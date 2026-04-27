@@ -12,6 +12,9 @@
 
 Context-engineering-powered multi-agent workflow pack for Gemini CLI.
 
+> FCAR private fork: this repository is maintained under `FCAR2025/oh-my-gemini-cli` for Antigravity proxy + Gemini 3.1 workflow usage. Upstream: https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli
+
+
 > "Claude Code's core competitiveness isn't the Opus or Sonnet engine. It's Claude Code itself. Surprisingly, Gemini works well too when attached to Claude Code."
 >
 > - Jeongkyu Shin (CEO of Lablup Inc.), from a YouTube channel interview
@@ -33,7 +36,7 @@ OmG extends Gemini CLI from a single-session assistant into a structured, role-d
 Install from GitHub using the official Gemini Extensions command:
 
 ```bash
-gemini extensions install https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli
+gemini extensions install https://github.com/FCAR2025/oh-my-gemini-cli
 ```
 
 Verify in interactive mode:

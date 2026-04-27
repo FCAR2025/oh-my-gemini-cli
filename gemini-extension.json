@@ -2,11 +2,11 @@
   "$schema": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/packages/cli/schemas/gemini-extension.json",
   "name": "oh-my-gemini-cli",
   "version": "0.8.4-fcar.1",
-  "description": "Context engineering and multi-agent workflow extension for Gemini CLI.",
-  "author": "Joonghyun-Lee-Frieren",
+  "description": "FCAR-branded Gemini CLI workflow extension fork with Antigravity proxy support, Gemini capability routing, and UltraQA gates.",
+  "author": "Joonghyun-Lee-Frieren; FCAR2025 private fork maintainers",
   "license": "MIT",
-  "homepage": "https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli",
-  "sourceUrl": "https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli",
+  "homepage": "https://github.com/FCAR2025/oh-my-gemini-cli",
+  "sourceUrl": "https://github.com/FCAR2025/oh-my-gemini-cli",
   "contextFileName": "GEMINI.md",
   "settings": []
 }
