@@ -1,0 +1,57 @@
+description = "Run adversarial QA cycles until evidence proves the claim, a blocker is real, or the loop exhausts."
+prompt = """
+Run OmG UltraQA.
+
+Goal:
+$ARGUMENTS
+
+Protocol:
+1. Define the exact claim under test and the smallest evidence set that can prove or falsify it.
+2. Select the verification posture:
+   - fast smoke or deterministic checks -> `gemini-3-flash-preview`
+   - adversarial review, security, architecture, or release readiness -> `gemini-3.1-pro-preview`
+   - cheap repeated checks -> `gemini-3.1-flash-lite-preview`
+3. If native Gemini CLI Plan Mode/read-only mode is active, perform verification and diagnosis only; do not route fixes unless the operator explicitly approves implementation.
+4. Cycle up to five times:
+   - verify: run or request the smallest real check that can falsify the claim
+   - diagnose: if failed, route root cause to `omg-debugger` or `omg-reviewer`
+   - fix: route the smallest safe patch to `omg-executor`
+   - re-run the failed check plus one adjacent regression check
+5. Treat missing evidence as `unknown`, not pass.
+6. Include adversarial edge cases: auth, state persistence, stale context, dirty workspace, permissions, external/runtime drift, rollback, and install-path mismatch.
+7. Use Gemini-native features only when they materially improve proof:
+   - large context for cross-file audits
+   - structured-output tables for acceptance matrices
+   - tool/function calling or MCP for reproducible checks
+   - Google Search grounding only for current external facts
+   - Code Execution only for isolated calculations or generated test data
+8. Read `.omg/state/session-lock.json` before mutating shared OmG state.
+9. If filesystem tools are available:
+   - if this session owns the lock, write/update `.omg/state/ultraqa.md`
+   - otherwise write `.omg/state/sessions/[session-slug]/ultraqa.md` and surface the owner conflict.
+
+Exit states:
+- `pass`: evidence proves the claim
+- `blocked`: authority, credentials, environment, or input is missing
+- `fail`: five cycles complete or the same failure repeats three times
+- `unknown`: checks were insufficient to prove the claim
+
+Response:
+## UltraQA Result
+- status: pass | fail | blocked | unknown
+- cycles:
+- claim:
+
+## Evidence
+| Check | Result | Evidence | Notes |
+| --- | --- | --- | --- |
+
+## Fixes Applied
+- ...
+
+## Remaining Risks
+- ...
+
+## Recommended Next Command
+- ...
+"""

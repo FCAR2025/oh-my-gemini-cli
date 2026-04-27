@@ -54,7 +54,39 @@ Run a smoke test:
 /omg:status
 ```
 
+Useful new checks:
+
+```text
+/omg:capabilities "plan the best Gemini route for this task"
+/omg:ultraqa "prove this change works adversarially"
+/omg:doctor install
+```
+
 Note: extension install/update commands run in terminal mode (`gemini extensions ...`), not in interactive slash-command mode.
+
+### Local linked install for isolated Gemini homes
+
+If Gemini CLI is launched through a wrapper with an isolated config home, install/link OmG into that same home. Current Gemini CLI stores extensions under `<home>/.gemini/extensions`; for wrappers that isolate via `HOME`, set that `HOME` for extension commands. If your Gemini CLI build supports `GEMINI_CLI_HOME`, use it instead of `HOME`. Example for an `ag-gemini` wrapper:
+
+```bash
+HOME=/path/to/gemini-cli-home \
+GEMINI_API_KEY=antigravity-local-live \
+GOOGLE_GEMINI_BASE_URL=http://127.0.0.1:51199 \
+GOOGLE_GENAI_USE_GCA=false \
+GOOGLE_GENAI_USE_VERTEXAI=false \
+gemini extensions link /path/to/oh-my-gemini-cli
+
+HOME=/path/to/gemini-cli-home gemini extensions list
+```
+
+Use `gemini extensions validate /path/to/oh-my-gemini-cli` before linking local edits.
+
+## What's New in v0.8.4-fcar.1
+
+- Added `/omg:capabilities` to map tasks to Gemini-native strengths: large context, multimodal inputs, structured outputs, tool/function calling, MCP, grounding, URL context, Code Execution, Plan Mode, and extension hooks.
+- Added `/omg:ultraqa` for adversarial verify -> diagnose -> fix loops with explicit evidence, edge-case checks, and single-writer state discipline.
+- Tightened core anti-slop rules from the OmG/OMX pattern: small reversible diffs, evidence before claims, session-lock respect, and 1000-line soft / 1500-line hard file caps.
+- Updated doctor/model guidance for Gemini CLI `v0.39.0+`, active-HOME extension installs, Gemini 3.1 model routing, and proxy-limited API surfaces.
 
 ## What's New in v0.8.3
 
@@ -81,7 +113,7 @@ Note: extension install/update commands run in terminal mode (`gemini extensions
 ## Shared Workflow State
 
 - `.omg/state/session-lock.json` is now the single-writer lock for shared workflow and operating-profile state inside one project.
-- Only the lock-owning orchestration session should write shared files like `workspace.json`, `taskboard.md`, `workflow.md`, `checkpoint.md`, `mode.json`, `hud.json`, `approval.json`, `reasoning.json`, `hooks.json`, and `notify.json`.
+- Only the lock-owning orchestration session should write shared files like `workspace.json`, `taskboard.md`, `workflow.md`, `checkpoint.md`, `capabilities.md`, `ultraqa.md`, `mode.json`, `hud.json`, `approval.json`, `reasoning.json`, `hooks.json`, and `notify.json`.
 - Parallel top-level sessions that do not own the lock should write session-local drafts under `.omg/state/sessions/[session-slug]/` and hand those notes back to the orchestrator for merge.
 - Delegated worker/sub-agent turns should stay read-mostly and must not mutate shared workflow state directly.
 
@@ -94,6 +126,8 @@ Note: extension install/update commands run in terminal mode (`gemini extensions
 | Main use case | Complex implementation tasks that need plan -> execute -> review loops |
 | Control surface | Slash-command-first `/omg:*` control plane + 8 deep-work `$skills` (including `omg-plan` alias) + sub-agent delegation |
 | Default model strategy | Configurable via `/omg:model` (`balanced` lane split uses `gemini-3.1-pro-preview` / `gemini-3-flash-preview` / `gemini-3.1-flash-lite-preview` by default, with optional `auto` or `custom` overrides) |
+| Gemini capability planner | `/omg:capabilities` maps work to Gemini-native models, multimodal/tooling features, and proxy/runtime constraints |
+| Adversarial QA loop | `/omg:ultraqa` cycles verify -> diagnose -> fix until the claim is proven, blocked, failed, or unknown |
 
 ## Why OmG
 
@@ -106,6 +140,8 @@ Note: extension install/update commands run in terminal mode (`gemini extensions
 | Deep interview sessions get interrupted by automated nudges | Learn-signal hook suppresses nudges while deep-interview lock is active and resumes only after lock release |
 | Repetitive prompt engineering for common jobs | Slash commands for operational control plus retained deep-work skills (`$plan`, `$omg-plan`, `$execute`, `$research`) |
 | Drift between "what was decided" and "what was changed" | Review and debugging roles inside the same orchestration loop |
+| Model/tool choice is guessed instead of designed | `/omg:capabilities` selects Gemini-native features and calls out proxy-limited API surfaces before execution |
+| Happy-path checks are mistaken for proof | `/omg:ultraqa` runs adversarial evidence loops and reports unknowns as unknowns |
 
 ## Architecture
 
@@ -441,6 +477,7 @@ export OMG_DISABLED_HOOKS=usage,learn
 | `/omg:hooks-test` | Dry-run hook event sequence and efficiency estimates | After policy changes or repeated loop stalls |
 | `/omg:notify` | Configure notification routing for approvals, blockers, verify results, checkpoints, and idle watchdog alerts | Before unattended `autopilot`/`loop` runs or when alert noise needs tuning |
 | `/omg:intent` | Classify task intent and route to the correct stage/command | Before planning or coding when request intent is ambiguous |
+| `/omg:capabilities` | Map a task to Gemini-native capabilities, model choices, and runtime/proxy constraints | Before work where model/tool/API fit matters |
 | `/omg:rules` | Activate task-conditional guardrail rule packs | Before implementation on migration/security/performance-sensitive work |
 | `/omg:memory` | Maintain MEMORY index, topic files, and path-aware rule packs | During long sessions or when decisions/rules drift |
 | `/omg:workspace` | Inspect, audit, or set primary root, worktree/path lanes, and collision boundaries | Before parallel implementation or multi-root work |
@@ -454,6 +491,7 @@ export OMG_DISABLED_HOOKS=usage,learn
 | `/omg:team-prd` | Lock measurable acceptance criteria and constraints | After planning, before coding |
 | `/omg:team-exec` | Implement one highest-priority ready slice with explicit lane/subagent handoff and single-shot fallback reroute | Main implementation loop |
 | `/omg:team-verify` | Validate acceptance criteria, regressions, and anti-slop quality gate, then emit priority-ordered fix backlog | After each execution slice |
+| `/omg:ultraqa` | Run adversarial verify -> diagnose -> fix cycles with explicit evidence and bounded exits | Before final claims on risky, runtime/proxy, or release-critical work |
 | `/omg:team-fix` | Patch only verified failures | When verification fails |
 | `/omg:loop` | Enforce repeated `exec -> verify -> fix` cycles until done/blocker | Mid/late delivery when unresolved findings remain |
 | `/omg:mode` | Inspect or switch operating profile (`balanced/speed/deep/autopilot/ralph/ultrawork`) | At session start or posture change |

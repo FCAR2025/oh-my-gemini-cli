@@ -6,11 +6,12 @@ Objective:
 $ARGUMENTS
 
 Autopilot protocol:
-1. Start with `team-plan`, `team-prd`, and `taskboard`.
+1. Start with `capabilities` when model/tool/API fit matters, then `team-plan`, `team-prd`, and `taskboard`.
 2. Execute iterative cycles of `team-exec -> team-verify -> team-fix`.
 3. After each cycle, evaluate done criteria, blocker status, and taskboard verification coverage.
-4. Stop when all acceptance criteria pass and tracked tasks are verified, when blocked, or when max cycles are reached.
-5. Default max cycles: 5 (override only if user explicitly requests).
+4. Run `ultraqa` before final claims when risk is high, runtime/proxy-sensitive, or the user requests adversarial proof.
+5. Stop when all acceptance criteria pass and tracked tasks are verified, when blocked, or when max cycles are reached.
+6. Default max cycles: 5 (override only if user explicitly requests).
 
 State handling:
 - Read `.omg/state/session-lock.json` before mutating shared workflow state.

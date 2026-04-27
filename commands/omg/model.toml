@@ -1,4 +1,4 @@
-description = "Inspect or set OmG model-selection strategy (balanced, auto, custom) for default task routing."
+description = "Inspect or set OmG model-selection strategy (balanced, auto, custom) for Gemini-native task routing."
 prompt = """
 Run OmG model-strategy manager.
 
@@ -10,7 +10,7 @@ Protocol:
    - examples:
      - `auto`
      - `balanced`
-     - `custom planning=gemini-3.1-pro-preview execution=gemini-3-flash-preview quick=gemini-3.1-flash-lite-preview review_verify=gemini-3.1-pro-preview`
+     - `custom planning=gemini-3.1-pro-preview execution=gemini-3-flash-preview quick=gemini-3.1-flash-lite-preview review_verify=gemini-3.1-pro-preview tools=gemini-3.1-pro-preview-custom-tools`
 2. Supported strategies:
    - `balanced` (default): role-aware lane split (`gemini-3.1-pro-preview` for planning/review, `gemini-3-flash-preview` for execution, `gemini-3.1-flash-lite-preview` for quick low-risk edits)
    - `auto`: defer lane model selection to Gemini runtime auto-model policy across all lanes
@@ -21,10 +21,14 @@ Protocol:
    - execution
    - quick_edit
    - review_verify
-5. If filesystem tools are available, write/update `.omg/state/model.json`.
-6. Clarify boundary:
+   - tool_calling
+   - multimodal_review
+   - external_research
+5. If filesystem tools are available, write/update `.omg/state/model.json` using session-lock discipline.
+6. Clarify boundaries:
    - this command sets OmG orchestration defaults
    - runtime model forcing still depends on Gemini CLI runtime controls (for example `/model` or launch-time `--model` when supported)
+   - separate Gemini API surfaces (Live, Files, Batch/cache, embeddings, media generation, TTS, Veo, Imagen, Lyria) require runtime/API support beyond normal chat-completions-style proxying
 
 Suggested `model.json` shape:
 {
@@ -33,7 +37,10 @@ Suggested `model.json` shape:
     "planning": "gemini-3.1-pro-preview|auto|<custom>",
     "execution": "gemini-3-flash-preview|auto|<custom>",
     "quick_edit": "gemini-3.1-flash-lite-preview|auto|<custom>",
-    "review_verify": "gemini-3.1-pro-preview|auto|<custom>"
+    "review_verify": "gemini-3.1-pro-preview|auto|<custom>",
+    "tool_calling": "gemini-3.1-pro-preview-custom-tools|auto|<custom>",
+    "multimodal_review": "gemini-3.1-pro-preview|auto|<custom>",
+    "external_research": "gemini-3.1-pro-preview|auto|<custom>"
   },
   "updated_at": "<ISO-8601>",
   "source": "omg:model"

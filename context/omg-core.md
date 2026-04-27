@@ -1,25 +1,35 @@
 # OmG Core Context
 
-OmG adds a role-driven workflow layer to Gemini CLI.
+OmG adds a Gemini-native, role-driven workflow layer to Gemini CLI.
 
 ## Primary Interface
 
 - Use `/omg:*` commands for operational control.
-- Keep always-on context thin; heavy procedure belongs in the invoked command, not here.
+- Keep always-on context thin; heavy procedure belongs in invoked commands, not here.
 - Retained deep-work skills are limited to: `$plan`, `$omg-plan`, `$execute`, `$prd`, `$ralplan`, `$research`, `$deep-dive`, `$context-optimize`.
+- Use `/omg:capabilities` when a task may benefit from Gemini-specific surfaces such as large context, multimodal inputs, structured outputs, tool calling, grounding, Code Execution, Plan Mode, MCP, or extension hooks.
+- Use `/omg:ultraqa` when completion needs adversarial proof instead of a normal happy-path check.
 
 ## Default Flow (Hybrid Routing)
 
-- **Entry**: `intent` -> `workspace` (if dirty lanes or multi-root setup needed) -> `team-assemble` (if role fit is unclear).
+- **Entry**: `intent` -> `capabilities` (if runtime/model/tool fit matters) -> `workspace` (if dirty lanes or multi-root setup needed) -> `team-assemble` (if role fit is unclear).
 - **Clarification**: `interview` (if depth flags detected or scope is ambiguous) -> `team-plan` -> `team-prd`.
 - **Execution**: `taskboard` -> `team-exec` -> `team-verify` -> `team-fix`.
+- **Proof**: Use `ultraqa` for adversarial verification, release readiness, proxy/runtime checks, or user-facing claims that must be proven.
 - **Loop**: Repeat `exec -> verify -> fix` until acceptance. Use `loop` for subsequent slices.
 - **Parallel Rule**: Keep immediate blockers on the active lane; delegate only independent sidecar tasks in parallel.
 
+## Gemini Capability Routing
+
+- Keep the always-on rule thin: use `/omg:capabilities` for detailed model/tool/API routing.
+- Default hints: Pro for deep reasoning/review, Flash for fast execution, Flash-Lite for cheap checks, custom-tools variants for heavy tool calling when available.
+- Use Gemini-native surfaces deliberately: multimodal inputs, structured outputs, function calling/MCP, grounding/URL context, Code Execution, Plan Mode, and extension hooks.
+- Proxy boundary: Live, Files, Batch/cache, embeddings, media generation, TTS, Veo, Imagen, and Lyria require native/proxy support beyond ordinary chat requests.
+
 ## System Map: Modes, Controls & Agents
 
-- **Operational Modes**: `balanced`, `speed`, `deep`, `autopilot`, `ralph`, `ultrawork`.
-- **Control Plane**: `rules`, `memory`, `workspace`, `taskboard`, `deep-init`, `hud`, `hooks`, `notify`, `reasoning`, `approval`, `doctor`, `cancel`.
+- **Operational Modes**: `balanced`, `speed`, `deep`, `autopilot`, `ralph`, `ultrawork`, `ultraqa`.
+- **Control Plane**: `rules`, `memory`, `workspace`, `taskboard`, `deep-init`, `hud`, `hooks`, `notify`, `reasoning`, `approval`, `model`, `capabilities`, `doctor`, `cancel`.
 - **Agent Role Registry**:
   - **Strategy**: `omg-director`, `omg-architect`, `omg-planner`.
   - **Production**: `omg-product`, `omg-consultant`, `omg-editor`.
@@ -44,7 +54,7 @@ OmG adds a role-driven workflow layer to Gemini CLI.
   - **Smart Synchronization**: Agents `read_file` the active pointer first, then the session state ONLY at entry points to ensure alignment.
   - **Implicit Adoption**: On read, the file content overrides any stale internal context immediately.
   - **Update Policy**: Update the active session file (`write_file`) only when tangible changes (facts, score, prompt) occur.
-- **Shared Workflow State**: Treat `.omg/state/workspace.json`, `.omg/state/taskboard.md`, `.omg/state/workflow.md`, and `.omg/state/checkpoint.md` as single-writer artifacts per project.
+- **Shared Workflow State**: Treat `.omg/state/workspace.json`, `.omg/state/taskboard.md`, `.omg/state/workflow.md`, `.omg/state/checkpoint.md`, `.omg/state/capabilities.md`, and `.omg/state/ultraqa.md` as single-writer artifacts per project.
   - **Lock File**: Read `.omg/state/session-lock.json` before mutating any shared workflow artifact.
   - **Authoritative Writer**: Only the main/orchestration session whose lock matches may update shared workflow artifacts.
   - **Conflict Rule**: If another live session owns the lock, do not overwrite shared workflow artifacts; write session-local drafts under `.omg/state/sessions/[session-slug]/` and surface the ownership conflict explicitly.
@@ -60,6 +70,7 @@ OmG adds a role-driven workflow layer to Gemini CLI.
 - **Critical-Path Focus**: Complete immediate blocking work before adding speculative side tasks.
 - **Deterministic Queue**: For task execution order, prefer dependency-ready + lane-safe tasks first, then priority (`p0` -> `p3`), then stable task ID.
 - **Baseline Integrity**: Keep each active lane anchored to an explicit baseline branch or HEAD snapshot when known; if the baseline drifts unexpectedly, stop and surface the mismatch before continuing implementation or review.
+- **Anti-Slop Gate**: Before final output, prove the claim with real evidence, prefer deletion/reuse over new layers, keep files under 1000 lines when practical and never exceed 1500 lines, and list residual risks instead of hiding unknowns.
 - **Permission Recovery**: If a tool/action is denied, do not retry unchanged; request approval or switch to a safe fallback plan.
 - **Agent Recovery**: If a lane agent is unavailable, reroute once to a mapped fallback lane and record why.
 - **Concise Success Path**: Keep normal-success reporting compact and expand only blocker or early-stop branches.

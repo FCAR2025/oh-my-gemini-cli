@@ -1,4 +1,4 @@
-description = "Run OmG diagnostics for extension readiness, workflow state integrity, and multi-agent safety."
+description = "Run OmG diagnostics for extension readiness, workflow state integrity, Gemini capability fit, and multi-agent safety."
 prompt = """
 Run OmG doctor diagnostics.
 
@@ -10,21 +10,23 @@ Supported scopes:
 - `team`: multi-agent/team-pipeline readiness diagnostics
 - `workspace`: lane/worktree hygiene and drift diagnostics
 - `hooks`: hook-policy safety and trigger-health diagnostics
+- `install`: active Gemini CLI extension install/root diagnostics
 
 Diagnostic protocol:
 1. Detect requested scope and run matching checks.
 2. Verify extension surface integrity:
    - key directories (`agents`, `commands/omg`, `skills`, `context`)
    - key manifest/context files (`gemini-extension.json`, `GEMINI.md`, `context/omg-core.md`)
-3. Verify command readiness for core flows (`team`, `intent`, `workspace`, `taskboard`, `loop`, `rules`, `memory`, `hooks`, `notify`, `reasoning`, `approval`).
+3. Verify command readiness for core flows (`team`, `intent`, `workspace`, `taskboard`, `loop`, `rules`, `memory`, `hooks`, `notify`, `reasoning`, `approval`, `model`, `capabilities`, `ultraqa`).
 4. Verify retained deep-work skills (`plan`, `omg-plan`, `execute`, `prd`, `ralplan`, `research`, `deep-dive`, `context-optimize`) and their metadata integrity.
-5. Check state artifacts and drift risks under `.omg/state/` when available, including lane health, trust notes, and hook lifecycle policy.
+5. Check state artifacts and drift risks under `.omg/state/` when available, including lane health, trust notes, capability notes, UltraQA evidence, and hook lifecycle policy.
 6. Detect common failure patterns:
    - extension not loaded in current session
-   - Gemini CLI runtime too old for current OmG assumptions (recommend `v0.38.0+`)
+   - Gemini CLI runtime too old for current OmG assumptions (recommend `v0.39.0+` for current Plan Mode, extension, memory, and model-routing behavior)
+   - active terminal `HOME` differs from the intended Gemini runtime home, causing `gemini extensions list` to inspect the wrong install path
    - missing or stale root `GEMINI.md` import chain
-   - mixed or stale OmG extension roots (for example: copied assets, duplicate local clones, or stale installed extension contents diverging from the active repository)
-   - command discovery mismatch
+   - mixed or stale OmG extension roots (for example: copied assets, duplicate local clones, stale installed extension contents, or linked roots diverging from the active repository)
+   - command discovery mismatch, especially missing `capabilities` or `ultraqa`
    - manual hook or skill wiring shadowing extension-managed OmG assets
    - malformed or duplicate skill metadata (`skills/*/SKILL.md` frontmatter)
    - native `/memory inbox` or skill-patching proposals applied without review or metadata validation
@@ -52,12 +54,14 @@ Diagnostic protocol:
    - hook plans or plan-session state not accounting for `GEMINI_PLANS_DIR` when the runtime provides it
    - repeated learn nudges due missing cooldown policy in `.omg/rules/learn.json`
    - repeated denied tool calls without escalation path
+   - proxy/runtime mismatch for separate Gemini API surfaces (Live, Files, Batch/cache, embeddings, media generation, TTS, Veo, Imagen, Lyria)
 7. Produce concrete remediation actions in priority order.
 8. Prefer extension-managed recovery paths first:
    - `gemini extensions list`
-   - reinstall/update via `gemini extensions ...` when the active extension root looks stale
+   - `gemini extensions validate <extension-root>`
+   - reinstall, update, or `gemini extensions link <extension-root>` when the active root looks stale
    - keep one authoritative OmG hook registration path per event before editing shipped assets
-9. If filesystem tools are available, write/update `.omg/state/doctor.md`.
+9. If filesystem tools are available, write/update `.omg/state/doctor.md` using session-lock discipline.
 
 Response:
 - Keep it concise and operator-facing.

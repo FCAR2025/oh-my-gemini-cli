@@ -2,6 +2,15 @@
 
 All notable changes to oh-my-gemini-cli are documented here.
 
+## v0.8.4-fcar.1 - Gemini Capability and UltraQA Hardening (2026-04-27)
+
+### Changed
+
+- Added `/omg:capabilities` to route work through Gemini-native capabilities, model choices, and runtime/proxy constraints.
+- Added `/omg:ultraqa` for adversarial verify -> diagnose -> fix loops with explicit evidence and bounded exits.
+- Tightened core context around anti-slop execution, lock-aware state writes, model/tool routing, and proxy-limited Gemini API surfaces.
+- Updated doctor/model/README guidance for active-HOME extension installs and Gemini CLI `v0.39.0+` assumptions.
+
 ## v0.8.3 - Gemini CLI Late-April Compatibility Sync (2026-04-27)
 
 ### Changed
@@ -36,6 +45,7 @@ All notable changes to oh-my-gemini-cli are documented here.
 
 | Version | Date | Theme | Outcome |
 | --- | --- | --- | --- |
+| `v0.8.4-fcar.1` | 2026-04-27 | Gemini capability and UltraQA hardening | Added Gemini-native capability planning, adversarial QA loops, anti-slop core policy, and active-HOME install diagnostics |
 | `v0.8.3` | 2026-04-27 | Gemini CLI late-April compatibility sync | Aligned OmG guidance with Gemini CLI v0.38-v0.40 preview changes around Plan Mode confirmation, unified subagent invocation, memory inbox/skill patching, hook plan env, and MCP auth config boundaries |
 | `v0.8.2` | 2026-04-22 | Quiet model routing defaults | Replaced the visible BeforeModel model banner with silent request routing so repeated model-routing lines no longer appear while lane-specific model selection remains active |
 | `v0.8.1` | 2026-04-20 | Model alias routing and visibility | Switched OmG guidance to Gemini CLI model aliases, enabled workspace preview features by default, and added a BeforeModel visibility banner plus stronger HUD model visibility |
