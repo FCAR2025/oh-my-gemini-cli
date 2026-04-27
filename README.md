@@ -5,7 +5,7 @@
 [![Stars](https://img.shields.io/github/stars/FCAR2025/oh-my-gemini-cli?style=social)](https://github.com/FCAR2025/oh-my-gemini-cli/stargazers)
 [![Gemini Extension](https://img.shields.io/badge/Gemini-Extension-0d8a83)](https://geminicli.com/docs/extensions/)
 
-[Landing Page](docs/index.html) | [History](docs/history.md)
+[Docs](docs/guide/installation.md) | [History](docs/history.md)
 
 [한국어](docs/README_ko.md) | [日本語](docs/README_ja.md) | [Français](docs/README_fr.md) | [中文](docs/README_zh.md) | [Español](docs/README_es.md)
 
