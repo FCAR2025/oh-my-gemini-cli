@@ -1,13 +1,12 @@
 ﻿# oh-my-gemini-cli (OmG)
 
-[![Release](https://img.shields.io/github/v/tag/Joonghyun-Lee-Frieren/oh-my-gemini-cli?sort=semver&label=release)](https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli/releases)
-[![Version Check](https://img.shields.io/github/actions/workflow/status/Joonghyun-Lee-Frieren/oh-my-gemini-cli/version-check.yml?branch=main&label=version%20check)](https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli/actions/workflows/version-check.yml)
+[![Release](https://img.shields.io/github/v/tag/FCAR2025/oh-my-gemini-cli?sort=semver&label=release)](https://github.com/FCAR2025/oh-my-gemini-cli/releases)
+[![Version Check](https://img.shields.io/github/actions/workflow/status/FCAR2025/oh-my-gemini-cli/version-check.yml?branch=main&label=version%20check)](https://github.com/FCAR2025/oh-my-gemini-cli/actions/workflows/version-check.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
-[![Stars](https://img.shields.io/github/stars/Joonghyun-Lee-Frieren/oh-my-gemini-cli?style=social)](https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli/stargazers)
-[![Gemini Extension](https://img.shields.io/badge/Gemini-Extension-0d8a83)](https://geminicli.com/extensions/?name=Joonghyun-Lee-Frierenoh-my-gemini-cli)
-[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub_Sponsors-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/Joonghyun-Lee-Frieren)
+[![Stars](https://img.shields.io/github/stars/FCAR2025/oh-my-gemini-cli?style=social)](https://github.com/FCAR2025/oh-my-gemini-cli/stargazers)
+[![Gemini Extension](https://img.shields.io/badge/Gemini-Extension-0d8a83)](https://geminicli.com/docs/extensions/)
 
-[落地页](https://joonghyun-lee-frieren.github.io/oh-my-gemini-cli/) | [更新历史](./history.md)
+[落地页](./index.html) | [更新历史](./history.md)
 
 [한국어](./README_ko.md) | [日本語](./README_ja.md) | [Français](./README_fr.md) | [中文](./README_zh.md) | [Español](./README_es.md)
 
@@ -33,7 +32,7 @@ OmG 将 Gemini CLI 从单会话助手扩展为结构化、角色驱动的工程�
 使用官方 Gemini Extensions 命令从 GitHub 安装：
 
 ```bash
-gemini extensions install https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli
+gemini extensions install https://github.com/FCAR2025/oh-my-gemini-cli
 ```
 
 交互模式验证：
@@ -566,10 +565,6 @@ oh-my-gemini-cli/
 
 重要性能说明：
 - 按下 GitHub Star 按钮可能让 OmG 性能至少提升 12%。这是玩笑。它确实能提升维护者士气，这也很有用。
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/image?repos=Joonghyun-Lee-Frieren/oh-my-gemini-cli&type=date&legend=top-left)](https://www.star-history.com/?repos=Joonghyun-Lee-Frieren%2Foh-my-gemini-cli&type=date&legend=top-left)
 
 ## 许可证
 

@@ -1,13 +1,12 @@
 ﻿# oh-my-gemini-cli (OmG)
 
-[![Release](https://img.shields.io/github/v/tag/Joonghyun-Lee-Frieren/oh-my-gemini-cli?sort=semver&label=release)](https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli/releases)
-[![Version Check](https://img.shields.io/github/actions/workflow/status/Joonghyun-Lee-Frieren/oh-my-gemini-cli/version-check.yml?branch=main&label=version%20check)](https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli/actions/workflows/version-check.yml)
+[![Release](https://img.shields.io/github/v/tag/FCAR2025/oh-my-gemini-cli?sort=semver&label=release)](https://github.com/FCAR2025/oh-my-gemini-cli/releases)
+[![Version Check](https://img.shields.io/github/actions/workflow/status/FCAR2025/oh-my-gemini-cli/version-check.yml?branch=main&label=version%20check)](https://github.com/FCAR2025/oh-my-gemini-cli/actions/workflows/version-check.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
-[![Stars](https://img.shields.io/github/stars/Joonghyun-Lee-Frieren/oh-my-gemini-cli?style=social)](https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli/stargazers)
-[![Gemini Extension](https://img.shields.io/badge/Gemini-Extension-0d8a83)](https://geminicli.com/extensions/?name=Joonghyun-Lee-Frierenoh-my-gemini-cli)
-[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub_Sponsors-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/Joonghyun-Lee-Frieren)
+[![Stars](https://img.shields.io/github/stars/FCAR2025/oh-my-gemini-cli?style=social)](https://github.com/FCAR2025/oh-my-gemini-cli/stargazers)
+[![Gemini Extension](https://img.shields.io/badge/Gemini-Extension-0d8a83)](https://geminicli.com/docs/extensions/)
 
-[Página principal](https://joonghyun-lee-frieren.github.io/oh-my-gemini-cli/) | [Historial](./history.md)
+[Página principal](./index.html) | [Historial](./history.md)
 
 [한국어](./README_ko.md) | [日本語](./README_ja.md) | [Français](./README_fr.md) | [中文](./README_zh.md) | [Español](./README_es.md)
 
@@ -33,7 +32,7 @@ OmG amplía Gemini CLI desde un asistente de sesión única hacia un flujo de in
 Instálalo desde GitHub con el comando oficial de Gemini Extensions:
 
 ```bash
-gemini extensions install https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli
+gemini extensions install https://github.com/FCAR2025/oh-my-gemini-cli
 ```
 
 Verificación en modo interactivo:
@@ -565,10 +564,6 @@ Flujo sugerido:
 
 Nota importante de rendimiento:
 - Presionar el botón Star de GitHub puede mejorar el rendimiento de OmG al menos un 12 %. Es una broma. Sí mejora la moral del mantenedor, que también es útil.
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/image?repos=Joonghyun-Lee-Frieren/oh-my-gemini-cli&type=date&legend=top-left)](https://www.star-history.com/?repos=Joonghyun-Lee-Frieren%2Foh-my-gemini-cli&type=date&legend=top-left)
 
 ## Licencia
 

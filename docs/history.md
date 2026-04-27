@@ -9,7 +9,7 @@ All notable changes to oh-my-gemini-cli are documented here.
 - Added `/omg:capabilities` to route work through Gemini-native capabilities, model choices, and runtime/proxy constraints.
 - Added `/omg:ultraqa` for adversarial verify -> diagnose -> fix loops with explicit evidence and bounded exits.
 - Tightened core context around anti-slop execution, lock-aware state writes, model/tool routing, and proxy-limited Gemini API surfaces.
-- Updated doctor/model/README guidance for active-HOME extension installs, FCAR private-fork metadata, and Gemini CLI `v0.39.0+` assumptions.
+- Updated doctor/model/README guidance for active-HOME extension installs, FCAR public-distribution metadata, and Gemini CLI `v0.39.0+` assumptions.
 
 ## v0.8.3 - Gemini CLI Late-April Compatibility Sync (2026-04-27)
 

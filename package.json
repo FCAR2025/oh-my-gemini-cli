@@ -1,7 +1,7 @@
 {
   "name": "oh-my-gemini-cli",
   "version": "0.8.4-fcar.1",
-  "description": "FCAR-branded Gemini CLI workflow extension fork with Antigravity proxy support, Gemini capability routing, and UltraQA gates.",
+  "description": "FCAR-maintained Gemini CLI workflow extension with Antigravity proxy support, Gemini capability routing, and UltraQA gates.",
   "keywords": [
     "gemini",
     "gemini-cli",
@@ -16,7 +16,7 @@
     "url": "https://github.com/FCAR2025/oh-my-gemini-cli.git"
   },
   "license": "MIT",
-  "author": "Joonghyun-Lee-Frieren; FCAR2025 private fork maintainers",
+  "author": "Joonghyun-Lee-Frieren; FCAR2025 maintainers",
   "type": "module",
   "scripts": {
     "test:version": "node scripts/check-version.js",

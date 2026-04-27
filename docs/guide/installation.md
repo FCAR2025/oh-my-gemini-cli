@@ -23,7 +23,7 @@ Compatibility note:
 ## Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli.git
+git clone https://github.com/FCAR2025/oh-my-gemini-cli.git
 cd oh-my-gemini-cli
 ```
 
@@ -32,7 +32,7 @@ cd oh-my-gemini-cli
 Run from your terminal (non-interactive mode):
 
 ```bash
-gemini extensions install https://github.com/Joonghyun-Lee-Frieren/oh-my-gemini-cli
+gemini extensions install https://github.com/FCAR2025/oh-my-gemini-cli
 ```
 
 ## Step 3: Verify Extension Loaded
