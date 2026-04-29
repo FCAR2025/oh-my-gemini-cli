@@ -5,6 +5,9 @@ OmG adds a Gemini-native, role-driven workflow layer to Gemini CLI.
 ## Primary Interface
 
 - Use `/omg:*` commands for operational control.
+- `/omg:*` is Gemini slash-command syntax, not a shell path. Do not call
+  `run_shell_command`/Shell with `/omg:*`; emit it as the next operator command
+  or invoke it through Gemini's native slash-command surface only.
 - Keep always-on context thin; heavy procedure belongs in invoked commands, not here.
 - Retained deep-work skills are limited to: `$plan`, `$omg-plan`, `$execute`, `$prd`, `$ralplan`, `$research`, `$deep-dive`, `$context-optimize`.
 - Use `/omg:capabilities` when a task may benefit from Gemini-specific surfaces such as large context, multimodal inputs, structured outputs, tool calling, grounding, Code Execution, Plan Mode, MCP, or extension hooks.
@@ -61,6 +64,7 @@ OmG adds a Gemini-native, role-driven workflow layer to Gemini CLI.
   - **Delegated Turns**: Delegated/worker/subagent turns must not write shared workflow artifacts directly; they return handoff summaries or session-local notes for the orchestrator to merge.
 - **Summarization**: Read only files needed for the current step and summarize before handoff.
 - **Persistence**: Use `.omg/state/*`, `MEMORY.md`, `.omg/memory/*`, `.omg/rules/*`, `.omg/hooks/*`, or `.omg/notify/*`.
+- **Native Tool Schemas**: When using Gemini CLI file tools, call `list_directory` with `dir_path`, and call `read_file` / `write_file` with `file_path`. Do not use a generic `path` field.
 
 ## Execution Discipline
 

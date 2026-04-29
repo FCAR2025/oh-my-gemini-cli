@@ -13,6 +13,10 @@ Supported scopes:
 - `install`: active Gemini CLI extension install/root diagnostics
 
 Diagnostic protocol:
+0. Tool schema guardrail: call `list_directory` with `dir_path`; call
+   `read_file` and `write_file` with `file_path`; if `.omg/state/*` is ignored
+   by native file tools, use a shell `cat`/`mkdir -p`/heredoc fallback instead of
+   retrying the same invalid call.
 1. Detect requested scope and run matching checks.
 2. Verify extension surface integrity:
    - key directories (`agents`, `commands/omg`, `skills`, `context`)
@@ -62,6 +66,7 @@ Diagnostic protocol:
    - reinstall, update, or `gemini extensions link <extension-root>` when the active root looks stale
    - keep one authoritative OmG hook registration path per event before editing shipped assets
 9. If filesystem tools are available, write/update `.omg/state/doctor.md` using session-lock discipline.
+   - Gemini CLI file tools require `file_path`; do not call `read_file` or `write_file` with `path`.
 
 Response:
 - Keep it concise and operator-facing.
