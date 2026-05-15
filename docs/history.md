@@ -2,6 +2,20 @@
 
 All notable changes to oh-my-gemini-cli are documented here.
 
+## v0.8.5-fcar.2 - Upstream Sync + FCAR Capability/UltraQA Preservation (2026-05-15)
+
+### Added
+
+- Adopted upstream `/omg:goal` Ralph/Codex-style autonomous delivery loop (from upstream `v0.8.5`).
+- Adopted upstream automated/manual interview routing under `/omg:interview` while keeping FCAR `/omg:capabilities` checkpoint between `intent` and `workspace` in `Default Flow (Hybrid Routing)`.
+
+### Changed
+
+- Bumped package and extension metadata to `v0.8.5-fcar.2`.
+- Refreshed Gemini CLI compatibility guidance to the upstream-tracked stable baseline `v0.42.0+` (preview `v0.42.0-preview.2`, nightly `v0.42.0-nightly.20260507.ga809bc7c5`).
+- Removed upstream-deprecated `omg-quota-watch-after-agent` hook + `hooks/scripts/after-agent-usage.js`; usage/quota now flows through Gemini CLI native `/model` or `/stats model`.
+- Preserved FCAR public-distribution branding (FCAR2025 origin, README headers, license attribution to Joonghyun-Lee-Frieren upstream).
+
 ## v0.8.4-fcar.1 - Gemini Capability and UltraQA Hardening (2026-04-27)
 
 ### Changed
@@ -11,16 +25,38 @@ All notable changes to oh-my-gemini-cli are documented here.
 - Tightened core context around anti-slop execution, lock-aware state writes, model/tool routing, and proxy-limited Gemini API surfaces.
 - Updated doctor/model/README guidance for active-HOME extension installs, FCAR public-distribution metadata, and Gemini CLI `v0.39.0+` assumptions.
 
+## v0.8.5 - Goal Mode Autonomous Delivery (2026-05-04, upstream)
+
+### Added
+
+- Added `/omg:goal` as a Ralph/Codex-style goal-driven autonomous delivery command.
+- Goal mode treats routine non-destructive work as approved, then runs the staged OmG delivery path through plan, PRD, taskboard, execution, verification, and fix loops.
+- Added explicit runtime-boundary guidance so blocked Gemini CLI approvals, sandbox limits, trusted-folder restrictions, shell/network policy, destructive actions, credential-sensitive actions, and production-impacting actions stop as blockers instead of being bypassed.
+
+### Changed
+
+- Bumped package and extension metadata to `v0.8.5`.
+- Updated README, Korean README, landing page, and history for the new goal command and autonomy limits.
+
+## v0.8.4 - Remove Usage Monitor Hook (2026-04-28, upstream)
+
+### Removed
+
+- Removed `omg-quota-watch-after-agent` from `hooks/hooks.json`.
+- Deleted `hooks/scripts/after-agent-usage.js` so OmG no longer emits noisy `usage=unavailable` lines.
+- Stopped documenting `.omg/state/quota-watch.json` as an active OmG state artifact.
+
+### Changed
+
+- Updated hook controls to keep only the quiet `BeforeModel` model router and the `AfterAgent` learn-signal safety filter.
+- Updated README, Korean README, landing page, hook guide, package metadata, and extension metadata for `v0.8.4`.
+- Redirected usage/quota guidance to Gemini CLI native `/model` or `/stats model` output.
+
 ## v0.8.3 - Gemini CLI Late-April Compatibility Sync (2026-04-27)
 
 ### Changed
 
-- Reviewed upstream Gemini CLI releases from 2026-04-14 through 2026-04-25, including stable `v0.38.x`, stable `v0.39.x`, and preview `v0.40.0-preview.x`.
-- Added Plan Mode safety guidance so OmG does not activate skills, subagents, or implementation lanes from native Plan Mode without explicit user confirmation.
-- Updated team execution and core context guidance for Gemini CLI's unified subagent invocation path instead of legacy wrapped subagent tool assumptions.
-- Treated native `/memory inbox` and skill patching as operator-reviewed inputs; accepted patches still require OmG retained-skill metadata validation.
-- Added diagnostics for `GEMINI_PLANS_DIR`, agent MCP `auth` block credential boundaries, stale subagent guidance, and unreviewed skill-patching changes.
-- Updated README, Korean README, landing page, package metadata, and extension metadata for `v0.8.3`.
+- Superseded by the 2026-05-13 compatibility guidance above. Historical release details remain in git history.
 
 ## v0.8.2 - Quiet Model Routing Defaults (2026-04-22)
 
@@ -45,8 +81,11 @@ All notable changes to oh-my-gemini-cli are documented here.
 
 | Version | Date | Theme | Outcome |
 | --- | --- | --- | --- |
+| `v0.8.5-fcar.2` | 2026-05-15 | Upstream sync + FCAR capability/UltraQA preservation | Adopted upstream `/omg:goal` autonomous delivery + automated/manual interview routing + Gemini CLI v0.42.0 compat while preserving FCAR `/omg:capabilities`, `/omg:ultraqa`, and Antigravity proxy guidance |
 | `v0.8.4-fcar.1` | 2026-04-27 | Gemini capability and UltraQA hardening | Added Gemini-native capability planning, adversarial QA loops, anti-slop core policy, and active-HOME install diagnostics |
-| `v0.8.3` | 2026-04-27 | Gemini CLI late-April compatibility sync | Aligned OmG guidance with Gemini CLI v0.38-v0.40 preview changes around Plan Mode confirmation, unified subagent invocation, memory inbox/skill patching, hook plan env, and MCP auth config boundaries |
+| `v0.8.5` | 2026-05-04 | Goal mode autonomous delivery (upstream) | Added `/omg:goal` for routine-approved plan/PRD/taskboard/exec/verify/fix loops while keeping Gemini CLI runtime approval, sandbox, and policy limits explicit |
+| `v0.8.4` | 2026-04-28 | Remove usage monitor hook (upstream) | Removed the quota-watch AfterAgent hook and script so OmG no longer prints `usage=unavailable`; usage/quota visibility now relies on Gemini CLI native `/model` or `/stats model` |
+| `v0.8.3` | 2026-04-27 | Gemini CLI late-April compatibility sync | Aligned OmG guidance with Gemini CLI v0.38-v0.40 preview changes; superseded by 2026-05-13 compatibility guidance above |
 | `v0.8.2` | 2026-04-22 | Quiet model routing defaults | Replaced the visible BeforeModel model banner with silent request routing so repeated model-routing lines no longer appear while lane-specific model selection remains active |
 | `v0.8.1` | 2026-04-20 | Model alias routing and visibility | Switched OmG guidance to Gemini CLI model aliases, enabled workspace preview features by default, and added a BeforeModel visibility banner plus stronger HUD model visibility |
 | `v0.8.0` | 2026-04-16 | Shared workflow single-writer safety | Added session-lock based ownership for shared workflow and operating-profile state, routed non-owning sessions into session-local drafts, and documented the safer same-project parallel-session model |
@@ -60,13 +99,13 @@ All notable changes to oh-my-gemini-cli are documented here.
 | `v0.7.2` | 2026-04-07 | Workflow/runtime hygiene | Added learn-signal cooldown control, release metadata sync utility, and stronger staged-workflow diagnostics |
 | `v0.7.1` | 2026-04-06 | Deterministic taskboard and fallback routing | Added null-safe task priority defaults (`p2`), deterministic `next` ordering, and one-shot agent-unavailable fallback routing across team execution stages |
 | `v0.7.0` | 2026-04-05 | Model selection policy controls | Added `/omg:model` with `balanced|auto|custom` strategy management and persisted model-policy state for consistent lane routing |
-| `v0.6.0` | 2026-04-03 | Gemini CLI compatibility sync | Aligned OmG runtime guidance with recent Gemini CLI stable releases (`v0.35.0`, `v0.36.0`) and hardened doctor diagnostics for runtime drift |
+| `v0.6.0` | 2026-04-03 | Gemini CLI compatibility sync | Superseded by the 2026-05-13 compatibility guidance above |
 | `v0.5.0` | 2026-04-01 | Prompt ops hardening | Applied Claude-derived delegation/edit/verification guardrails across OmG core context, team commands, and agent contracts |
 | `v0.4.6` | 2026-03-31 | Deep-dive discovery skill | Added extension-native `$deep-dive` trace-to-interview skill with clarity scoring and optional interview/launch state artifacts |
 | `v0.4.5` | 2026-03-30 | Deep-interview lock nudge suppression | Learn-signal hook now suppresses automated nudges while deep-interview lock is active and resumes safely after lock release |
 | `v0.4.4` | 2026-03-26 | Learn-signal safety hardening | Added actionable-session filtering, deduped learn-signal state tracking, and safer stale-state handling for `/omg:learn` nudges |
 | `v0.4.3` | 2026-03-24 | AfterAgent deduplication and retry safety | Added transcript-fingerprint state tracking so repeated usage-hook retries no longer double-print the same turn |
-| `v0.4.2` | 2026-03-21 | Skills/footer compatibility alignment | Added slash-friendly `omg-plan` skill alias and documented Gemini CLI v0.34 skill/footer UX with version-gated guidance |
+| `v0.4.2` | 2026-03-21 | Skills/footer compatibility alignment | Added slash-friendly `omg-plan` skill alias; current compatibility guidance is maintained in the 2026-05-13 section above |
 | `v0.4.1` | 2026-03-20 | Usage monitor runtime knobs | Added quiet-hook output control and state-root override for safer, less noisy long sessions |
 | `v0.3.9` | 2026-03-12 | Workspace hygiene and hook symmetry | Added lane-health auditing, hook lifecycle symmetry rules, and quieter delegated handoffs for safer long sessions |
 | `v0.3.8` | 2026-03-11 | Workspace and taskboard control | Added extension-native workspace lane mapping and verifier-backed taskboard workflows for lighter long-session orchestration |
@@ -481,32 +520,7 @@ Added an extension-native model policy control surface so operators can intentio
 
 ## v0.6.0 - Gemini CLI Compatibility Sync (2026-04-03)
 
-Reviewed upstream Gemini CLI release notes published in the last two weeks (from 2026-03-20 to 2026-04-03) and aligned OmG compatibility assumptions with stable-channel behavior.
-
-### Added
-
-- Runtime-drift checks in doctor diagnostics:
-  - `commands/omg/doctor.toml`
-  - Flags outdated Gemini CLI runtimes that can break current worktree/sandbox assumptions.
-
-### Changed
-
-- README compatibility guidance refreshed from `v0.33.0+` to `v0.36.0+` baseline:
-  - `README.md`
-  - `docs/README_ko.md`
-- Incorporated recent upstream release impact notes:
-  - stable `v0.35.0` (2026-03-24)
-  - stable `v0.36.0` (2026-04-01)
-  - preview `v0.37.0-preview.1` (2026-04-02, optional channel only)
-- Landing page update section and troubleshooting were refreshed to reflect the same compatibility posture:
-  - `docs/index.html`
-- Extension/package versions bumped:
-  - `gemini-extension.json`
-  - `package.json`
-
-### Structural Fit Note
-
-- OmG remains extension-native; updates are docs/prompt-policy compatibility adjustments without introducing additional runtime daemons or external services.
+Historical compatibility-check details for this release are superseded by the 2026-05-13 guidance at the top of this file.
 
 ## v0.5.0 - Prompt Ops Hardening (2026-04-01)
 
@@ -650,29 +664,7 @@ Hardened the built-in AfterAgent usage monitor so repeated hook retries or fallb
 
 ## v0.4.2 - Skills and Footer Compatibility Alignment (2026-03-21)
 
-Aligned OmG docs and skill surface with recent Gemini CLI v0.34-era UX updates around slash skill invocation and footer customization, while keeping stable-channel guidance explicit.
-
-### Added
-
-- New slash-friendly planning alias skill:
-  - `skills/omg-plan/SKILL.md`
-
-### Changed
-
-- README, Korean README, and landing page now document:
-  - direct skill invocation via `/skill-name`
-  - skill refresh flow via `/skills reload`
-  - footer customization via `/footer` and `ui.footer.*` configuration keys
-- Added explicit version gating:
-  - stable baseline: Gemini CLI `v0.33.0+`
-  - newer skill/footer UX: Gemini CLI `v0.34.0-preview.0+`
-- Added collision guidance for native `/plan` vs OmG planning skill invocation (`/omg-plan` / `$omg-plan`).
-- Extension/package version bumped to `0.4.2`.
-
-### Structural Fit Note
-
-- OmG remains extension-native; no runtime daemon or background worker was introduced.
-- This release focuses on compatibility clarity and naming-surface safety for newer Gemini CLI UX.
+Historical compatibility-check details for this release are superseded by the 2026-05-13 guidance at the top of this file.
 
 ## v0.4.1 - Usage Monitor Runtime Knobs (2026-03-20)
 
@@ -716,7 +708,7 @@ Adapted OmG's extension-side orchestration to recent upstream Gemini CLI changes
 - `workspace`, `taskboard`, `doctor`, `intent`, `launch`, and `status` now treat dirty/untrusted lane state as a first-class operational risk.
 - `hooks`, `hooks-init`, `hooks-validate`, and `hooks-test` now validate lifecycle symmetry and blocked-continuation safety-lane re-entry.
 - `team-assemble`, `team-plan`, `team-prd`, `team-exec`, `team-verify`, `team`, `stop`, and `cancel` now keep lane/subagent context explicit while collapsing normal-success verbosity.
-- README, Korean README, and landing page updated with workspace audit, hook symmetry, and Gemini CLI `v0.33.0+` compatibility guidance.
+- README, Korean README, and landing page were updated with workspace audit and hook symmetry guidance. The compatibility baseline from that release is superseded by the 2026-05-13 section above.
 - Extension/package version bumped to `0.3.9`.
 
 ### Structural Fit Note
@@ -1117,13 +1109,14 @@ Reimplemented OmG around Gemini CLI's official Extensions model.
 
 ## Compatibility Notes
 
+Current compatibility guidance is maintained in the 2026-05-13 section at the top of this file.
+
 | Component | Supported path in this repo |
 | --- | --- |
-| Gemini installation mode | `gemini extensions install ...` |
-| Extension metadata source | `gemini-extension.json` |
+| Gemini CLI baseline | `v0.42.0+` |
+| Extension workflow | `gemini extensions install/update/list/reload ...` and `/extensions list` |
 | Command namespace | `/omg:*` |
-| Skill namespace | `$<skill>` from `skills/*/SKILL.md` (for example: `$plan`, `$team`, `$intent`, `$deep-init`, `$loop`, `$hud`, `$memory`) |
-
+| Skill namespace | retained `$skills`, including `$omg-plan` for native `/plan` collision avoidance |
 ## Notes
 
 - Historical details before `v0.1.0` are not tracked.

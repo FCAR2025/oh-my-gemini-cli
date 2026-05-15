@@ -296,17 +296,6 @@
       gap: 14px;
     }
 
-    .diagram {
-      margin: 0;
-      overflow-x: auto;
-      background: #f6fffd;
-      border: 1px solid #cdebe7;
-      border-radius: 10px;
-      padding: 12px;
-      color: #0e4b60;
-      font-size: 12px;
-    }
-
     table {
       width: 100%;
       border-collapse: collapse;
@@ -483,7 +472,7 @@
   <header>
     <div class="wrap">
       <div class="hero-top">
-        <span class="badge">Latest Update v0.8.3</span>
+        <span class="badge">Latest Update v0.8.5</span>
         <div class="top-actions">
           <a class="btn btn-link btn-github" href="https://github.com/FCAR2025/oh-my-gemini-cli" target="_blank" rel="noreferrer noopener">
             <svg class="btn-icon" viewBox="0 0 16 16" aria-hidden="true">
@@ -516,9 +505,6 @@
               <span class="btn-label">Copy</span>
             </button>
           </div>
-          <pre class="diagram" style="margin-top:10px;">Verify:
-  gemini extensions list
-  /extensions list</pre>
         </div>
 
         <div class="panel interview-spotlight">
@@ -531,7 +517,7 @@
       <div class="stats">
         <div class="stat"><div class="n">13</div><div class="l">Sub-agents</div></div>
         <div class="stat"><div class="n">8</div><div class="l">Retained skills</div></div>
-        <div class="stat"><div class="n">42</div><div class="l">Namespaced commands</div></div>
+        <div class="stat"><div class="n">43</div><div class="l">Namespaced commands</div></div>
         <div class="stat"><div class="n">5</div><div class="l">Context layers</div></div>
       </div>
     </div>
@@ -539,8 +525,8 @@
 
   <section>
     <div class="wrap">
-      <h2>Latest Update (Gemini CLI Late-April Compatibility Sync)</h2>
-      <p class="sub">OmG v0.8.3 aligns extension guidance with recent Gemini CLI changes around Plan Mode confirmation, unified subagent invocation, memory inbox review, hook plan environment, and MCP auth config boundaries.</p>
+      <h2>Latest Update (Goal Mode)</h2>
+      <p class="sub">OmG v0.8.5 adds <code>/omg:goal</code>, a Ralph/Codex-style autonomous delivery command that runs plan, PRD, taskboard, execution, verification, and fix loops until acceptance passes, a blocker appears, or max cycles are reached.</p>
       <table>
         <thead>
           <tr>
@@ -550,32 +536,32 @@
         </thead>
         <tbody>
           <tr>
-            <td>Upstream review window</td>
-            <td>Reviewed Gemini CLI releases from 2026-04-14 through 2026-04-25, including stable <code>v0.38.x</code>, stable <code>v0.39.x</code>, and preview <code>v0.40.0-preview.x</code>.</td>
+            <td>New command</td>
+            <td><code>/omg:goal</code> provides a goal-driven autonomous loop for routine non-destructive delivery work.</td>
           </tr>
           <tr>
-            <td>Plan Mode safety</td>
-            <td>OmG now states that native Plan Mode skill, subagent, or implementation-lane activation requires explicit user confirmation before proceeding.</td>
+            <td>Pipeline</td>
+            <td>Goal mode runs <code>team-plan -&gt; team-prd -&gt; taskboard -&gt; team-exec -&gt; team-verify -&gt; team-fix</code>.</td>
           </tr>
           <tr>
-            <td>Unified subagent handoff</td>
-            <td>Team execution guidance now assumes Gemini CLI's unified subagent invocation path instead of older wrapped subagent tools.</td>
+            <td>Loop condition</td>
+            <td>It repeats <code>exec -&gt; verify -&gt; fix</code> until criteria pass, tracked tasks are verified, a blocker appears, or max cycles are reached.</td>
           </tr>
           <tr>
-            <td>Memory and skill review</td>
-            <td>Native <code>/memory inbox</code> and skill patching are documented as review queues; accepted OmG skill changes still need metadata validation.</td>
+            <td>Approval posture</td>
+            <td>Routine non-destructive work is treated as approved, while destructive, credential-sensitive, production-impacting, and permission-denied actions stop as blockers.</td>
           </tr>
           <tr>
-            <td>Hook and plan environment</td>
-            <td>Hook/plan guidance now accounts for <code>GEMINI_PLANS_DIR</code> when Gemini CLI exposes native plan-session storage.</td>
+            <td>Runtime boundary</td>
+            <td>OmG orchestrates autonomy but does not bypass Gemini CLI approval, sandbox, trusted-folder, shell, network, or policy controls.</td>
           </tr>
           <tr>
-            <td>MCP auth config boundary</td>
-            <td><code>/omg:doctor</code> now checks agent MCP configs with <code>auth</code> blocks for an explicit credential boundary.</td>
+            <td>Docs refresh</td>
+            <td>README, Korean README, landing page, hook guide, changelog, package metadata, and extension metadata were updated. Gemini CLI compatibility guidance was refreshed on 2026-05-13.</td>
           </tr>
           <tr>
-            <td>Release metadata refresh</td>
-            <td>README, Korean README, landing page, changelog, package metadata, and extension metadata were updated together for <code>v0.8.3</code>.</td>
+            <td>Release metadata</td>
+            <td>Package and extension metadata were bumped to <code>v0.8.5</code>.</td>
           </tr>
         </tbody>
       </table>
@@ -583,24 +569,60 @@
   </section>
 
   <section>
-    <div class="wrap two-col">
-      <div>
-        <h2>System Diagram</h2>
-        <p class="sub">How user intent becomes a validated output</p>
-        <pre class="diagram">User Request
-    |
-Gemini CLI
-    |
-OmG Extension (gemini-extension.json)
-    |--- commands/omg/*.toml  -> command-driven orchestration
-    |--- skills/*/SKILL.md    -> retained deep-work skills only
-    |--- agents/*.md          -> role prompts and behavior contracts
-    |--- GEMINI.md -> context/omg-core.md
-    |
-Structured Result
-(plan / implementation / review / next actions)</pre>
-      </div>
+    <div class="wrap">
+      <h2>Gemini CLI Compatibility</h2>
+      <p class="sub">Reviewed against official Gemini CLI documentation and releases on 2026-05-13.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Area</th>
+            <th>Current Guidance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Stable baseline</td>
+            <td>Use Gemini CLI <code>v0.42.0+</code>. Latest stable observed: <code>v0.42.0</code> (2026-05-12). Recent changelog window reviewed: <code>v0.39.0</code> through <code>v0.42.0</code>.</td>
+          </tr>
+          <tr>
+            <td>Preview/nightly</td>
+            <td>Latest preview observed: <code>v0.42.0-preview.2</code>. Latest nightly observed: <code>v0.42.0-nightly.20260507.ga809bc7c5</code>. OmG does not require preview/nightly-only behavior.</td>
+          </tr>
+          <tr>
+            <td>Extensions</td>
+            <td>Install, update, list, reload, and validate through official <code>gemini extensions ...</code> and <code>/extensions</code> flows.</td>
+          </tr>
+          <tr>
+            <td>Registries</td>
+            <td>Use <code>/skills reload</code>, <code>/agents reload</code>, <code>/commands reload</code>, and <code>/extensions reload</code> after local changes or updates.</td>
+          </tr>
+          <tr>
+            <td>Subagents</td>
+            <td>Gemini CLI subagents are first-class and can be invoked automatically or with <code>@agent_name</code>; OmG keeps shared workflow state single-writer.</td>
+          </tr>
+          <tr>
+            <td>Policy</td>
+            <td><code>--allowed-tools</code> and <code>--yolo</code> are deprecated; use the Policy Engine and <code>--approval-mode=yolo</code> where appropriate.</td>
+          </tr>
+          <tr>
+            <td>Environment</td>
+            <td>Gemini CLI protects headless <code>.env</code> loading with workspace trust and now supports <code>ignoreLocalEnv</code>/<code>--ignore-env</code> when local environment files should be ignored.</td>
+          </tr>
+          <tr>
+            <td>Hooks</td>
+            <td>Hook diagnostics should go to <code>stderr</code> and final JSON to <code>stdout</code>. OmG retains quiet model routing and learn-signal filtering only.</td>
+          </tr>
+          <tr>
+            <td>Memory</td>
+            <td>Gemini CLI native <code>/memory</code> and Auto Memory inbox flows are separate from OmG <code>/omg:memory</code>, which remains scoped to project memory files and rule packs.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
+  <section>
+    <div class="wrap">
       <div>
         <h2>Model Allocation</h2>
         <p class="sub">Default balanced split uses explicit preview model IDs: <code>gemini-3.1-pro-preview</code>, <code>gemini-3-flash-preview</code>, and <code>gemini-3.1-flash-lite-preview</code>, so OmG does not depend on Gemini CLI alias target drift.</p>
@@ -742,9 +764,9 @@ Structured Result
             <td><code>/omg:notify</code> keeps approvals, blockers, verify failures, checkpoints, and idle drift observable with extension-native policy files</td>
           </tr>
           <tr>
-            <td>Per-turn usage visibility</td>
-            <td>Manual <code>/stats model(~0.37.2) or /model(0.38.0+)</code> checks only</td>
-            <td>Built-in <code>AfterAgent</code> hook prints compact turn/session token usage after each completed turn and suppresses duplicate replays of the same transcript snapshot</td>
+            <td>Usage and quota visibility</td>
+            <td>Manual <code>/model</code> or <code>/stats model</code> checks</td>
+            <td>OmG intentionally delegates usage/quota visibility to Gemini CLI native commands instead of printing potentially unavailable hook-derived estimates</td>
           </tr>
           <tr>
             <td>Startup/discovery weight</td>
@@ -757,7 +779,7 @@ Structured Result
   </section>
 
   <section>
-    <div class="wrap two-col">
+    <div class="wrap">
       <div>
         <h2>Dynamic Team Assembly</h2>
         <p class="sub">Assemble first, execute after approval.</p>
@@ -821,18 +843,6 @@ Structured Result
           </tbody>
         </table>
       </div>
-      <div>
-        <h2>Example Flow</h2>
-        <p class="sub">Lightweight control without adding a runtime daemon.</p>
-        <pre class="diagram">/omg:workspace set .
-/omg:workspace audit
-/omg:workspace add ../feature-auth omg-executor
-/omg:taskboard sync
-/omg:team Implement auth flow with tests
-/omg:taskboard next
-/omg:recall "why was auth lane blocked" scope=state
-/omg:checkpoint</pre>
-      </div>
     </div>
   </section>
 
@@ -840,7 +850,7 @@ Structured Result
     <div class="wrap two-col">
       <div>
         <h2>Automatic Hook Monitors</h2>
-        <p class="sub">Extension-native <code>AfterAgent</code> hooks for usage visibility and learn-signal safety filtering, including deep-interview lock suppression.</p>
+        <p class="sub">Extension-native hooks now focus on quiet model routing and learn-signal safety filtering. The quota-watch usage monitor was removed in v0.8.4.</p>
         <table>
           <thead>
             <tr>
@@ -849,25 +859,19 @@ Structured Result
             </tr>
           </thead>
           <tbody>
-            <tr><td><code>hooks/hooks.json</code></td><td>Registers <code>omg-quota-watch-after-agent</code> on <code>AfterAgent</code></td></tr>
-            <tr><td><code>hooks/scripts/after-agent-usage.js</code></td><td>Reads transcript, calculates turn/session/model token totals, and deduplicates repeated retries against the same snapshot</td></tr>
-            <tr><td><code>.omg/state/quota-watch.json</code></td><td>Persists turn counter, latest usage snapshot, and last processed transcript fingerprint</td></tr>
+            <tr><td><code>hooks/hooks.json</code></td><td>Registers the quiet <code>BeforeModel</code> model router and the retained <code>omg-learn-signal-after-agent</code> hook</td></tr>
+            <tr><td><code>hooks/scripts/before-model-banner.js</code></td><td>Silently maps outgoing model requests to the active OmG model strategy without printing a banner</td></tr>
             <tr><td><code>hooks/scripts/learn.js</code></td><td>Filters informational-only learning nudges, deduplicates retries, and sanitizes legacy state before emit</td></tr>
             <tr><td><code>.omg/state/learn-watch.json</code></td><td>Persists learn-signal dedupe key, prompt-once session tracking, and skip reason</td></tr>
             <tr><td><code>.omg/state/deep-interview.json</code></td><td>Lock-state input; when active, learn nudges are suppressed to protect interview flow</td></tr>
           </tbody>
         </table>
-        <p class="sub" style="margin-top:10px;">Boundary: the hook cannot fetch authoritative remaining account quota by itself. Use <code>/stats model(~0.37.2) or /model(0.38.0+)</code> for remaining quota/limits.</p>
+        <p class="sub" style="margin-top:10px;">Boundary: OmG no longer fetches or estimates usage from hooks. Use Gemini CLI native <code>/model</code> or <code>/stats model</code> for remaining quota/limits.</p>
       </div>
       <div>
-        <h2>Sample Output</h2>
-        <p class="sub">Printed after each completed agent turn.</p>
-        <pre class="diagram">[OMG][USAGE][TURN 12] turn=9,703 tok (in 9,487 / out 48 / cache 3,195)
-session=18,859 tok model=flash 18,859 tok remaining=/stats model(~0.37.2) or /model(0.38.0+)
-(actionable session only) [OMG][Learn] Actionable session signals detected (4/11). Run '/omg:learn'
-(deep-interview lock active) learn nudge suppressed
-(duplicate retries against the same transcript snapshot are suppressed)</pre>
-        <p class="sub" style="margin-top:10px;">Disable per hook with <code>hooksConfig.disabled = ["omg-quota-watch-after-agent"]</code> or <code>["omg-learn-signal-after-agent"]</code>.</p>
+        <h2>Retained Hook Output</h2>
+        <p class="sub">Only actionable learn-signal nudges are emitted after agent turns.</p>
+        <p class="sub" style="margin-top:10px;">Disable the retained learn hook with <code>hooksConfig.disabled = ["omg-learn-signal-after-agent"]</code>.</p>
       </div>
     </div>
   </section>
@@ -921,6 +925,7 @@ session=18,859 tok model=flash 18,859 tok remaining=/stats model(~0.37.2) or /mo
           <tr><td>Command</td><td><code>/omg:loop</code></td><td>Continue exec/verify/fix cycles until done or blocked</td></tr>
           <tr><td>Command</td><td><code>/omg:model</code></td><td>Switch model-selection strategy (<code>balanced</code>/<code>auto</code>/<code>custom</code>)</td></tr>
           <tr><td>Command</td><td><code>/omg:approval</code></td><td>Switch approval posture (<code>suggest</code>/<code>auto</code>/<code>full-auto</code>)</td></tr>
+          <tr><td>Command</td><td><code>/omg:goal</code></td><td>Run a goal-driven autonomous delivery loop until verified, blocked, or max cycles are reached</td></tr>
           <tr><td>Command</td><td><code>/omg:team</code></td><td>Run full multi-agent lifecycle with optional assembled roster, deterministic queueing, and fallback rerouting</td></tr>
           <tr><td>Command</td><td><code>/omg:cancel</code></td><td>Harness-style safe cancel alias with resume handoff</td></tr>
           <tr><td>Command</td><td><code>/omg:optimize</code></td><td>Tune prompt/context quality and cost profile</td></tr>
@@ -1010,9 +1015,9 @@ session=18,859 tok model=flash 18,859 tok remaining=/stats model(~0.37.2) or /mo
             <td>Approval, blocker, verify-failure, checkpoint, and idle-watchdog alerts persisted to policy state</td>
           </tr>
           <tr>
-            <td>Enable usage visibility</td>
-            <td><code>/stats model(~0.37.2) or /model(0.38.0+)</code> (periodic quota check) + built-in <code>AfterAgent</code> usage hook</td>
-            <td>Automatic per-turn token usage line plus authoritative remaining quota on demand</td>
+            <td>Check usage visibility</td>
+            <td><code>/model</code> or <code>/stats model</code></td>
+            <td>Authoritative Gemini CLI runtime usage/quota status without OmG hook-derived estimates</td>
           </tr>
           <tr>
             <td>Learn signal (automatic)</td>
@@ -1114,7 +1119,7 @@ session=18,859 tok model=flash 18,859 tok remaining=/stats model(~0.37.2) or /mo
           <tr>
             <td>Workspace/sandbox behavior differs from docs</td>
             <td>Gemini CLI runtime is older than the current OmG compatibility baseline</td>
-            <td>Upgrade Gemini CLI to stable <code>v0.38.0+</code>, then rerun <code>/omg:doctor</code> and <code>/omg:workspace audit</code></td>
+            <td>Upgrade Gemini CLI to stable <code>v0.42.0+</code>, then rerun <code>/omg:doctor</code> and <code>/omg:workspace audit</code></td>
           </tr>
           <tr>
             <td>Slash command list looks stale after an update</td>
@@ -1206,7 +1211,7 @@ session=18,859 tok model=flash 18,859 tok remaining=/stats model(~0.37.2) or /mo
           <tr>
             <td>Windows skill linking differs across machines</td>
             <td>Gemini CLI builds in the last two weeks changed how Windows skill links are handled</td>
-            <td>Prefer stable <code>v0.38.0+</code>; if you track preview/nightly, note that newer builds moved toward directory-junction based skill linking</td>
+            <td>Prefer stable <code>v0.42.0+</code>; if you track preview/nightly, verify skill-link behavior separately before publishing docs or support guidance</td>
           </tr>
         </tbody>
       </table>
@@ -1222,7 +1227,7 @@ session=18,859 tok model=flash 18,859 tok remaining=/stats model(~0.37.2) or /mo
         <a href="./guide/agent-team-assembly.md">Team Assembly Guide</a>
         <a href="./guide/hook-engineering.md">Hook Engineering Guide</a>
       </div>
-      <div>Built for official Gemini CLI Extensions workflow. Late-April Gemini CLI compatibility refreshed through v0.8.3.</div>
+      <div>Built for official Gemini CLI Extensions workflow. Goal mode added in v0.8.5.</div>
     </div>
   </footer>
 

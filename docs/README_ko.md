@@ -54,16 +54,21 @@ gemini extensions list
 /omg:status
 ```
 
+Goal-style autonomous delivery loop:
+
+```text
+/omg:goal "Implement the requested change, update tests, and verify acceptance criteria"
+```
+
 참고: 설치/업데이트 명령은 대화형 슬래시 명령 모드가 아니라 터미널 모드(`gemini extensions ...`)에서 실행합니다.
 
-## v0.8.3의 새로운 내용
+## What's New in v0.8.5
 
-- 2026-04-14부터 2026-04-25까지의 Gemini CLI 릴리스를 검토하고 `v0.38.x`, `v0.39.x`, `v0.40.0-preview.x` 중 OmG 확장에 직접 영향을 주는 항목을 반영했습니다.
-- native Plan Mode에서 OmG가 스킬, 서브에이전트, 구현 lane을 활성화해야 할 때 명시적 사용자 확인을 먼저 요구하도록 안전 가이드를 추가했습니다.
-- Gemini CLI의 unified subagent invocation 흐름에 맞춰 OmG handoff 문구를 갱신하고, 오래된 wrapped subagent tool을 전제로 하지 않도록 정리했습니다.
-- native `/memory inbox`와 skill patching은 자동 반영 대상이 아니라 operator review queue로 취급하도록 문서화했습니다.
-- `GEMINI_PLANS_DIR`, agent MCP `auth` block, `/skills reload` 갱신 수정, sandbox/path hardening 관련 호환성 노트를 추가했습니다.
-- 패키지/확장 버전을 `0.8.3`으로 올리고 README/한국어 README/랜딩/히스토리를 갱신했습니다.
+- Added `/omg:goal` for Ralph/Codex-style goal-driven autonomous delivery.
+- `/omg:goal` treats routine non-destructive work as approved, then runs `team-plan -> team-prd -> taskboard -> team-exec -> team-verify -> team-fix`.
+- Goal mode repeats `exec -> verify -> fix` until acceptance passes, tracked tasks are verified, a blocker appears, or max cycles are reached.
+- Documented the runtime boundary: OmG can orchestrate autonomy, but it does not bypass Gemini CLI approval, sandbox, trusted-folder, shell, network, or policy controls.
+- Bumped package and extension metadata to `0.8.5` and refreshed README, Korean README, landing page, and history.
 
 ## 공유 워크플로우 상태
 
@@ -104,80 +109,6 @@ gemini extensions list
 | deep-interview 진행 중 자동 안내가 인터뷰를 끊음 | learn-signal 훅이 deep-interview 잠금 활성 시 안내를 억제하고 잠금 해제 후에만 재개 |
 | 반복적인 프롬프트 엔지니어링 필요 | 운영 제어는 slash command로, 깊은 작업은 유지된 스킬(`$plan`, `$omg-plan`, `$execute`, `$research`)로 분리 |
 | 결정 사항과 변경 사항의 드리프트 | 동일 오케스트레이션 루프 내 리뷰/디버깅 역할 포함 |
-
-## 아키텍처
-
-```mermaid
-flowchart TD
-    U["User Task"] --> CLI["Gemini CLI Session"]
-    CLI --> ORCH["OmG Extension Orchestration"]
-
-    CORE["GEMINI.md -> context/omg-core.md"] --> ORCH
-    CMDS["commands/omg/*.toml"] --> ORCH
-    AGENTS["agents/*.md (role prompts)"] --> ORCH
-    SKILLS["skills/*/SKILL.md (retained deep-work skills)"] --> ORCH
-
-    ORCH --> I["/omg:intent"]
-    I --> W["/omg:workspace (+ audit when needed)"]
-    W --> A["/omg:team-assemble (optional approval gate)"]
-    A --> P["team-plan -> team-prd -> taskboard sync"]
-    P --> E["team-exec"]
-    E --> V["team-verify"]
-    V --> D{"Done criteria met?"}
-    D -- "No" --> F["team-fix"]
-    F --> E
-    D -- "Yes" --> O["Validated output + next actions"]
-
-    W -. lane map .-> WS[".omg/state/workspace.json"]
-    P -. seed/sync .-> TB[".omg/state/taskboard.md"]
-    E -. slice updates .-> TB
-    V -. verifier evidence .-> TB
-    ORCH -. status/checkpoint/hooks/notify .-> ST[".omg/state/{workflow.md,hooks.json,notify.json,...}"]
-```
-
-## 팀 워크플로우
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Director as omg-director
-    participant Workspace as workspace/taskboard state
-    participant Planner as omg-planner
-    participant Architect as omg-architect
-    participant Product as omg-product
-    participant Executor as omg-executor
-    participant Reviewer as omg-reviewer
-    participant Verifier as omg-verifier
-    participant Debugger as omg-debugger
-    participant Editor as omg-editor
-
-    User->>Director: Request team execution
-    Director->>Workspace: Check lane health + task readiness
-    Workspace-->>Director: workspace/taskboard summary
-    Director->>User: Propose dynamic team + approval gate
-    User->>Director: Approve roster
-    Director->>Planner: Run team-plan
-    Planner->>Architect: Validate technical direction (when needed)
-    Architect-->>Planner: Design feedback and risk flags
-    Planner-->>Director: Task graph + lane assumptions
-    Director->>Product: Run team-prd
-    Product-->>Director: Acceptance criteria + non-goals
-
-    loop team-exec -> team-verify -> team-fix until done/blocker
-        Director->>Executor: Assign smallest ready slice
-        Executor->>Workspace: Update taskboard with execution notes
-        Director->>Reviewer: Review implementation slice
-        Reviewer->>Verifier: Run acceptance + anti-slop gate
-        Verifier-->>Director: Pass/fail + verified task IDs
-        alt Verification fails
-            Director->>Debugger: Trigger root-cause analysis
-            Debugger-->>Executor: Patch plan and fix targets
-        end
-    end
-
-    Director->>Editor: Package validated output
-    Editor-->>User: Final validated deliverable
-```
 
 ## 알림 라우팅
 
@@ -237,66 +168,20 @@ sequenceDiagram
 - `/omg:hooks`와 `/omg:hooks-validate`는 에이전트 라이프사이클 결과(`completed`, `blocked`, `stopped`)를 짝지어 다루며, blocked continuation이 downstream 훅보다 먼저 safety lane을 다시 지나가도록 강제합니다.
 - `team-exec`, `team`, `team-verify`, `stop`, `cancel`은 위임된 lane/sub-agent 컨텍스트를 compact하게 유지하고, 실행이 조기 종료되거나 blocker에 걸렸을 때만 상세 내역을 확장합니다.
 
-## 자동 사용량 모니터 (AfterAgent Hook)
+## Model Router and Learn-Signal Hooks
 
-OmG에는 에이전트 턴이 끝날 때마다 compact 토큰 사용량 라인을 출력하는 확장 훅이 기본 포함됩니다.
+As of OmG v0.8.4, `omg-quota-watch-after-agent` has been removed. Gemini CLI may report hook usage as unavailable, so OmG no longer emits hook-derived usage estimates.
 
-- 훅 엔트리포인트: `hooks/hooks.json` (`AfterAgent` -> `omg-quota-watch-after-agent`)
-- 스크립트: `hooks/scripts/after-agent-usage.js`
-- 상태 파일: `.omg/state/quota-watch.json` (턴 카운터, 최신 사용량 스냅샷, 마지막으로 처리한 transcript fingerprint)
-- 상태 루트 경로 오버라이드: `OMG_STATE_ROOT=<dir>` (절대 경로 또는 세션 `cwd` 기준 상대 경로)
-- 훅 출력 조용 모드: `OMG_HOOKS_QUIET=1`
-- cwd 표시 모드: `OMG_USAGE_CWD_MODE=off|leaf|parent-leaf|full` (기본값: `parent-leaf`)
+Retained hooks:
 
-자동 표시 항목:
+- `BeforeModel` -> `omg-model-router`: silently routes outgoing model requests according to the active OmG model strategy.
+- `AfterAgent` -> `omg-learn-signal-after-agent`: shows `/omg:learn` nudges only for actionable sessions and suppresses them during deep-interview lock windows.
 
-- 최근 턴 토큰 합계(input/output/cached/total)
-- 세션 누적 토큰
-- 현재 활성 모델 기준 누적 토큰
+Usage and quota visibility:
 
-경계:
-
-- 이 훅만으로는 계정의 authoritative 남은 quota를 직접 조회할 수 없습니다.
-- 실제 남은 quota/limit은 `/stats model(~0.37.2) or /model(0.38.0+)`로 확인해야 합니다.
-- Gemini가 같은 transcript 스냅샷을 다시 보낼 경우, 훅은 이미 전달된 것으로 처리하고 중복 출력을 생략합니다.
-
-- 상태 파일: `.omg/state/quota-watch.json` (턴 카운터, 최신 usage 스냅샷, 마지막으로 처리한 transcript fingerprint, 모델/제공자별 세션 누적치)
-- 선택적 hook profile: `OMG_HOOK_PROFILE=minimal|balanced|strict` (`minimal`은 usage 라인 출력은 숨기되 상태 스냅샷은 유지)
-- 선택적 훅별 비활성화: `OMG_DISABLED_HOOKS=usage` 로 usage monitor만 env에서 끌 수 있습니다.
-
-예시 (상태 저장은 유지하고 훅 출력만 숨기기):
-
-```bash
-export OMG_HOOKS_QUIET=1
-```
-
-예시 (상태는 유지하고 일반 usage 출력만 줄이기):
-
-```bash
-export OMG_HOOK_PROFILE=minimal
-```
-
-예시 (기본 `.omg/state` 대신 다른 경로에 모니터 상태 저장):
-
-```bash
-export OMG_STATE_ROOT=.omg/state-local
-```
-
-예시 (usage 라인에 전체 cwd 경로 표시):
-
-```bash
-export OMG_USAGE_CWD_MODE=full
-```
-
-이 훅만 비활성화:
-
-```json
-{
-  "hooksConfig": {
-    "disabled": ["omg-quota-watch-after-agent"]
-  }
-}
-```
+- OmG no longer estimates or prints per-turn token usage.
+- Use Gemini CLI native `/model` or `/stats model` for authoritative usage and quota status.
+- Existing `.omg/state/quota-watch.json` files can be ignored. New releases no longer update them.
 
 ## Learn-Signal 안전 필터 (AfterAgent Hook)
 
@@ -332,55 +217,59 @@ OmG는 실행 의도가 확인된 세션에서만 `/omg:learn` 안내를 띄우�
 예시 (기본 제공 AfterAgent 훅 일부 또는 전체를 env로 끄기):
 
 ```bash
-export OMG_DISABLED_HOOKS=usage,learn
+export OMG_DISABLED_HOOKS=learn
 ```
 
-## Gemini CLI 호환성 노트 (검토일: 2026-04-27)
+## Gemini CLI 호환성 노트 (검토일: 2026-05-13)
 
-- 최근 업스트림 검토 범위: 2026-04-14부터 2026-04-25까지의 Gemini CLI 릴리스.
-- 검토 시점 최신 stable: `v0.39.1` (2026-04-24), preview 채널 최신: `v0.40.0-preview.4` (2026-04-25).
-- 이번 검토에서 OmG에 직접 반영한 사항:
-  - Plan Mode에서 skill/subagent 활성화는 명시적 사용자 확인 후 진행합니다.
-  - subagent handoff는 legacy wrapper가 아니라 Gemini CLI의 unified invocation 경로를 전제로 설명합니다.
-  - native `/memory inbox`와 skill patching은 review queue로 취급하며, 수락된 패치도 OmG skill metadata 검증을 거칩니다.
-  - Gemini CLI가 `GEMINI_PLANS_DIR`를 제공하는 경우 plan/session 참조에 활용할 수 있음을 hook/plan 가이드에 반영했습니다.
-  - agent MCP config의 `auth` block은 credential boundary가 명확한지 doctor 진단에서 확인합니다.
-- 최근 upstream 변경 중 OmG 영향 항목:
-  - `v0.38.0`: `/skills reload` 후 slash command refresh 수정, Plan Mode 정책 보강, background process monitoring, ContextCompressionService, persistent policy approvals.
-  - `v0.39.0`: `/memory inbox`, skill patching, unified subagent invocation, sandbox path 처리 강화, `GEMINI_PLANS_DIR` hook 노출, agent MCP auth block, Plan Mode model-routing silent fallback.
-  - `v0.40.0-preview.x`: plan/session, memory, 보안, terminal notification, extension bundling 수정이 이어졌으며 OmG는 이를 stable 요구사항이 아닌 preview 호환성 메모로 추적합니다.
-
-- 권장 최소 검증 baseline: Gemini CLI `v0.38.0+`
-  - OmG가 현재 명시적으로 맞춰 둔 stable 기준선이며, 동적 Linux worktree 샌드박스 지원, Windows 샌드박스 확장 개선, plan-mode 정책 완화, 스킬/서브에이전트 지시 전파 안정화를 포함합니다.
-- 서브에이전트 공식화 상태 업데이트:
-  - Google Developers Blog가 2026-04-15에 `Subagents have arrived in Gemini CLI`를 게시했습니다.
-  - OmG는 이제 Gemini CLI subagent를 실험적 우회 경로가 아니라 정식 지원 capability로 취급합니다.
-  - 이 검토 결과는 OmG 안전 규칙에도 반영되어, delegated/worker/sub-agent turn은 shared workflow state에 대해 read-mostly로 다루고, shared project state는 single-writer session lock + session-local draft fallback 모델을 사용합니다.
-- 최근 stable 업데이트 중 OmG 영향 항목:
-  - `v0.36.0` (2026-04-01): multi-registry sub-agent 구조, macOS Seatbelt/Windows 네이티브 샌드박스, Git worktree 지원, sub-agent 컨텍스트/거부 복원 강화
-  - `v0.37.0` (2026-04-08): 동적 Linux 샌드박스 확장 + worktree 지원, Windows 샌드박스 확장, plan-mode write 정책 완화, sub-agent 프롬프트에 스킬 시스템 지시 주입, 전역 env allowlist 처리 수정, cross-platform terminal-bell 알림, 역할별 `/stats` 지표 추가
-- post-GA 시점의 OmG 재검토 결과:
-  - cross-project hook state는 unsafe shared `process.cwd()` fallback을 사용하지 않습니다.
-  - delegated subagent hook turn은 명시적으로 허용하지 않으면 기본 skip 됩니다.
-  - 같은 프로젝트의 shared workflow state는 `.omg/state/session-lock.json` 기반 단일 writer를 전제로 합니다.
-  - lock이 없는 병렬 세션은 `.omg/state/sessions/[session-slug]/` 아래 session-local draft를 쓰고 merge 대상으로 넘겨야 합니다.
-- 모델 alias 정책 참고:
-  - OmG balanced 기본값은 `gemini-3.1-pro-preview`, `gemini-3-flash-preview`, `gemini-3.1-flash-lite-preview` 명시 모델명을 사용합니다.
-  - OmG는 더 이상 `gemini-3.x` concrete preview 모델명을 기본 권장값으로 고정하지 않고 alias를 사용합니다.
-  - preview 모델을 기본 우선 사용하려면 `general.previewFeatures=true`가 필요하며, 이 저장소는 workspace `.gemini/settings.json`에서 이를 기본 활성화합니다.
-  - preview/nightly를 추적한다면 Windows skill link 처리, slash registry refresh, 기타 UX 수준 변경은 stable baseline과 별개로 계속 확인하는 편이 안전합니다.
-- `v0.34.0-preview.0+`에서 추가된 UX는 계속 유효합니다.
-  - `/skill-name` 기반 스킬 직접 호출
-  - `/footer` 기반 footer 구성 (`ui.footer.items`, `ui.footer.showLabels`, `ui.footer.hideCWD`, `ui.footer.hideSandboxStatus`, `ui.footer.hideModelInfo`)
-- OmG의 slash-skill 호환 경로:
-  - 기본 `/plan`과 충돌 없이 OmG 계획 스킬을 부르려면 `/omg-plan`(또는 `$omg-plan`)을 사용합니다.
-- 슬래시 레지스트리 새로고침 가이드:
-  - Gemini CLI/runtime 업데이트 직후 OmG 스킬이나 슬래시 별칭이 stale하게 보이면, 확장 자체가 깨진 것으로 판단하기 전에 `/skills reload`를 실행하거나 세션을 다시 시작하는 편이 안전합니다.
-- 정책 엔진 마이그레이션:
-  - 래퍼 스크립트가 아직 `--allowed-tools`를 쓴다면 `--policy` 프로필로 옮기는 편이 안전합니다.
-- 네이티브 `/plan` 모드와 OmG planning 명령은 함께 사용할 수 있습니다.
-  - native: `/plan`
-  - OmG staged flow: `/omg:team-plan`, `/omg:team-prd`
+- 공식 upstream 기준 확인:
+  - 최신 stable 릴리스: Gemini CLI `v0.42.0` (2026-05-12)
+  - 최신 preview 릴리스: `v0.42.0-preview.2` (2026-05-06)
+  - 확인된 최신 nightly: `v0.42.0-nightly.20260507.ga809bc7c5` (2026-05-07)
+- 최근 upstream changelog 검토 범위: `v0.39.0` (2026-04-23)부터 `v0.42.0` (2026-05-12)까지입니다.
+- OmG 권장 런타임 baseline: Gemini CLI `v0.42.0+`.
+  - 현재 stable의 extension, subagent, policy, session, sandbox, model-selection 동작을 기준으로 합니다.
+  - preview/nightly 빌드는 선택 사항이며, OmG의 일반 동작에는 preview/nightly 전용 기능이 필요하지 않습니다.
+  - 2026년 5월 upstream changelog 기준으로 OmG command, hook, agent, manifest 코드 변경은 필요하지 않습니다.
+- 공식 extension workflow가 지원되는 설치/업데이트 경로입니다.
+  - 터미널 모드에서는 `gemini extensions ...`로 설치, 업데이트, 관리를 수행합니다.
+  - 대화형 모드에서는 `/extensions list`로 로드 상태를 확인합니다.
+  - 런타임이나 확장 업데이트 뒤에는 `/extensions reload`로 활성 extension metadata를 새로고침합니다.
+- 현재 reload 가이드:
+  - retained skill 변경 후에는 `/skills reload`
+  - subagent registry 변경 후에는 `/agents reload`
+  - custom slash command 변경 후에는 `/commands reload`
+  - reload 후에도 registry가 stale하게 보이면 세션을 재시작합니다.
+- Subagent 호환성:
+  - Gemini CLI subagent는 first-class 기능이며 자동 위임 또는 `@agent_name`으로 호출할 수 있습니다.
+  - OmG는 delegated/worker/subagent turn을 shared workflow state에 대해 read-mostly로 유지합니다.
+  - shared OmG state는 계속 `.omg/state/session-lock.json` 기반 단일 orchestration writer를 전제로 합니다.
+  - lock을 소유하지 않은 병렬 세션은 `.omg/state/sessions/[session-slug]/` 아래에 draft를 남겨야 합니다.
+- Model routing 호환성:
+  - Gemini CLI `--model` 기본값은 `auto`이며 공식 alias는 `auto`, `pro`, `flash`, `flash-lite`입니다.
+  - OmG `balanced`는 deterministic routing을 위해 명시적인 lane model ID를 계속 씁니다.
+  - `/omg:model auto`는 lane model 선택을 Gemini CLI runtime auto-model policy에 위임합니다.
+- Policy와 approval 호환성:
+  - `--allowed-tools`는 deprecated 상태이므로 Gemini CLI Policy Engine을 사용합니다.
+  - `--yolo`도 deprecated 상태이므로 필요한 경우 `--approval-mode=yolo`를 사용합니다.
+  - OmG goal/autopilot 흐름은 Gemini CLI approval, sandbox, trusted-folder, shell, network, policy 경계를 우회하지 않습니다.
+- Environment loading 호환성:
+  - Gemini CLI `v0.41.0+`는 headless mode에서 workspace trust를 기준으로 `.env` 로딩을 보호합니다.
+  - Gemini CLI `v0.42.0`에는 `ignoreLocalEnv`와 `--ignore-env`가 추가되었으므로 project-local `.env`를 무시해야 할 때는 해당 runtime control을 우선 사용합니다.
+- Hook 호환성:
+  - hook script는 diagnostic log를 `stderr`로, 최종 JSON을 `stdout`으로 써야 합니다.
+  - OmG는 quiet `BeforeModel` router와 `AfterAgent` learn-signal safety filter만 유지합니다.
+  - usage/quota 확인은 Gemini CLI native `/model` 또는 `/stats model`에 위임합니다.
+- Memory 호환성:
+  - Gemini CLI `v0.39.0+`는 native `/memory` inbox 흐름을 도입했고, `v0.42.0`에는 Auto Memory inbox 동작이 추가되었습니다.
+  - OmG `/omg:memory`는 `MEMORY.md`, `.omg/memory/*`, path-aware rule pack을 다루는 project workflow 명령으로 유지하며, Gemini CLI native memory review의 대체물로 취급하지 않습니다.
+- Browser-agent 참고:
+  - Gemini CLI는 `browser_agent`를 experimental로 문서화하고 있습니다.
+  - OmG는 기본적으로 `browser_agent`를 활성화하거나 의존하지 않습니다.
+- Slash planning 호환성:
+  - Gemini CLI native planning은 `/plan`입니다.
+  - OmG planning skill은 `/omg-plan` 또는 `$omg-plan`을 사용합니다.
+  - staged OmG workflow는 `/omg:team-plan`, `/omg:team-assemble`, `/omg:team`을 사용합니다.
 ## 인터페이스 맵
 
 ### Commands
@@ -410,6 +299,7 @@ export OMG_DISABLED_HOOKS=usage,learn
 | `/omg:mode` | 운영 프로파일 조회/전환 (`balanced/speed/deep/autopilot/ralph/ultrawork`) | 세션 시작 또는 운영 방식 전환 시 |
 | `/omg:model` | 기본 모델 선택 전략 조회/전환 (`balanced/auto/custom`) | 모든 작업에 Gemini Auto 같은 단일 기본 정책을 적용하고 싶을 때 |
 | `/omg:approval` | 승인 포스처 조회/전환 (`suggest/auto/full-auto`) | 자율 실행 루프 시작 전 또는 승인 정책 변경 시 |
+| `/omg:goal` | Ralph/Codex `/goal` 스타일의 목표 기반 자율 delivery loop 실행. routine non-destructive work는 승인된 것으로 간주하고 runtime-boundary blocker는 명시적으로 보고 | 검증 완료, blocker, 또는 max cycles까지 hands-off delivery가 필요할 때 |
 | `/omg:autopilot` | 체크포인트 기반 반복 자동 사이클 실행 | 자율 실행이 필요한 복잡 작업 |
 | `/omg:ralph` | 엄격한 품질 게이트 오케스트레이션 강제 | 릴리스 크리티컬 작업 |
 | `/omg:ultrawork` | 독립 작업 배치 처리 중심 고처리량 모드 | 대규모 백로그 |
@@ -489,10 +379,10 @@ oh-my-gemini-cli/
 | 설치 중 `settings.filter is not a function` | Gemini CLI 런타임 또는 확장 메타데이터 캐시가 오래됨 | Gemini CLI 업데이트 후 확장 제거/재설치 |
 | `/omg:*` 명령을 찾을 수 없음 | 현재 세션에 확장이 로드되지 않음 | `gemini extensions list` 실행 후 CLI 세션 재시작 |
 | 런타임/확장 갱신 후 슬래시 명령 또는 스킬 목록이 오래된 것처럼 보임 | 업데이트 후 대화형 레지스트리가 새로고침되지 않음 | 최신 Gemini CLI에서는 `/skills reload`를 실행하고, 구버전 stable이면 세션을 재시작 |
-| `/plan`이 열리고 OmG 플랜 스킬이 실행되지 않음 | 기본 `/plan`과 스킬 슬래시 호출 이름이 충돌함 | OmG 플랜 스킬은 `/omg-plan`(또는 `$omg-plan`)으로 호출하거나, 단계형 흐름은 `/omg:team-plan` 사용 |
+| `/plan`이 열리고 OmG 플랜 스킬이 실행되지 않음 | 기본 `/plan`과 스킬 슬래시 호출 이름이 충돌함 | OmG 플랜 스킬은 `/omg-plan`(또는 `$omg-plan`)으로 호출하거나, 단계형 흐름은 `/omg:team-assemble` 또는 `/omg:team-plan` 사용 |
 | 모든 작업에서 하나의 전역 모델 또는 Gemini Auto을 쓰고 싶은데 OmG가 예전 고정 모델 정책처럼 동작함 | 오래된 설치본이나 stale extension metadata에 이전 모델 가이드가 남아 있음 | OmG를 업데이트/재설치하고, 명시 preview 라우팅이 필요하면 `/omg:model balanced`, 런타임 auto 선택이 필요하면 `/omg:model auto`를 다시 적용. 현재 에이전트는 고정 모델 대신 Gemini CLI의 활성 모델 설정을 상속함 |
 | 스킬이 트리거되지 않음 | 유지된 deep-work 스킬만 남아 있거나 확장 메타데이터가 오래됨 | README의 유지 스킬 목록 확인 후 확장/세션 재로드 |
-| Windows에서 스킬 링크나 확장 리로드 동작이 머신마다 다름 | Gemini CLI 빌드마다 Windows skill link 처리 방식이 다름 | stable `v0.38.0+`를 우선 권장하고, nightly/preview 추적 시에는 directory junction 기반 변경 여부를 함께 확인 |
+| Windows에서 스킬 링크나 확장 리로드 동작이 머신마다 다름 | Gemini CLI 빌드마다 Windows skill link 처리 방식이 다름 | stable `v0.42.0+`를 우선 권장하고, preview/nightly 추적 시에는 skill-link 동작을 별도로 확인 |
 | 병렬 구현이 자꾸 같은 파일에서 충돌하거나 재계획됨 | workspace lane이 명시되지 않음 | `/omg:workspace status`로 확인하거나 `/omg:workspace`로 경로/lane 소유권 설정 |
 | `taskboard next`가 실행할 작업을 계속 바꿔 제시함 | priority 누락 또는 큐 정렬 기준 불안정 | `/omg:taskboard sync`로 기본 `p2`를 보강한 뒤 `/omg:taskboard rebalance` 실행 |
 | dirty하거나 신뢰되지 않은 lane 위에서 바로 리뷰/자동화를 돌리려 함 | 공유 worktree 위생 상태가 불명확함 | `/omg:workspace audit`로 점검하고, 필요 시 lane을 분리한 뒤 verify/review를 이어서 실행 |

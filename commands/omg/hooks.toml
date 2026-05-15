@@ -91,7 +91,7 @@ Suggested `hooks.json` shape:
   },
   "runtime_controls": {
     "hook_profile_env": "OMG_HOOK_PROFILE=minimal|balanced|strict",
-    "disabled_hooks_env": "OMG_DISABLED_HOOKS=usage,learn",
+    "disabled_hooks_env": "OMG_DISABLED_HOOKS=learn,model-routing",
     "plans_dir_env": "GEMINI_PLANS_DIR when provided by Gemini CLI"
   },
   "team_safety": {

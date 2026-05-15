@@ -1,4 +1,4 @@
-﻿# oh-my-gemini-cli (OmG)
+# oh-my-gemini-cli (OmG)
 
 [![Release](https://img.shields.io/github/v/tag/FCAR2025/oh-my-gemini-cli?sort=semver&label=release)](https://github.com/FCAR2025/oh-my-gemini-cli/releases)
 [![Version Check](https://img.shields.io/github/actions/workflow/status/FCAR2025/oh-my-gemini-cli/version-check.yml?branch=main&label=version%20check)](https://github.com/FCAR2025/oh-my-gemini-cli/actions/workflows/version-check.yml)
@@ -379,7 +379,7 @@ OmG は、安全強化された learn-signal hook も同梱し、`/omg:learn` nu
 - native `/plan` と衝突させず OmG planning skill を使うには `/omg-plan` (または `$omg-plan`) を使用してください。
 - runtime update 後に skill や slash alias が stale に見える場合、新しい build では `/skills reload`、古い build では session restart を行ってください。
 - wrapper script がまだ `--allowed-tools` を使う場合は `--policy` profile へ移行してください。
-- native `/plan` と OmG `/omg:team-plan`, `/omg:team-prd` は共存可能です。
+- native `/plan` と OmG の自動化フロー (`/omg:team-assemble` または `/omg:team`)、または手動ステージフロー (`/omg:team-plan`, `/omg:team-prd` 등) は共存可能です。
 
 ## インターフェースマップ
 
@@ -506,7 +506,7 @@ oh-my-gemini-cli/
 | --- | --- | --- |
 | install 時に `settings.filter is not a function` | Gemini CLI runtime が古い、または extension metadata cache が古い | Gemini CLI を更新し extension を再インストール |
 | `/omg:*` が見つからない | 現在セッションで extension 未ロード | `gemini extensions list` 実行後、Gemini CLI セッションを再起動 |
-| OmG planning skill を使いたいのに `/plan` で native plan が開く | built-in `/plan` と skill slash invocation の名前衝突 | OmG planning skill は `/omg-plan` (または `$omg-plan`) を使う、または staged planning に `/omg:team-plan` を使用 |
+| OmG planning skill を使いたいのに `/plan` で native plan が開く | built-in `/plan` と skill slash invocation の名前衝突 | OmG planning skill は `/omg-plan` (または `$omg-plan`) を使う、または staged planning に `/omg:team-assemble` または `/omg:team-plan` を使用 |
 | Skill が発火しない | retained deep-work skills 以外は同梱されない、または extension metadata が stale | README の retained skill 一覧を再確認し extension/session を再ロード |
 | team assembly が提案だけして実行しない | 要求内の approval token が不足 | 明示 approval (`yes`, `approve`, `go`, `run`) を返答 |
 | 並列実行で同じファイルが衝突/再計画される | workspace lane が明示されていない | `/omg:workspace status` で確認、または `/omg:workspace` で lane/path ownership を設定 |

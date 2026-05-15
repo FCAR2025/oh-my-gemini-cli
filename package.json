@@ -1,7 +1,7 @@
 {
   "name": "oh-my-gemini-cli",
-  "version": "0.8.4-fcar.1",
-  "description": "FCAR-maintained Gemini CLI workflow extension with Antigravity proxy support, Gemini capability routing, and UltraQA gates.",
+  "version": "0.8.5-fcar.2",
+  "description": "FCAR-maintained Gemini CLI workflow extension with Antigravity proxy support, Gemini capability routing, UltraQA gates, /omg:goal autonomous delivery, and v0.42.0 compatibility.",
   "keywords": [
     "gemini",
     "gemini-cli",

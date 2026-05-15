@@ -63,12 +63,15 @@ Recommended behavior:
 - Timeout budgets per lane
 - Cooldown for repeatedly failing hooks
 
-## Runtime Knobs (Usage Monitor Hook)
+## Runtime Knobs
 
-- `OMG_HOOKS_QUIET=1`: suppresses non-essential hook status lines while keeping fail-open behavior.
-- `OMG_STATE_ROOT=<dir>`: overrides the default `.omg/state` location for `quota-watch.json`.
+- `OMG_HOOKS_QUIET=1`: suppresses non-essential learn-signal hook status lines while keeping fail-open behavior.
+- `OMG_STATE_ROOT=<dir>`: overrides the default `.omg/state` location for retained hook state such as `learn-watch.json`.
 - `OMG_DISABLED_HOOKS=model-routing`: disables only the quiet `BeforeModel` model router.
+- `OMG_DISABLED_HOOKS=learn`: disables only the retained learn-signal `AfterAgent` hook.
 - `GEMINI_PLANS_DIR`: when provided by Gemini CLI, can be used by hook/plan policy to reference native plan-session storage without guessing paths.
+
+Note: OmG no longer ships the quota-watch usage monitor hook. Use Gemini CLI's native `/model` or `/stats model` output when authoritative usage or quota visibility is needed.
 
 ## Team Safety Policy
 

@@ -1,4 +1,4 @@
-﻿# oh-my-gemini-cli (OmG)
+# oh-my-gemini-cli (OmG)
 
 [![Release](https://img.shields.io/github/v/tag/FCAR2025/oh-my-gemini-cli?sort=semver&label=release)](https://github.com/FCAR2025/oh-my-gemini-cli/releases)
 [![Version Check](https://img.shields.io/github/actions/workflow/status/FCAR2025/oh-my-gemini-cli/version-check.yml?branch=main&label=version%20check)](https://github.com/FCAR2025/oh-my-gemini-cli/actions/workflows/version-check.yml)
@@ -379,7 +379,7 @@ Desactivar solo este hook:
 - Usa `/omg-plan` (o `$omg-plan`) para la skill de planning de OmG sin colisionar con `/plan` nativo.
 - Si skills o alias slash parecen obsoletos tras una actualización, ejecuta `/skills reload` en builds recientes o reinicia la sesión.
 - Si tus wrappers aún pasan `--allowed-tools`, migra a perfiles `--policy`.
-- El modo `/plan` nativo y `/omg:team-plan`, `/omg:team-prd` pueden coexistir.
+- El modo `/plan` nativo y el flujo automatizado de OmG (`/omg:team-assemble` o `/omg:team`) o el flujo manual por etapas (`/omg:team-plan`, `/omg:team-prd`, etc.) pueden coexistir.
 
 ## Mapa de interfaz
 
@@ -506,7 +506,7 @@ oh-my-gemini-cli/
 | --- | --- | --- |
 | `settings.filter is not a function` durante instalación | Runtime de Gemini CLI desactualizado o metadata cacheada obsoleta | Actualiza Gemini CLI, desinstala la extensión y reinstala desde la URL del repositorio |
 | No se encuentra `/omg:*` | La extensión no se cargó en la sesión actual | Ejecuta `gemini extensions list` y reinicia la sesión de Gemini CLI |
-| `/plan` abre el modo nativo cuando querías la skill de planificación OmG | Colisión de nombre entre `/plan` nativo y slash invocation de skill | Usa `/omg-plan` (o `$omg-plan`) para la skill OmG, o `/omg:team-plan` para planificación por etapas |
+| `/plan` abre el modo nativo cuando querías la skill de planificación OmG | Colisión de nombre entre `/plan` nativo y slash invocation de skill | Usa `/omg-plan` (o `$omg-plan`) para la skill OmG, o `/omg:team-assemble` o `/omg:team-plan` para planificación por etapas |
 | Una skill no se dispara | Solo se distribuyen retained deep-work skills, o metadata de extensión obsoleta | Revisa lista de retained skills en README y recarga extensión/sesión |
 | Team assembly sigue proponiendo pero no ejecuta | Falta token de aprobación en la solicitud | Responde con aprobación explícita (`yes`, `approve`, `go`, o `run`) |
 | La ejecución paralela colisiona o vuelve a planificar los mismos archivos | Los lanes de workspace no son explícitos | Ejecuta `/omg:workspace status` o fija ownership de lane/path con `/omg:workspace` |

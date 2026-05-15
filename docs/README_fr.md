@@ -1,4 +1,4 @@
-﻿# oh-my-gemini-cli (OmG)
+# oh-my-gemini-cli (OmG)
 
 [![Release](https://img.shields.io/github/v/tag/FCAR2025/oh-my-gemini-cli?sort=semver&label=release)](https://github.com/FCAR2025/oh-my-gemini-cli/releases)
 [![Version Check](https://img.shields.io/github/actions/workflow/status/FCAR2025/oh-my-gemini-cli/version-check.yml?branch=main&label=version%20check)](https://github.com/FCAR2025/oh-my-gemini-cli/actions/workflows/version-check.yml)
@@ -379,7 +379,7 @@ Désactiver uniquement ce hook :
 - Pour éviter la collision avec `/plan`, utilisez `/omg-plan` (ou `$omg-plan`) pour la skill de planning OmG.
 - Si les skills ou alias slash semblent obsolètes après une mise à jour, exécutez `/skills reload` sur les builds récents ou redémarrez la session.
 - Si vos wrappers passent encore `--allowed-tools`, migrez vers les profils `--policy`.
-- Le mode `/plan` natif et les commandes OmG `/omg:team-plan`, `/omg:team-prd` peuvent coexister.
+- Le mode `/plan` natif et les flux OmG (automatisé via `/omg:team-assemble` ou `/omg:team`, ou manuel par étapes via `/omg:team-plan`, `/omg:team-prd`, etc.) peuvent coexister.
 
 ## Carte d'interface
 
@@ -506,7 +506,7 @@ oh-my-gemini-cli/
 | --- | --- | --- |
 | `settings.filter is not a function` pendant l'installation | Runtime Gemini CLI obsolète ou metadata d'extension en cache périmée | Mettre à jour Gemini CLI, désinstaller l'extension puis réinstaller depuis l'URL du dépôt |
 | `/omg:*` introuvable | Extension non chargée dans la session en cours | Exécuter `gemini extensions list`, puis redémarrer la session Gemini CLI |
-| `/plan` ouvre le mode natif alors que vous vouliez la skill planning OmG | Collision de nom entre `/plan` natif et invocation slash de skill | Utiliser `/omg-plan` (ou `$omg-plan`) pour la skill OmG, ou `/omg:team-plan` pour un planning par étapes |
+| `/plan` ouvre le mode natif alors que vous vouliez la skill planning OmG | Collision de nom entre `/plan` natif et invocation slash de skill | Utiliser `/omg-plan` (ou `$omg-plan`) pour la skill OmG, ou `/omg:team-assemble` ou `/omg:team-plan` pour un planning par étapes |
 | Une skill ne se déclenche pas | Seules les retained deep-work skills sont livrées, ou metadata extension obsolète | Revérifier la liste retained skill du README puis recharger extension/session |
 | Team assembly propose mais n'exécute pas | Jeton d'approbation manquant dans la requête | Répondre avec approbation explicite (`yes`, `approve`, `go`, ou `run`) |
 | Exécution parallèle en collision ou replanification des mêmes fichiers | Lanes workspace non explicites | Exécuter `/omg:workspace status` ou définir ownership lane/path via `/omg:workspace` |

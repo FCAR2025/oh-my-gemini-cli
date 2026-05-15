@@ -22,7 +22,6 @@ Protocol:
    - `.omg/state/workspace.json`
    - `.omg/state/doctor.md`
    - `.omg/state/notify.json`
-   - `.omg/state/quota-watch.json`
 3. If matches are insufficient and `scope` is `recent` or `all`, run bounded fallback:
    - inspect only recent transcript/log files (newest first)
    - max 20 files, max 200 matched lines total

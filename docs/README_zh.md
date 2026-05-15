@@ -379,7 +379,7 @@ OmG 同时内置了安全加固的 learn-signal hook，使 `/omg:learn` 提示�
 - 想避免与原生 `/plan` 冲突时，使用 `/omg-plan`（或 `$omg-plan`）调用 OmG planning skill。
 - 如果 runtime 更新后 skill 或 slash alias 看起来陈旧，请在新版中运行 `/skills reload`，或重启 session。
 - 若 wrapper scripts 仍传 `--allowed-tools`，请迁移到 `--policy` profiles。
-- 原生 `/plan` 与 OmG `/omg:team-plan`、`/omg:team-prd` 可以共存。
+- 原生 `/plan` 与 OmG 的自动化流程（`/omg:team-assemble` 或 `/omg:team`）或手动分阶段流程（`/omg:team-plan`、`/omg:team-prd` 等）可以共存。
 
 ## 接口地图
 
@@ -408,6 +408,7 @@ OmG 同时内置了安全加固的 learn-signal hook，使 `/omg:learn` 提示�
 | `/omg:deep-init` | 构建项目深层地图与验证 baseline | 项目启动或首次接手陌生代码库时 |
 | `/omg:team-assemble` | 动态组装匹配任务的角色团队，并附审批门与 lane 级 reasoning map | 跨领域或非常规任务中，执行 `/omg:team` 前 |
 | `/omg:team` | 执行完整分阶段流水线（`team-assemble? -> plan -> prd -> taskboard -> exec -> verify -> fix`） | 复杂功能或重构交付 |
+| `/omg:team-assemble` | 动态组建任务适配团队 | 规划前 |
 | `/omg:team-plan` | 生成依赖感知执行计划 | 实现前 |
 | `/omg:team-prd` | 锁定可度量验收标准与约束 | 规划后、编码前 |
 | `/omg:team-exec` | 在明确 lane/subagent 交接下实现一段范围明确的交付切片 | 主实现循环 |
@@ -507,7 +508,7 @@ oh-my-gemini-cli/
 | 安装时报 `settings.filter is not a function` | Gemini CLI 运行时过旧，或扩展缓存元数据陈旧 | 升级 Gemini CLI，卸载扩展后再从仓库 URL 重装 |
 | 找不到 `/omg:*` 命令 | 当前会话未加载扩展 | 运行 `gemini extensions list` 后重启 Gemini CLI 会话 |
 | 你想使用一个全局模型（例如 `flash`、`pro` 或 Gemini Auto），但 OmG 仍像旧的固定模型策略一样运行 | 较旧安装或陈旧的扩展元数据仍带有旧模型指引或缓存命令元数据 | 更新/重装 OmG；如果想使用 preview-backed alias routing，请启用 `general.previewFeatures=true`，然后设置 `/omg:model auto` 或你的 runtime 模型；当前 agents 会继承 Gemini CLI 当前激活模型，而不是强制固定某个模型 |
-| 你想用 OmG 规划 skill，却被 `/plan` 打开原生规划模式 | 内置 `/plan` 与 skill slash 调用发生命名冲突 | 使用 `/omg-plan`（或 `$omg-plan`）调用 OmG 规划 skill，或使用 `/omg:team-plan` 执行分阶段规划 |
+| 你想用 OmG 规划 skill，却被 `/plan` 打开原生规划模式 | 内置 `/plan` 与 skill slash 调用发生命名冲突 | 使用 `/omg-plan`（或 `$omg-plan`）调用 OmG 规划 skill，或使用 `/omg:team-assemble` 或 `/omg:team-plan` 执行分阶段规划 |
 | Skill 无法触发 | 仅保留 retained deep-work skills，或扩展元数据已过期 | 重新核对 README 中 retained skill 列表并重载扩展/会话 |
 | Team assembly 一直提案但不执行 | 请求中缺少批准 token | 明确回复批准（`yes`、`approve`、`go` 或 `run`） |
 | 并行执行频繁冲突或重复规划同一批文件 | Workspace lanes 未明确 | 运行 `/omg:workspace status`，或通过 `/omg:workspace` 设置 lane/path ownership |
