@@ -10,6 +10,10 @@
 
 [한국어](./README_ko.md) | [日本語](./README_ja.md) | [Français](./README_fr.md) | [中文](./README_zh.md) | [Español](./README_es.md)
 
+> **FCAR 에디션 (v0.8.5-fcar.2)**: [FCAR2025](https://github.com/FCAR2025/oh-my-gemini-cli) 가 Antigravity proxy + Gemini 3.1 용으로 유지보수하는 공개 배포판.
+> FCAR 에디션 추가 명령: `/omg:capabilities` (Gemini 네이티브 능력 라우팅), `/omg:ultraqa` (적대적 verify→diagnose→fix 루프).
+> 업스트림 `/omg:goal` (자율 전달) 이미 포함됨.
+
 Gemini CLI를 위한 컨텍스트 엔지니어링 기반 멀티 에이전트 워크플로우 팩입니다.
 
 > "Claude Code의 핵심 경쟁력은 Opus나 Sonnet 엔진이 아닙니다. Claude Code 그 자체에요. 놀랍지만 Gemini도 Claude Code를 붙이면 잘 돌아갑니다."

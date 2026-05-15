@@ -10,6 +10,10 @@
 
 [한국어](./README_ko.md) | [日本語](./README_ja.md) | [Français](./README_fr.md) | [中文](./README_zh.md) | [Español](./README_es.md)
 
+> **FCAR 版 (v0.8.5-fcar.2)**: 由 [FCAR2025](https://github.com/FCAR2025/oh-my-gemini-cli) 维护的公开发行版,适用于 Antigravity proxy + Gemini 3.1。
+> FCAR 版扩展命令:`/omg:capabilities` (Gemini 原生能力路由) 和 `/omg:ultraqa` (对抗式 verify→diagnose→fix 循环)。
+> 上游 `/omg:goal` (自主交付) 已包含。
+
 面向 Gemini CLI 的、由上下文工程驱动的多代理工作流套件。
 
 > "Claude Code 的核心竞争力不是 Opus 或 Sonnet，而是 Claude Code 本身。令人意外的是，把同样的 harness 接到 Gemini 上也非常好用。"

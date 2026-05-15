@@ -472,7 +472,7 @@
   <header>
     <div class="wrap">
       <div class="hero-top">
-        <span class="badge">Latest Update v0.8.5</span>
+        <span class="badge">Latest Update v0.8.5-fcar.2</span>
         <div class="top-actions">
           <a class="btn btn-link btn-github" href="https://github.com/FCAR2025/oh-my-gemini-cli" target="_blank" rel="noreferrer noopener">
             <svg class="btn-icon" viewBox="0 0 16 16" aria-hidden="true">
@@ -925,7 +925,9 @@
           <tr><td>Command</td><td><code>/omg:loop</code></td><td>Continue exec/verify/fix cycles until done or blocked</td></tr>
           <tr><td>Command</td><td><code>/omg:model</code></td><td>Switch model-selection strategy (<code>balanced</code>/<code>auto</code>/<code>custom</code>)</td></tr>
           <tr><td>Command</td><td><code>/omg:approval</code></td><td>Switch approval posture (<code>suggest</code>/<code>auto</code>/<code>full-auto</code>)</td></tr>
-          <tr><td>Command</td><td><code>/omg:goal</code></td><td>Run a goal-driven autonomous delivery loop until verified, blocked, or max cycles are reached</td></tr>
+          <tr><td>Command</td><td><code>/omg:goal</code></td><td>Run a goal-driven autonomous delivery loop until verified, blocked, or max cycles are reached (FCAR: pre-flighted by <code>/omg:capabilities</code>)</td></tr>
+          <tr><td>Command</td><td><code>/omg:capabilities</code></td><td>FCAR: map a task to Gemini-native capabilities, model choices, and runtime/proxy constraints before execution</td></tr>
+          <tr><td>Command</td><td><code>/omg:ultraqa</code></td><td>FCAR: run adversarial verify -> diagnose -> fix loop with explicit evidence and bounded exits</td></tr>
           <tr><td>Command</td><td><code>/omg:team</code></td><td>Run full multi-agent lifecycle with optional assembled roster, deterministic queueing, and fallback rerouting</td></tr>
           <tr><td>Command</td><td><code>/omg:cancel</code></td><td>Harness-style safe cancel alias with resume handoff</td></tr>
           <tr><td>Command</td><td><code>/omg:optimize</code></td><td>Tune prompt/context quality and cost profile</td></tr>
@@ -1227,7 +1229,7 @@
         <a href="./guide/agent-team-assembly.md">Team Assembly Guide</a>
         <a href="./guide/hook-engineering.md">Hook Engineering Guide</a>
       </div>
-      <div>Built for official Gemini CLI Extensions workflow. Goal mode added in v0.8.5.</div>
+      <div>Built for official Gemini CLI Extensions workflow. Goal mode added in v0.8.5; <code>/omg:capabilities</code> + <code>/omg:ultraqa</code> added in FCAR fork v0.8.5-fcar.2.</div>
     </div>
   </footer>
 

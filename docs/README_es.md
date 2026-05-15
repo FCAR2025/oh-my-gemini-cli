@@ -10,6 +10,10 @@
 
 [한국어](./README_ko.md) | [日本語](./README_ja.md) | [Français](./README_fr.md) | [中文](./README_zh.md) | [Español](./README_es.md)
 
+> **FCAR Edition (v0.8.5-fcar.2)**: distribución mantenida por [FCAR2025](https://github.com/FCAR2025/oh-my-gemini-cli) para uso con Antigravity proxy + Gemini 3.1.
+> Comandos extra de la edición FCAR: `/omg:capabilities` (rutas de capacidades nativas) y `/omg:ultraqa` (ciclo adversarial verify→diagnose→fix).
+> Comando upstream `/omg:goal` (entrega autónoma) ya está incluido.
+
 Paquete de flujo de trabajo multiagente para Gemini CLI, impulsado por ingeniería de contexto.
 
 > "La ventaja competitiva real de Claude Code no es Opus ni Sonnet. Es Claude Code en sí. Sorprendentemente, Gemini también funciona muy bien cuando se conecta al mismo harness."
