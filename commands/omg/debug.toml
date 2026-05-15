@@ -1,0 +1,53 @@
+description = "Structured debugging lane — root-cause + minimal repro + smallest fix, never wallpaper-over."
+prompt = """
+Run OmG `debug`.
+
+Symptom:
+$ARGUMENTS
+
+Protocol:
+1. Capture the symptom verbatim. What is observed; what was expected; what changed since last green.
+2. Reproduce or define a reproduction. If reproduction is not yet possible, exit `blocked` with the smallest concrete probe that would unblock it.
+3. Stack-walk + boundary scan:
+   - read the failing function/file:line and at least one direct caller
+   - inspect the closest input/output boundary (network, parse, persistence, UI event)
+   - read recent diffs that touched the failing path (`git log -p` on the file)
+4. Hypothesize 2-3 candidate causes. For each: severity, blast radius, and the single test that would falsify it.
+5. Pick the highest-evidence cause. Implement the smallest fix that addresses it; do NOT add scope (no opportunistic refactors, no broad error handlers, no defensive layers).
+6. Add a regression check (test, assertion, sentinel grep, or runtime invariant) that would have caught this exact bug.
+7. Verify: re-run the original repro AND one adjacent failure mode. Both must pass before declaring done.
+8. Read `.omg/state/session-lock.json` before mutating shared OmG state. Persist the trace under `.omg/state/debug/<slug>-<iso>.md`; non-owners write to `.omg/state/sessions/[session-slug]/debug/`.
+
+Anti-slop guards:
+- Never wallpaper over a symptom (broad try/except, silent fallback path, retry loop) without proving the root cause.
+- Never delete a failing test to make CI green.
+- Never claim fixed without an executed verification step.
+- If three cycles fail to converge on a root cause, escalate to `/omg:trace` and stop debugging.
+
+Response:
+## Symptom
+- observed:
+- expected:
+- changed:
+
+## Hypotheses
+| # | Cause | Evidence For | Falsifying Test | Severity |
+| --- | --- | --- | --- | --- |
+
+## Root Cause
+- ...
+
+## Smallest Fix
+- file:line:
+- diff summary:
+
+## Regression Check
+- ...
+
+## Verification
+- repro re-run: pass | fail
+- adjacent regression: pass | fail
+
+## Recommended Next Command
+- ...
+"""

@@ -1,0 +1,56 @@
+description = "Stateful single-mission research loop with strict evaluator contract and bounded runtime."
+prompt = """
+Run OmG `autoresearch`.
+
+Mission:
+$ARGUMENTS
+
+Protocol:
+1. Lock the mission. Restate it in one sentence; surface the single decision the research must inform.
+2. Define the evaluator contract BEFORE searching. Operator-readable acceptance criteria:
+   - what counts as a satisfactory answer (specific facts, citations, decision recommendation)
+   - what counts as `unknown` (missing source, conflicting credible sources, paywalled-only data)
+   - what counts as `blocked` (no credible source within reach, mission scope unclear)
+3. Build a research plan with at most 5 sub-questions ordered by decision-impact.
+4. Iterate up to `max_cycles` (default 5):
+   a. pick the highest-impact open sub-question
+   b. choose the surface: Google Search grounding for current external facts; URL-context for known sources; Code Execution only for isolated calculations; large-context Gemini for cross-document synthesis
+   c. capture findings to `.omg/state/autoresearch/<slug>/cycle-<n>.md` with sources cited inline
+   d. evaluator pass: against the contract from step 2, mark each sub-question pass | unknown | blocked
+   e. stop early when the mission decision can be made; otherwise pick the next sub-question
+5. Final synthesis: write `.omg/state/autoresearch/<slug>/decision.md` with:
+   - the decision the operator should make and the evidence ladder behind it
+   - the sub-questions that remain open and why
+   - the cheapest next probe per open sub-question
+6. Read `.omg/state/session-lock.json` before mutating shared OmG state. Non-owners write to `.omg/state/sessions/[session-slug]/autoresearch/<slug>/`.
+
+Source discipline:
+- Every claim that drives the decision must be cited (URL, doc title, or local file:line). No uncited claims in the decision file.
+- When sources conflict, surface the conflict; do not silently average.
+- Refuse to use the model's training-data recall as the sole source for time-sensitive facts.
+
+Boundaries:
+- Autoresearch is read-only. Implementation belongs to a follow-up `/omg:team-exec` or `/omg:goal` cycle once the decision is made.
+- Stop the loop on hard blockers, repeated failures, or runtime denial; do not silently downgrade scope.
+
+Response:
+## Mission
+- decision:
+- max cycles:
+
+## Cycle Board
+| Cycle | Sub-question | Surface | Result | Notes |
+| --- | --- | --- | --- | --- |
+
+## Evaluator Verdict
+- mission status: ready-to-decide | unknown | blocked
+
+## Decision (when ready)
+- ...
+
+## Open Sub-Questions
+- ...
+
+## Recommended Next Command
+- ...
+"""

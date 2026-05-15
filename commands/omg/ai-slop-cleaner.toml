@@ -1,0 +1,58 @@
+description = "Regression-safe deletion-first cleanup of AI-generated slop (dead code, ceremony, vestigial layers)."
+prompt = """
+Run OmG `ai-slop-cleaner`.
+
+Target:
+$ARGUMENTS
+
+Protocol:
+1. Resolve scope: a directory, file, or feature flag. Refuse vague scope ("clean the repo"); require a target with a verifiable boundary.
+2. Reviewer-only mode by default: produce a deletion candidates list WITHOUT modifying any file. The operator must explicitly pass `--apply` to actually delete.
+3. Slop signatures to flag (each with file:line evidence):
+   - Dead code: unreferenced functions, classes, exports, files
+   - Ceremony: empty try/except wrappers, no-op fallback layers, single-implementer interfaces, premature abstractions ("will be useful later")
+   - Vestigial layers: getter/setter pairs that just forward, builder classes used once, factories that return one type
+   - Hard-coded test-only branches: `if test_mode:` paths in production
+   - Stale shims: `// removed`, `_unused_*`, `legacy_*` markers older than 90 days
+   - Comment-only-rot: comments restating the next line in English
+   - Documentation lies: docstrings/comments contradicting current behavior
+   - Frameworked-for-one-call: helper modules used by exactly one caller
+4. For each candidate, mark:
+   - `delete-safely` (no live caller, no external API surface, no test reference)
+   - `delete-after-verify` (one or two callers; verify call sites before delete)
+   - `keep-with-reason` (looks slop but is load-bearing; explain why)
+5. Regression-safety pass (always):
+   - run the test suite or smoke checks BEFORE marking `delete-safely`
+   - if no test exists for the candidate, downgrade to `delete-after-verify` and flag the missing test as a higher-priority finding
+6. Persist under `.omg/state/ai-slop-cleaner/<slug>-<iso>.md` (single-writer; respect `.omg/state/session-lock.json`).
+
+Hard rules:
+- Never delete code with NO test coverage AND no operator confirmation, even if it appears unreferenced.
+- Never delete a comment that documents an external constraint, regulatory requirement, or non-obvious workaround — those are load-bearing.
+- Never delete a feature flag or experiment gate without reading the experiment's status; flags often outlive their initial ramp.
+- Never delete files in `migrations/`, `fixtures/`, or `seed/` without explicit confirmation.
+- Apply mode (`--apply`) requires the test suite to pass after each delete; rollback the delete if any test fails.
+
+Boundaries:
+- This is a deletion tool, not a refactoring tool. Do not rewrite logic, only remove it.
+- Do not auto-commit. Stage the deletes; the operator commits.
+
+Response:
+## Slop Scan
+- target:
+- mode: review-only | --apply
+
+## Findings
+| # | Path:Range | Signature | Verdict | Evidence | Risk |
+| --- | --- | --- | --- | --- | --- |
+
+## Deletion Plan (when --apply)
+- ...
+
+## Verification
+- pre-delete tests:
+- post-delete tests:
+
+## Recommended Next Command
+- ...
+"""
