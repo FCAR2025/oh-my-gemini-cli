@@ -4,7 +4,7 @@ This guide follows the official Gemini CLI Extensions workflow.
 
 ## Prerequisites
 
-1. Gemini CLI installed (recommended `v0.38.0+`)
+1. Gemini CLI installed (recommended `v0.42.0+`; FCAR v0.8.5-fcar.2 sets the unified baseline across README, doctor, and install guide)
 2. Gemini authentication completed
 3. Local clone of this repository
 

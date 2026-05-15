@@ -16,6 +16,13 @@ Test protocol:
    - `Notification` -> `blocker-repeat` -> `loop-stall` (derived)
    - `PreCompress` -> `context-drift` (derived)
    - `SessionEnd`
+
+   Coverage note: only `BeforeModel` and `AfterAgent` are registered to
+   shipped scripts in `hooks/hooks.json`. Other events listed above are
+   prompt-policy modeling targets — the dry-run reports what *would* fire
+   if/when scripts are registered, and how lifecycle/lane policy would
+   route them. Flag any phantom-event registration mismatch in `Skip
+   Reasons` so operators do not assume enforcement that does not exist.
 2. Evaluate trigger firing order by lane (`P0-safety -> P1-quality -> P2-optimization`).
 3. Simulate all defined derived signals:
    - `context-drift`: when summary entropy or token usage spikes

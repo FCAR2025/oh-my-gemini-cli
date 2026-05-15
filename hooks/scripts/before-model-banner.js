@@ -242,7 +242,11 @@ function detectLane(hookInput) {
       return lane;
     }
   }
-  return "planning";
+  // Default to execution lane (Flash) for unclassified requests instead of
+  // planning (Pro). Cheap-default policy: never silently route an unrouted
+  // request to the most expensive model. Operators who want Pro can route
+  // explicitly via /omg:model or /omg:capabilities.
+  return "execution";
 }
 
 function buildOutput(model) {

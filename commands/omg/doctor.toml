@@ -26,7 +26,7 @@ Diagnostic protocol:
 5. Check state artifacts and drift risks under `.omg/state/` when available, including lane health, trust notes, capability notes, UltraQA evidence, and hook lifecycle policy.
 6. Detect common failure patterns:
    - extension not loaded in current session
-   - Gemini CLI runtime too old for current OmG assumptions (recommend `v0.39.0+` for current Plan Mode, extension, memory, and model-routing behavior)
+   - Gemini CLI runtime too old for current OmG assumptions (recommend `v0.42.0+` for current Plan Mode, extension, memory, model-routing, secure .env loading, and Auto Memory inbox behavior)
    - active terminal `HOME` differs from the intended Gemini runtime home, causing `gemini extensions list` to inspect the wrong install path
    - missing or stale root `GEMINI.md` import chain
    - mixed or stale OmG extension roots (for example: copied assets, duplicate local clones, stale installed extension contents, or linked roots diverging from the active repository)

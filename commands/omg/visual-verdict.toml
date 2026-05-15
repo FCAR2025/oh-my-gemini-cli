@@ -1,0 +1,45 @@
+description = "Structured visual QA verdict for screenshot-to-reference comparisons (UI/site/PDF/diagram)."
+prompt = """
+Run OmG `visual-verdict`.
+
+Input:
+$ARGUMENTS
+
+Inputs expected (parse from `$ARGUMENTS`, ask once if missing):
+- `--candidate <path>`: image or PDF page being judged (required)
+- `--reference <path>`: ground-truth/baseline image or design (optional but strongly recommended)
+- `--criteria <comma-separated>`: criteria the verdict should evaluate (e.g., `layout,typography,color,copy,brand-marks,interactive-state`)
+- `--threshold pass|warn|fail`: minimum pass bar (default `pass`)
+
+Protocol:
+1. Capability fit: visual judgement requires multimodal Gemini. Use `gemini-3.1-pro-preview` for design/brand audits, `gemini-3-flash-preview` for fast pass/fail screens. Do not attempt visual verdict without a multimodal model.
+2. Load the candidate (and reference, if present) via the multimodal surface. Refuse to fabricate visual content; if loading fails, exit `blocked` with the failed path.
+3. For each criterion, produce a row with: `observation`, `expected (from reference or criterion)`, `delta`, `severity (pass | warn | fail)`, `evidence (which region of the image)`.
+4. Apply the threshold:
+   - `threshold=pass` -> any `fail` row collapses to overall `fail`
+   - `threshold=warn` -> only multiple `fail` rows collapse to overall `fail`
+   - `threshold=fail` -> only outright broken visuals collapse to overall `fail`
+5. Persist the verdict to `.omg/state/visual-verdict/<candidate-slug>-<iso>.md`. Single-writer; respect `.omg/state/session-lock.json`.
+6. End with the smallest concrete fix that would move the verdict from current to the next-better severity (e.g., `tighten button padding to 12px` not `improve UX`).
+
+Boundaries:
+- This command never edits source files. It produces a verdict + a fix list. Implementation belongs to a follow-up `/omg:team-exec` or `/omg:goal` cycle.
+- If the candidate contains PII (faces, ID numbers, screen contents with credentials), surface the leak risk and stop unless the operator explicitly approves.
+
+Response:
+## Visual Verdict
+- candidate:
+- reference:
+- threshold:
+- overall: pass | warn | fail
+
+## Findings
+| # | Criterion | Observation | Expected | Delta | Severity | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+
+## Smallest Fix
+- ...
+
+## Recommended Next Command
+- ...
+"""

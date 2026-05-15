@@ -28,8 +28,11 @@ Protocol:
 
 Routing hints:
 - depth keywords (`low`, `medium`, `high`) detected -> `/omg:interview` (via `interview`) [Note: Flags like `--deep` are deprecated and replaced by keywords]
+- runtime/model/tool fit unclear -> `/omg:capabilities` first (FCAR addition; gates `goal`/`team-assemble` for Antigravity proxy users — record the capability decision before automation entry)
 - canonical automated flow when implementation is expected ->
-  `/omg:team-assemble` (orchestrates plan -> prd -> taskboard -> exec -> verify -> fix)
+  `/omg:team-assemble` (orchestrates plan -> prd -> taskboard -> exec -> verify -> fix; pre-flight with `/omg:capabilities` when runtime/model fit matters)
+- single-shot autonomous delivery (assumed-approval, max-cycle bound) -> `/omg:goal` (FCAR: pre-flighted by `/omg:capabilities`)
+- adversarial proof / release readiness / claim falsification -> `/omg:ultraqa` (FCAR: bounded verify -> diagnose -> fix loop)
 - manual staged flow for granular control ->
   `/omg:team-plan` -> `/omg:team-prd` -> `/omg:taskboard sync` -> `/omg:team-exec` -> `/omg:team-verify` -> `/omg:team-fix`
 - multi-root, dirty-lane, or worktree-sensitive implementation -> `/omg:workspace` (use `/omg:workspace audit` when lane health or trust is unclear)

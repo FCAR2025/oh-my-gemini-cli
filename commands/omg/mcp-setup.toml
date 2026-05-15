@@ -1,0 +1,44 @@
+description = "Configure MCP servers for Gemini CLI extensions — discover, install, validate, and document credential boundaries."
+prompt = """
+Run OmG `mcp-setup`.
+
+Input:
+$ARGUMENTS
+
+Subcommands (first token of `$ARGUMENTS`):
+- `list` -> Show currently configured MCP servers from the active Gemini settings: `~/.gemini/settings.json` (or `${GEMINI_CLI_HOME}/.gemini/settings.json` when isolated). Surface each server's name, transport (`stdio`, `http`, `sse`), command/URL, and whether an `auth` block is documented.
+- `add <name> <type=stdio|http|sse> <target>` -> Append a server entry. For `stdio`: `<target>` is the command (e.g., `npx -y @modelcontextprotocol/server-filesystem /repo`). For `http`/`sse`: `<target>` is the URL.
+- `remove <name>` -> Confirm once, then remove the entry.
+- `validate` -> For each configured server: attempt to enumerate tools/resources via Gemini CLI's MCP probe. Report `ok | unreachable | auth-required | tool-listing-empty`.
+- `popular` -> Show a curated list of common MCP servers (filesystem, git, github, postgres, sqlite, sequential-thinking, browser/playwright, fetch). Include install command + minimum required env/permissions.
+
+Credential discipline:
+1. Refuse to write secrets directly into `settings.json`. Use environment-variable references (e.g., `${GITHUB_TOKEN}`) and document the env source separately.
+2. For every `add` of an `http`/`sse` server with auth, require the operator to confirm the credential boundary (which env var, which scope, whether the token is read-only).
+3. Never log full tokens. When showing settings, redact any literal token to `<NAME>=<redacted>`.
+
+State / safety:
+1. Read `.omg/state/session-lock.json` before mutating settings.
+2. Diff the current `settings.json` against the proposed change BEFORE writing; surface the diff and ask once for confirmation if the change touches more than the targeted server.
+3. After write, run `validate` against the touched server only; if it fails, surface the failure but do not auto-rollback (operator may have intentionally added a server that requires manual auth flow).
+
+Response:
+## MCP Setup
+- subcommand:
+- target:
+
+## Current Servers
+| Name | Transport | Target | Auth Documented | Status |
+| --- | --- | --- | --- | --- |
+
+## Diff (when add/remove)
+```diff
+...
+```
+
+## Validation
+- ...
+
+## Recommended Next Command
+- ...
+"""

@@ -20,6 +20,17 @@ const HOOK_PROFILE_ENV = "OMG_HOOK_PROFILE";
 const DISABLED_HOOKS_ENV = "OMG_DISABLED_HOOKS";
 const ALLOW_DELEGATED_HOOKS_ENV = "OMG_ALLOW_DELEGATED_HOOKS";
 const DEFAULT_STATE_RELATIVE_PATH = path.join(".omg", "state", "learn-watch.json");
+// New session-partitioned interview layout (post-2026-04-16):
+//   .omg/state/interviews/active.json     -> { slug: "..." } pointer
+//   .omg/state/interviews/<slug>/context.json -> session lock + facts
+// Legacy single-file layout (< 2026-04-16):
+//   .omg/state/deep-interview.json
+const DEFAULT_INTERVIEW_ACTIVE_RELATIVE_PATH = path.join(
+  ".omg",
+  "state",
+  "interviews",
+  "active.json",
+);
 const DEFAULT_DEEP_INTERVIEW_STATE_RELATIVE_PATH = path.join(
   ".omg",
   "state",
@@ -198,23 +209,57 @@ function resolveStatePath(cwd) {
   return path.join(cwd, DEFAULT_STATE_RELATIVE_PATH);
 }
 
-function resolveDeepInterviewStatePath(cwd) {
+function resolveStateRoot(cwd) {
   const customStateRoot = process.env[STATE_ROOT_ENV];
   if (typeof customStateRoot === "string" && customStateRoot.trim()) {
-    const stateRoot = path.isAbsolute(customStateRoot)
+    return path.isAbsolute(customStateRoot)
       ? customStateRoot.trim()
       : cwd
         ? path.join(cwd, customStateRoot.trim())
         : "";
-    if (!stateRoot) {
-      return null;
-    }
-    return path.join(stateRoot, "deep-interview.json");
   }
-  if (!cwd) {
+  return cwd ? path.join(cwd, ".omg", "state") : "";
+}
+
+function resolveInterviewStatePaths(cwd) {
+  const stateRoot = resolveStateRoot(cwd);
+  if (!stateRoot) {
+    return { active: null, legacy: null };
+  }
+  return {
+    active: path.join(stateRoot, "interviews", "active.json"),
+    legacy: path.join(stateRoot, "deep-interview.json"),
+  };
+}
+
+function resolveDeepInterviewStatePath(cwd) {
+  // Backwards-compatible accessor: returns the legacy path so callers
+  // that still inspect the old single-file shape keep working.
+  // New code should use resolveInterviewStatePaths() and prefer active.json.
+  return resolveInterviewStatePaths(cwd).legacy;
+}
+
+function resolveActiveInterviewContextPath(activePointerPath) {
+  if (!activePointerPath || !fs.existsSync(activePointerPath)) {
     return null;
   }
-  return path.join(cwd, DEFAULT_DEEP_INTERVIEW_STATE_RELATIVE_PATH);
+  const pointer = safeJsonParse(
+    (() => {
+      try { return fs.readFileSync(activePointerPath, "utf8"); }
+      catch { return ""; }
+    })(),
+    null,
+  );
+  const slug =
+    pointer && typeof pointer.slug === "string" && pointer.slug.trim()
+      ? pointer.slug.trim()
+      : pointer && typeof pointer.session_slug === "string" && pointer.session_slug.trim()
+        ? pointer.session_slug.trim()
+        : "";
+  if (!slug || /[/\\]/.test(slug) || slug.includes("..")) {
+    return null;
+  }
+  return path.join(path.dirname(activePointerPath), slug, "context.json");
 }
 
 function hashText(text) {
@@ -516,7 +561,11 @@ async function main() {
   const hookProfile = resolveHookProfile();
   const disabledHooks = parseCsvEnv(process.env[DISABLED_HOOKS_ENV]);
   const statePath = resolveStatePath(sessionCwd);
-  const deepInterviewStatePath = resolveDeepInterviewStatePath(sessionCwd);
+  const interviewPaths = resolveInterviewStatePaths(sessionCwd);
+  const activeContextPath = resolveActiveInterviewContextPath(interviewPaths.active);
+  // Prefer the new session-partitioned interview layout; fall back to the
+  // legacy single-file path so older state still pauses the learn nudger.
+  const deepInterviewStatePath = activeContextPath || interviewPaths.legacy;
   const prevState = readState(statePath);
   const config = loadLearnConfig(sessionCwd);
   const deepInterviewState = readDeepInterviewState(deepInterviewStatePath);

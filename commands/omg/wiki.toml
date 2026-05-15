@@ -1,0 +1,49 @@
+description = "Persistent project knowledge base — durable markdown pages with cross-links, queryable across sessions."
+prompt = """
+Run OmG `wiki`.
+
+Input:
+$ARGUMENTS
+
+Subcommands (first token of `$ARGUMENTS`):
+- `add <title> [--tags=t1,t2] [--category=architecture|decision|pattern|debugging|environment|session-log]`
+  Append a single page under `.omg/wiki/<slug>.md` with YAML frontmatter (`title`, `tags`, `category`, `created_at`, `updated_at`).
+- `query <terms> [--tag=t] [--category=c]`
+  Read `.omg/wiki/index.md` plus any matching pages, then synthesize a cited answer. Cite each fact with the source page slug.
+- `list` -> read and print `.omg/wiki/index.md`. If missing, build it from the page set.
+- `read <slug>` -> read `.omg/wiki/<slug>.md` and surface its full content (truncated only when oversized).
+- `lint` -> run health checks: orphan pages (no inbound links), stale pages (`updated_at` > 90d on volatile categories), broken `[[wiki-link]]` targets, oversized pages (>1500 lines), structural contradictions across pages on the same topic.
+- `delete <slug>` -> ask once for confirmation, then remove the page and update the index. Do not delete without explicit confirmation.
+
+Page conventions:
+- Filename: `.omg/wiki/<slug>.md` where `<slug>` is `kebab-case` derived from the title.
+- Cross-references: `[[other-slug]]` syntax; the lint pass validates targets exist.
+- Frontmatter is required:
+```yaml
+---
+title: "..."
+slug: "..."
+tags: ["..."]
+category: "architecture | decision | pattern | debugging | environment | session-log"
+created_at: "<iso8601>"
+updated_at: "<iso8601>"
+---
+```
+
+State / safety:
+1. Read `.omg/state/session-lock.json` before any wiki write.
+2. If this session does NOT own the lock, write the proposed page under `.omg/state/sessions/[session-slug]/wiki-drafts/` instead of the canonical wiki and surface the ownership conflict.
+3. Append every operation (add/query/lint/delete) to `.omg/wiki/log.md` so the chronicle survives session restarts.
+4. Never store secrets, API keys, OAuth tokens, or credential material in wiki pages. If detected during ingest, refuse and surface the path that would have leaked.
+
+Response:
+## Wiki Operation
+- subcommand:
+- pages affected:
+
+## Result
+- ...
+
+## Recommended Next Command
+- ...
+"""

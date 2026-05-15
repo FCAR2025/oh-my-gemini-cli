@@ -1,0 +1,45 @@
+description = "Capture a successful workflow from the current session into a reusable OmG skill."
+prompt = """
+Run OmG `skillify`.
+
+Hint (optional):
+$ARGUMENTS
+
+Protocol:
+1. Identify the workflow worth capturing:
+   - If `$ARGUMENTS` names a topic, scope to that topic.
+   - Otherwise scan the current transcript and recent `.omg/state/*` for a coherent multi-step sequence that completed successfully (no remaining blockers, evidence captured).
+   - Refuse to skillify a sequence that did not pass verification or that the user explicitly rolled back.
+2. Distill the sequence into a skill:
+   - `name`: kebab-case, derived from the workflow's verb/noun (e.g., `migrate-cron-to-systemd-timer`).
+   - `description`: one-liner stating what the skill does (not how).
+   - `triggers`: 3-7 comma-separated trigger phrases an operator might say.
+   - `argument-hint`: optional, one short phrase describing what the user passes in.
+   - `prompt`: the protocol body — preconditions, steps, verification, response shape.
+3. Strip session-specific data:
+   - paths from THIS session (replace with `<repo>`, `<file>`, `<topic>` placeholders)
+   - secrets, tokens, internal hostnames
+   - personal names not relevant to the skill
+4. Place the new file at `.omg/skills/<name>/SKILL.md`. Validate with `node scripts/check-skill-metadata.js` before claiming success.
+5. Read `.omg/state/session-lock.json` before writing. If this session does not own the lock, write a draft under `.omg/state/sessions/[session-slug]/skill-drafts/<name>.md` and surface the ownership conflict.
+6. Append a one-line summary to `.omg/skills/log.md` (create if missing): `<iso>  <name>  <description>`.
+7. Recommend the operator review the new skill before broadcasting (`/omg:skill show <name>`), and add it to `commands/omg/<name>.toml` only if a user-facing slash command is wanted.
+
+Boundaries:
+- Skillify reads sessions; it does NOT auto-publish skills to user/global scope, and it never overwrites a built-in skill.
+- If the workflow contained destructive, credential-sensitive, or production-impacting steps, capture the skill but mark the trigger set with `--require-confirmation` and document the danger in the skill body.
+
+Response:
+## Skillify Result
+- workflow source: transcript | $ARGUMENTS topic
+- candidate skill: `.omg/skills/<name>/SKILL.md`
+- metadata-check: pass | fail (cite reason)
+
+## Captured Skill Summary
+- name:
+- description:
+- triggers:
+
+## Recommended Next Command
+- /omg:skill show <name>
+"""

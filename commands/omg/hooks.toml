@@ -9,7 +9,7 @@ Protocol:
 1. Parse requested action:
    - `status`
    - `on` / `off`
-   - `profile <strict|balanced|fast>`
+   - `profile <minimal|balanced|strict>` (matches `OMG_HOOK_PROFILE` env vocabulary and `hooks/scripts/learn.js` enforcement; `fast` was an older alias and is no longer accepted)
    - `events`
 2. Manage native event triggers:
    - `SessionStart`

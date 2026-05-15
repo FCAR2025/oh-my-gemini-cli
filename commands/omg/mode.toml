@@ -14,6 +14,8 @@ Mode behavior:
    - `autopilot`
    - `ralph`
    - `ultrawork`
+   - `goal` (single-shot autonomous delivery; FCAR pre-flights with `/omg:capabilities`)
+   - `ultraqa` (FCAR: adversarial verify/diagnose/fix posture; max 5 cycles)
 3. Produce profile settings for planning depth, execution pace, quick-fix lane, and verification strictness.
 4. Read `.omg/state/session-lock.json` before mutating shared operating-profile state.
 5. If filesystem tools are available:

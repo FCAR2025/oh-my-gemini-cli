@@ -1,0 +1,48 @@
+description = "Evidence-driven causal tracing — explain WHY an observed outcome happened, do not jump into fixes."
+prompt = """
+Run OmG `trace`.
+
+Observation:
+$ARGUMENTS
+
+Protocol:
+1. Restate the observation in one short sentence. Strip speculation; keep only what was actually observed.
+2. Generate 3-5 competing hypotheses for the cause. Each must be falsifiable.
+3. Gather evidence per hypothesis. Use ranked evidence strength:
+   1. controlled reproduction or direct experiment
+   2. primary artifact with provenance (logs, metrics, traces, configs, git blame, file:line)
+   3. multiple independent sources converging
+   4. single-source code-path inference
+   5. weak circumstantial clue (timing, naming, resemblance to prior bugs)
+4. For each hypothesis record:
+   - Evidence For
+   - Evidence Against / Gaps
+5. Identify the Critical Unknown — the missing fact that would let you choose between the top 2 hypotheses.
+6. Propose the Discriminating Probe — the single highest-value next action that would collapse uncertainty fastest. Bias toward cheap reproductions and primary-artifact reads over more inference.
+7. Persist the trace under `.omg/state/trace/<slug>-<iso>.md` (single-writer). For delegated/worker turns, write under `.omg/state/sessions/[session-slug]/trace/`.
+8. Do NOT collapse into a generic fix-it loop, debugger summary, or fake certainty.
+
+Boundaries:
+- Trace is read-only. Implementation belongs to `/omg:team-fix`, `/omg:team-exec`, or `/omg:goal` once the cause is established.
+- If the observation cannot be defined precisely, ask one clarifying question, then exit `unknown` rather than tracing a vague target.
+
+Response:
+## Observation
+- ...
+
+## Hypotheses
+| # | Hypothesis | Evidence For | Evidence Against / Gaps | Strength |
+| --- | --- | --- | --- | --- |
+
+## Current Best Explanation
+- ...
+
+## Critical Unknown
+- ...
+
+## Discriminating Probe
+- ...
+
+## Recommended Next Command
+- ...
+"""

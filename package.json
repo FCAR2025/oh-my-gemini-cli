@@ -21,6 +21,8 @@
   "scripts": {
     "test:version": "node scripts/check-version.js",
     "test:skills": "node scripts/check-skill-metadata.js",
+    "test:parity": "node scripts/check-command-parity.js",
+    "test": "npm run --silent test:version && npm run --silent test:skills && npm run --silent test:parity",
     "sync:version": "node scripts/sync-version.js"
   },
   "files": [
@@ -31,6 +33,9 @@
     "hooks/",
     "skills/",
     "context/",
+    "scripts/",
+    ".gemini/",
+    "resources/",
     "README.md",
     "docs/",
     "LICENSE"
