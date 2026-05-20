@@ -36,6 +36,10 @@
       "env": {
         "CLAUDE_PLUGIN_ROOT": "/home/info/.claude/plugins/cache/omc/oh-my-claudecode/4.14.0"
       }
+    },
+    "obsidian-vault": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/info/Obsidian-FCAR"]
     }
   }
 }
