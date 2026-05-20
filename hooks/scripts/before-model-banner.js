@@ -8,6 +8,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 
 const STATE_ROOT_ENV = "OMG_STATE_ROOT";
 const DISABLED_HOOKS_ENV = "OMG_DISABLED_HOOKS";
@@ -23,10 +24,10 @@ const MODEL_HOOK_KEYS = new Set([
 ]);
 
 const DEFAULT_LANE_MODELS = {
-  planning: "gemini-3.1-pro-preview",
-  execution: "gemini-3-flash-preview",
-  quick_edit: "gemini-3.1-flash-lite-preview",
-  review_verify: "gemini-3.1-pro-preview",
+  planning: "gemini-pro-agent",
+  execution: "gemini-3-flash-agent",
+  quick_edit: "gemini-3.5-flash-low",
+  review_verify: "gemini-pro-agent",
 };
 
 const LANE_PATTERNS = [
@@ -168,7 +169,31 @@ function resolveStateRoot(cwd) {
         ? path.join(cwd, customStateRoot.trim())
         : null;
   }
-  return cwd ? path.join(cwd, ".omg", "state") : null;
+
+  // 1. Check cwd-local state root (.omg/state/model.json exists)
+  const localStateRoot = cwd ? path.join(cwd, ".omg", "state") : null;
+  if (localStateRoot) {
+    const localModelJson = path.join(localStateRoot, "model.json");
+    try {
+      if (fs.existsSync(localModelJson)) {
+        return localStateRoot;
+      }
+    } catch {}
+  }
+
+  // 2. Check $HOME global state root (~/.omg/state/model.json exists)
+  const homeDir = process.env.HOME || process.env.USERPROFILE || os.homedir();
+  if (homeDir) {
+    const globalStateRoot = path.join(homeDir, ".omg", "state");
+    const globalModelJson = path.join(globalStateRoot, "model.json");
+    try {
+      if (fs.existsSync(globalModelJson)) {
+        return globalStateRoot;
+      }
+    } catch {}
+  }
+
+  return localStateRoot;
 }
 
 function readJsonFile(filePath, fallback = {}) {
@@ -377,6 +402,54 @@ function buildOutput(model, options = {}) {
   };
 }
 
+const laneFallbacks = new Map();
+
+function readInaccessibleModels() {
+  const homeDir = process.env.HOME || process.env.USERPROFILE || os.homedir();
+  if (!homeDir) {
+    return new Set();
+  }
+  const filePath = path.join(homeDir, ".omg", "state", "inaccessible-models.json");
+  try {
+    if (fs.existsSync(filePath)) {
+      const raw = fs.readFileSync(filePath, "utf8");
+      const parsed = safeJsonParse(raw, null);
+      if (Array.isArray(parsed)) {
+        return new Set(parsed.map(m => String(m).trim().toLowerCase()));
+      } else if (parsed && typeof parsed === "object") {
+        return new Set(Object.keys(parsed).map(m => String(m).trim().toLowerCase()));
+      }
+    }
+  } catch {}
+  return new Set();
+}
+
+function resolveLaneModel(lane, policy, inaccessibleModels) {
+  if (laneFallbacks.has(lane)) {
+    return laneFallbacks.get(lane);
+  }
+
+  const model = policy.strategy === "auto" ? "auto" : policy.laneModels[lane] || DEFAULT_LANE_MODELS[lane];
+
+  if (model && model !== "auto") {
+    const lowerModel = model.toLowerCase();
+    if (inaccessibleModels.has(lowerModel)) {
+      let fallback = process.env.AG_GEMINI_MODEL;
+      if (!fallback || inaccessibleModels.has(fallback.toLowerCase())) {
+        fallback = DEFAULT_LANE_MODELS.execution;
+      }
+
+      process.stderr.write(
+        `omg-model-router: lane ${lane} model ${model} inaccessible, falling back to AG_GEMINI_MODEL or default\n`
+      );
+      laneFallbacks.set(lane, fallback);
+      return fallback;
+    }
+  }
+
+  return model;
+}
+
 async function main() {
   const rawInput = await readStdinText();
   const hookInput = safeJsonParse(rawInput, {});
@@ -392,7 +465,8 @@ async function main() {
   const cwd = resolveSessionCwd(hookInput);
   const policy = readModelPolicy(cwd);
   const lane = detectLane(hookInput);
-  const model = policy.strategy === "auto" ? "auto" : policy.laneModels[lane] || DEFAULT_LANE_MODELS[lane];
+  const inaccessibleModels = readInaccessibleModels();
+  const model = resolveLaneModel(lane, policy, inaccessibleModels);
 
   // Apply 3.x/2.5 schema translation when the incoming request carries a
   // generationConfig with the wrong-shape thinking config for the routed model.
