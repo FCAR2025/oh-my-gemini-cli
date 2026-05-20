@@ -114,15 +114,50 @@ Until step 4 is complete, the filesystem MCP remains the active path.
 
 ---
 
-## MCP Server Entry (reference)
+## MCP Server Entries (reference)
 
-Both Claude Code (`~/.claude.json`) and OMG (`gemini-extension.json`) have this entry:
+Both Claude Code (`~/.claude.json`) and OMG (`gemini-extension.json`) have these entries:
 
 ```json
 "obsidian-vault": {
   "command": "npx",
   "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/info/Obsidian-FCAR"]
+},
+"brain-graph": {
+  "command": "npx",
+  "args": ["-y", "@modelcontextprotocol/server-filesystem", "/opt/agentic/shared/ontology/brain"]
 }
 ```
 
 No API key, no env vars, no running app required.
+
+---
+
+## Companion: Graphify Second-Brain (retrieval)
+
+The Obsidian vault is the **capture** half of the second-brain stack. The **retrieval** half is `graphify` — a knowledge-graph engine over the existing brain corpus at `/opt/agentic/shared/ontology/brain/`. Both surfaces complement each other.
+
+### How agents should use the two halves
+
+| Need | Use | Why |
+|------|-----|-----|
+| Capture a new note / decision / finding | `obsidian-vault` MCP (`write_file`) | Persistent, human-readable, indexed by Obsidian when synced |
+| Retrieve from existing knowledge | `graphify query "<question>"` via `run_shell_command` | BFS traversal of the brain graph; surfaces nodes + edges + sources |
+| Trace cross-document relationships | `graphify path "A" "B"` | Shortest path between two concepts |
+| Read raw brain corpus files | `brain-graph` MCP (`read_file`, `search_files`) | Direct file access to `/opt/agentic/shared/ontology/brain/decisions/`, `projects/joy/`, etc. + `graphify-out/` |
+| Explain a single node | `graphify explain "<node>"` | Plain-language summary + neighbors |
+
+### Pattern: "user mentions topic X"
+
+1. `graphify query "X"` → returns 10-20 nodes + sources (BFS)
+2. Surface top 3 relevant nodes to the agent's context
+3. Decide if user wants more depth → `graphify explain "<top-node>"` or `graphify path "X" "<related-concept>"`
+4. If user makes a new decision based on this → `write_file` to `Daily/YYYY-MM-DD.md` (capture) AND optionally `Decisions/<slug>.md` for durability
+
+### When to NOT auto-write to vault
+
+- Transient debug output, single-session scratch, anything already captured in `.omc/notepad.md`
+- Build logs, test stdout, CI noise
+- Any content > 1000 lines unless explicitly summarizing
+
+Write to vault when the information has multi-session OR multi-agent value.

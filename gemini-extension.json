@@ -40,6 +40,10 @@
     "obsidian-vault": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/info/Obsidian-FCAR"]
+    },
+    "brain-graph": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/opt/agentic/shared/ontology/brain"]
     }
   }
 }
