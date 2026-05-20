@@ -31,7 +31,7 @@ Prefer skills that encode decision-making heuristics, constraints, pitfalls, and
    - best target location for the skill
 3. Decide whether the workflow belongs as:
    - a repo built-in skill (write to `skills/` within the oh-my-gemini-cli extension)
-   - a project learned skill (write to `.omg/learned/`)
+   - a project learned skill (write to `.omg/skills/learned/`)
    - documentation only
 4. When drafting a learned skill file, output a complete skill file that starts with YAML frontmatter.
    - Never emit plain markdown-only skill files.
@@ -47,7 +47,7 @@ Prefer skills that encode decision-making heuristics, constraints, pitfalls, and
      ---
      ```
    - Write learned/project skills to flat file-backed paths:
-     - `.omg/learned/<skill-name>.md` (project-level, default)
+     - `.omg/skills/learned/<skill-name>/SKILL.md` (project-level, default)
      - `skills/<skill-name>.md` within the oh-my-gemini-cli extension directory (extension-wide)
    - Use `write_file` to create the file at the chosen path.
    - Remember that uncommitted skills are still worktree-local until committed or copied to an extension-wide directory.
@@ -59,7 +59,7 @@ Prefer skills that encode decision-making heuristics, constraints, pitfalls, and
 - Keep the skill practical and scoped.
 - Prefer explicit success criteria over vague prose.
 - If the workflow still has unresolved branching decisions, note them before drafting.
-- Keep `omg-learned` as the storage directory name for compatibility; do not present it as the public invocation name.
+- Keep `.omg/skills/learned/` as the storage directory for learned skills (matches the `commands/omg/skill.toml` discovery convention); do not present it as the public invocation name.
 
 ## Output
 - Proposed skill name

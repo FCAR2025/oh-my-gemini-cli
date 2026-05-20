@@ -31,6 +31,21 @@ OmG adds a Gemini-native, role-driven workflow layer to Gemini CLI.
 - Use Gemini-native surfaces deliberately: multimodal inputs, structured outputs, function calling/MCP, grounding/URL context, Code Execution, Plan Mode, and extension hooks.
 - Proxy boundary: Live, Files, Batch/cache, embeddings, media generation, TTS, Veo, Imagen, and Lyria require native/proxy support beyond ordinary chat requests.
 
+### Gemini 3.5 Flash routing
+
+Gemini 3.5 Flash launched at I/O 2026 (2026-05-19) and is materially different from 2.5 Flash; route accordingly.
+
+- Canonical slug: `gemini-3.5-flash`. Hyphen alias `gemini-3-5-flash` must also route. The `before-model-banner.js` hook detects both via `^gemini-3(\.|-)5(\.|-)?flash` and the cost-tier banner annotates with `$$`.
+- Thinking config schema: 3.x models use `generationConfig.thinkingConfig.thinkingLevel` (enum: `minimal` / `low` / `medium` (default) / `high`). 2.5 models use `generationConfig.thinkingConfig.thinkingBudget` (integer). Sending the wrong field is silently ignored upstream; the OmG model hook translates between them automatically.
+- Default `thinkingLevel` is `medium`. Escalate to `high` only for genuinely deep reasoning tasks (architecture, adversarial review). `minimal`/`low` are for cost-conscious quick checks.
+- Function-calling adds a new mode `VALIDATED` (joining AUTO/ANY/NONE). VALIDATED constrains the response to either a function call or natural language with schema enforcement — use it when the caller must get back one of those two shapes.
+- Default temperature is 1.0; docs say do not lower below 1.0 for 3.5 Flash. The OmG hook clamps `temperature` to `max(current, 1.0)` for this model.
+- Context window: 1M input / 64K output.
+- Cost tier: $1.50 in / $9.00 out per 1M tokens — roughly 5x more expensive than 2.5 Flash. Banner annotates with `$$`; Pro uses `$$$`, 2.5 Flash uses `$`.
+- No Live API support. Do NOT route Live sessions to `gemini-3.5-flash`; pin Live sessions to a model that supports the Live API surface.
+- Code Execution + image (visual math, image annotation, zoom-into-image) is new to 3.5 Flash; older Flash variants did not support image-aware code execution.
+- See `skills/gemini-3-5-flash-tuning/` for tuning advice when an operator explicitly requests 3.5 Flash.
+
 ## System Map: Modes, Controls & Agents
 
 - **Operational Modes**: `balanced`, `speed`, `deep`, `autopilot`, `ralph`, `ultrawork`, `ultraqa`.

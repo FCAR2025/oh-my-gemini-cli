@@ -111,7 +111,7 @@ This classification ensures expertise can be updated independently without desta
 ### Step 4: Save Location
 
 - **Extension-wide**: `skills/<skill-name>.md` within the oh-my-gemini-cli extension directory — for truly portable insights that apply across projects.
-- **Project-level**: `.omg/learned/<skill-name>.md` — Default. Intended to be committed with the repo when you want the team to keep the skill. In linked worktrees, uncommitted skills are still worktree-local and disappear if that worktree is deleted.
+- **Project-level**: `.omg/skills/learned/<skill-name>/SKILL.md` — Default. Intended to be committed with the repo when you want the team to keep the skill. In linked worktrees, uncommitted skills are still worktree-local and disappear if that worktree is deleted.
 
 Use `write_file` to create the skill file at the chosen path.
 

@@ -467,19 +467,19 @@ After the spec is written, mark it `pending approval` and present execution opti
    - Description: "Full autonomous pipeline -- planning, parallel implementation, QA, validation. Faster but without consensus refinement."
    - Action: Invoke the `autopilot` skill with the spec file path as context only after the user explicitly selects this execution option. The spec replaces autopilot's Phase 0 -- autopilot starts at Phase 1 (Planning).
 
-3. **Execute with ralph**
+3. **Execute with `/omg:loop` (ralph-style loop)**
    - Description: "Persistence loop with architect verification -- keeps working until all acceptance criteria pass"
-   - Action: Invoke the `ralph` skill with the spec file path as the task definition.
+   - Action: Invoke `/omg:loop` with the spec file path as the task definition.
 
-4. **Execute with team**
+4. **Execute with `/omg:team`**
    - Description: "N coordinated parallel agents -- fastest execution for large specs"
-   - Action: Invoke the `team` skill with the spec file path as the shared plan.
+   - Action: Invoke `/omg:team` with the spec file path as the shared plan.
 
 5. **Refine further**
    - Description: "Continue interviewing to improve clarity (current: {score}%)"
    - Action: Return to Phase 2 interview loop.
 
-**IMPORTANT:** On explicit execution selection, invoke the chosen skill via Gemini CLI `activate_skill` tool. Do NOT implement directly. The deep-interview agent is a requirements agent, not an execution agent. If oversized initial context was summarized, pass the spec and prompt-safe summary forward, not the raw oversized source material. Without explicit execution selection, stop with the spec marked `pending approval`.
+**IMPORTANT:** On explicit execution selection, the chosen skill is auto-loaded by Gemini CLI when its frontmatter description matches the selected task. Do NOT implement directly. The deep-interview agent is a requirements agent, not an execution agent. If oversized initial context was summarized, pass the spec and prompt-safe summary forward, not the raw oversized source material. Without explicit execution selection, stop with the spec marked `pending approval`.
 
 ### Approval-Gated Refinement Path (Recommended)
 
@@ -508,13 +508,13 @@ Skipping any stage is possible but reduces quality assurance:
 </Steps>
 
 <Tool_Usage>
-- Use Gemini CLI `activate_skill` tool for each interview question -- provides clickable UI with contextual options
+- Each interview question is presented through the standard Gemini CLI prompt surface with contextual options; skills are auto-loaded by Gemini CLI when their frontmatter description matches the active task
 - Use Gemini CLI search tools (`glob`, `search_file_content`, `read_many_files`) for brownfield codebase exploration (run BEFORE asking user about codebase)
 - Use planning-lane model (gemini-3.1-pro-preview) at temperature 0.1 for ambiguity scoring -- consistency is critical
 - Round 0 topology confirmation happens before ambiguity scoring; Phase 2 scoring must honor locked topology and rotate targeting across active components when more than one is present
 - Use `write_file` / `read_file` for interview state persistence under `.omg/state/`; check `.omg/state/session-lock.json` before writing
 - Use `write_file` tool to save the final spec to `.omg/specs/deep-interview-{slug}.md` exactly; use `.omg/state/` for ephemeral artifacts
-- Use Gemini CLI `activate_skill` tool to bridge to execution modes only after explicit execution approval -- never implement directly
+- Bridge to execution modes only after explicit execution approval -- the chosen execution skill is auto-loaded by Gemini CLI when its frontmatter description matches the selected handoff; never implement directly
 - Challenge agent modes are prompt injections, not separate agent spawns
 </Tool_Usage>
 
@@ -637,8 +637,8 @@ Why bad: 45% ambiguity means nearly half the requirements are unclear. The mathe
 - [ ] Challenge agents activated at correct thresholds (round 4, 6, 8)
 - [ ] Spec file written to `.omg/specs/deep-interview-{slug}.md` exactly; ephemeral artifacts stayed under `.omg/state/`
 - [ ] Spec includes: topology, goal, constraints, acceptance criteria, clarity breakdown, transcript
-- [ ] Execution bridge presented via Gemini CLI activate_skill tool
-- [ ] Selected execution mode invoked via activate_skill only after explicit execution approval (never direct implementation)
+- [ ] Execution bridge presented (chosen skill is auto-loaded by Gemini CLI when its frontmatter description matches)
+- [ ] Selected execution mode invoked only after explicit execution approval (never direct implementation)
 - [ ] If 3-stage pipeline selected: plan --consensus --direct invoked, then stopped with the consensus plan marked `pending approval` until the user explicitly approves execution
 - [ ] State cleaned up after execution handoff
 - [ ] Brownfield confirmation questions cite repo evidence (file/path/pattern) before asking the user to decide

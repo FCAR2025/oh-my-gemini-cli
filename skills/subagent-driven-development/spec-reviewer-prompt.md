@@ -57,6 +57,14 @@ Format:
     - <concrete-fix-1>
     - <concrete-fix-2>
 
+UNDETERMINABLE — spec is ambiguous; flag the wording, do not guess.
+Format:
+  UNDETERMINABLE
+  Ambiguous wording:
+    - <quoted-spec-fragment>: <why it is ambiguous> | <what would resolve it>
+  Required clarification:
+    - <concrete-question-1>
+
 # Rules
 - Do not fix anything. Report only.
 - Do not comment on code quality, style, naming, tests structure, or
@@ -72,4 +80,4 @@ Format:
 - Spec review happens BEFORE code-quality review. Wrong order = wasted reviewer effort.
 - If the spec reviewer returns UNDETERMINABLE, the controller (not the implementer) should resolve the ambiguity, then re-dispatch.
 - If FAIL → implementer fixes → re-dispatch spec reviewer. Do not skip the re-review.
-- Track the spec-review verdict in `.omg/state/taskboard.md` so a later restart knows where the task left off.
+- Track the spec-review verdict in `.omg/state/taskboard.md` so a later restart knows where the task left off. The taskboard is a single-writer artifact: the controller must check `.omg/state/session-lock.json` before mutating it, and the reviewer sub-agent must never write to the taskboard directly when this prompt is reused standalone.

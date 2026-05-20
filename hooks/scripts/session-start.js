@@ -35,14 +35,11 @@ function isOff(value) {
 }
 
 function hookDisabled() {
-  if (isOff(process.env[DISABLE_SESSION_START_ENV] || "")) {
-    return false;
-  }
   if (process.env[DISABLE_SESSION_START_ENV] && !isOff(process.env[DISABLE_SESSION_START_ENV])) {
     return true;
   }
-  const disabled = (process.env[DISABLED_HOOKS_ENV] || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
-  return disabled.some((key) => SESSION_START_KEYS.has(key));
+  const list = (process.env[DISABLED_HOOKS_ENV] || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
+  return list.some((k) => SESSION_START_KEYS.has(k));
 }
 
 function resolveExtensionRoot() {

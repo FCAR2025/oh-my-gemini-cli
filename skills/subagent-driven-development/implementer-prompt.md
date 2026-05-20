@@ -71,4 +71,4 @@ status once when you are done.
 - Always specify `ALLOWED_FILES` and `FORBIDDEN_FILES`. Without this, the sub-agent expands scope.
 - If the task spans more than ~3 files, consider splitting it first.
 - If the sub-agent asks a question, answer it inline in the same prompt thread when re-dispatching.
-- After DONE, capture the commit SHA in `.omg/state/taskboard.md` before moving on.
+- After DONE, capture the commit SHA in `.omg/state/taskboard.md` before moving on. The taskboard is a single-writer artifact: the controller must check `.omg/state/session-lock.json` before mutating it, and sub-agents must never write to the taskboard directly when this prompt is reused standalone.

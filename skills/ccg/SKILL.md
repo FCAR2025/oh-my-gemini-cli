@@ -30,13 +30,13 @@ Use this when you want parallel external perspectives without launching full tea
    - Claude prompt (analysis/architecture/backend)
    - Codex prompt (UX/design/docs/alternatives)
 
-2. Gemini runs via CLI (skill nesting not supported):
+2. Gemini invokes the `/omg:ask` slash command twice:
    - /omg:ask claude "<claude prompt>"
    - /omg:ask codex "<codex prompt>"
 
-3. Artifacts are written under .omg/artifacts/ask/
+3. Each `/omg:ask` call writes an artifact under .omg/state/ask/
 
-4. Gemini synthesizes both outputs into one final response
+4. Gemini reads both artifacts and synthesizes one final response
 ```
 
 ## Execution Protocol
@@ -51,13 +51,11 @@ Split the user request into:
 - **Codex prompt:** UX/content clarity, alternatives, edge-case usability, docs polish
 - **Synthesis plan:** how to reconcile conflicts
 
-### 2. Invoke advisors via CLI
+### 2. Invoke advisors via `/omg:ask`
 
-> **Note:** Skill nesting (invoking a skill from within an active skill) is not supported in Gemini CLI. Always use the direct CLI path via `run_shell_command`.
+`/omg:ask` is a real Gemini slash command (see `commands/omg/ask.toml`) that wraps the cross-runtime advisor surface. Issue it as the next operator command — it is not a shell call and is not skill nesting:
 
-Run both advisors:
-
-```bash
+```
 /omg:ask claude "<claude prompt>"
 /omg:ask codex "<codex prompt>"
 ```
@@ -67,8 +65,8 @@ Run both advisors:
 Read latest ask artifacts from:
 
 ```text
-.omg/artifacts/ask/claude-*.md
-.omg/artifacts/ask/codex-*.md
+.omg/state/ask/claude-*.md
+.omg/state/ask/codex-*.md
 ```
 
 Use `read_file` to load each artifact.
@@ -95,12 +93,10 @@ If both unavailable:
 
 ## Invocation
 
-```bash
-/omg:ccg <task description>
-```
+There is no `/omg:ccg` slash command. Activate this skill via its frontmatter trigger — phrases such as "ccg", "council", "claude+codex+gemini", or "tri-model" auto-load `ccg` per the keyword-detector rule in `hooks/scripts/before-agent-keywords.js`.
 
-Example:
+Example operator phrasing:
 
-```bash
-/omg:ccg Review this PR - architecture/security via Claude and UX/readability via Codex
-```
+> "Run ccg on this PR — architecture and security via Claude, UX and readability via Codex."
+
+The skill then issues the two `/omg:ask` commands described above and synthesizes the results.

@@ -9,7 +9,7 @@ Persistent, self-maintained markdown knowledge base for project and session know
 
 ## Operations
 
-Wiki tools (`wiki_query`, `wiki_list`, `wiki_read`, and related) are MCP-provided — the same tool surface is available in both oh-my-gemini-cli and oh-my-claudecode.
+Wiki tools (`wiki_query`, `wiki_list`, `wiki_read`, `wiki_ingest`, `wiki_add`, `wiki_delete`) are provided by an MCP server — they are NOT built into Gemini CLI. Configure the wiki MCP server via the `mcp-setup` skill (or `/omg:mcp-setup`) before using these operations. The same tool surface is available in both oh-my-gemini-cli and oh-my-claudecode.
 
 ### Ingest
 Process knowledge into wiki pages. A single ingest can touch multiple pages.
@@ -61,7 +61,7 @@ Pages are organized by category: `architecture`, `decision`, `pattern`, `debuggi
 Use `[[page-name]]` wiki-link syntax to create cross-references between pages.
 
 ## Auto-Capture
-At session end, significant discoveries are automatically captured as session-log pages. Configure via `wiki.autoCapture` in `.omg-config.json` (default: enabled).
+At session end, significant discoveries are automatically captured as session-log pages. Configure via `wiki.autoCapture` in `.omg/config.jsonc` (default: enabled).
 
 ## Hard Constraints
 - NO vector embeddings — query uses keyword + tag matching only

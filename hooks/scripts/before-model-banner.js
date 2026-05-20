@@ -249,22 +249,130 @@ function detectLane(hookInput) {
   return "execution";
 }
 
-function buildOutput(model) {
+// ---------------------------------------------------------------------------
+// Gemini 3.5 Flash awareness (launched I/O 2026 May 19).
+//
+// Schema differences vs 2.5 Flash that this hook normalizes:
+//   - 3.x uses `thinkingConfig.thinkingLevel` (enum: minimal|low|medium|high).
+//     2.5 uses `thinkingConfig.thinkingBudget` (integer). Sending the wrong
+//     field is silently ignored upstream — translate before request leaves.
+//   - 3.5 Flash docs say not to lower temperature below 1.0.
+//   - 3.5 Flash is 5x the cost of 2.5 Flash; surface a cost tier marker so
+//     the operator sees it before the spend lands on the bill.
+//   - 3.5 Flash has no Live API support — Live sessions must NOT route here
+//     (gated upstream; this hook just refuses to translate Live payloads).
+// ---------------------------------------------------------------------------
+const GEMINI_3X_RX = /^gemini-3(\.|-)/i;
+const GEMINI_25X_RX = /^gemini-2(\.|-)5/i;
+const GEMINI_35_FLASH_RX = /^gemini-3(\.|-)5(\.|-)?flash/i;
+const GEMINI_PRO_RX = /^gemini-[0-9.\-]+pro/i;
+
+const THINKING_LEVEL_TO_BUDGET = {
+  minimal: 1024,
+  low: 2048,
+  medium: 8192,
+  high: 16384,
+};
+
+function costTier(model) {
+  if (typeof model !== "string" || !model) {
+    return "";
+  }
+  if (GEMINI_PRO_RX.test(model)) {
+    return "$$$";
+  }
+  if (GEMINI_35_FLASH_RX.test(model)) {
+    return "$$";
+  }
+  if (GEMINI_25X_RX.test(model)) {
+    return "$";
+  }
+  return "";
+}
+
+function isObjectLike(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function ensureThinkingConfig(generationConfig) {
+  if (!isObjectLike(generationConfig.thinkingConfig)) {
+    generationConfig.thinkingConfig = {};
+  }
+  return generationConfig.thinkingConfig;
+}
+
+function transformGenerationConfig(model, generationConfig) {
+  // Returns { generationConfig, warnings: string[] }
+  const warnings = [];
+  if (!isObjectLike(generationConfig)) {
+    return { generationConfig, warnings };
+  }
+  // Defensive copy — never mutate inputs we did not own.
+  const next = { ...generationConfig };
+  if (isObjectLike(next.thinkingConfig)) {
+    next.thinkingConfig = { ...next.thinkingConfig };
+  }
+
+  if (GEMINI_3X_RX.test(model)) {
+    // 3.x branch: thinkingLevel is canonical.
+    const tc = ensureThinkingConfig(next);
+    if (Object.prototype.hasOwnProperty.call(tc, "thinkingBudget")) {
+      const droppedBudget = tc.thinkingBudget;
+      delete tc.thinkingBudget;
+      if (!tc.thinkingLevel) {
+        tc.thinkingLevel = "medium";
+      }
+      warnings.push(
+        `Gemini 3.x detected (${model}); dropped legacy thinkingConfig.thinkingBudget=${droppedBudget} and set thinkingLevel=${tc.thinkingLevel}.`,
+      );
+    }
+    if (GEMINI_35_FLASH_RX.test(model)) {
+      // 3.5 Flash docs: do not lower temperature below 1.0.
+      if (typeof next.temperature === "number" && next.temperature < 1.0) {
+        warnings.push(
+          `Gemini 3.5 Flash detected; raising temperature ${next.temperature} -> 1.0 (docs: do not lower below 1.0).`,
+        );
+        next.temperature = 1.0;
+      } else if (typeof next.temperature !== "number") {
+        next.temperature = 1.0;
+      }
+    }
+  } else if (GEMINI_25X_RX.test(model)) {
+    // 2.5 branch: thinkingBudget is canonical.
+    const tc = next.thinkingConfig;
+    if (isObjectLike(tc) && Object.prototype.hasOwnProperty.call(tc, "thinkingLevel")) {
+      const level = String(tc.thinkingLevel).toLowerCase();
+      const translated = THINKING_LEVEL_TO_BUDGET[level] ?? THINKING_LEVEL_TO_BUDGET.medium;
+      delete tc.thinkingLevel;
+      tc.thinkingBudget = translated;
+      warnings.push(
+        `Gemini 2.5.x detected (${model}); translated thinkingConfig.thinkingLevel=${level} -> thinkingBudget=${translated}.`,
+      );
+    }
+  }
+
+  return { generationConfig: next, warnings };
+}
+
+function buildOutput(model, options = {}) {
+  const { generationConfig, systemMessage } = options;
   if (!model) {
     return {
       decision: "allow",
-      systemMessage: "",
-      suppressOutput: true,
+      systemMessage: systemMessage || "",
+      suppressOutput: !systemMessage,
     };
+  }
+  const llmRequest = { model };
+  if (generationConfig) {
+    llmRequest.generationConfig = generationConfig;
   }
   return {
     decision: "allow",
-    systemMessage: "",
-    suppressOutput: true,
+    systemMessage: systemMessage || "",
+    suppressOutput: !systemMessage,
     hookSpecificOutput: {
-      llm_request: {
-        model,
-      },
+      llm_request: llmRequest,
     },
   };
 }
@@ -286,7 +394,42 @@ async function main() {
   const lane = detectLane(hookInput);
   const model = policy.strategy === "auto" ? "auto" : policy.laneModels[lane] || DEFAULT_LANE_MODELS[lane];
 
-  process.stdout.write(JSON.stringify(buildOutput(model)));
+  // Apply 3.x/2.5 schema translation when the incoming request carries a
+  // generationConfig with the wrong-shape thinking config for the routed model.
+  const incomingGenerationConfig = hookInput?.llm_request?.generationConfig;
+  let outgoingGenerationConfig;
+  const warnings = [];
+  if (model && model !== "auto" && isObjectLike(incomingGenerationConfig)) {
+    const result = transformGenerationConfig(model, incomingGenerationConfig);
+    if (result.warnings.length > 0) {
+      outgoingGenerationConfig = result.generationConfig;
+      warnings.push(...result.warnings);
+    }
+  } else if (model && model !== "auto" && GEMINI_35_FLASH_RX.test(model)) {
+    // No incoming generationConfig but routed model is 3.5 Flash — set the
+    // temperature floor + default thinkingLevel so the proxy gets a coherent
+    // request shape.
+    outgoingGenerationConfig = {
+      temperature: 1.0,
+      thinkingConfig: { thinkingLevel: "medium" },
+    };
+  }
+
+  const tier = costTier(model);
+  const banner = tier
+    ? `OmG model route: ${model} ${tier}${warnings.length ? ` | ${warnings.join(" ")}` : ""}`
+    : warnings.length
+      ? `OmG model route: ${model} | ${warnings.join(" ")}`
+      : "";
+
+  process.stdout.write(
+    JSON.stringify(
+      buildOutput(model, {
+        generationConfig: outgoingGenerationConfig,
+        systemMessage: banner,
+      }),
+    ),
+  );
 }
 
 main().catch(() => {

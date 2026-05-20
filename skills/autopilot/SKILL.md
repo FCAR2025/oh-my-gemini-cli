@@ -39,7 +39,7 @@ Most non-trivial software tasks require coordinated phases: understanding requir
    - **If deep-interview spec exists** (`.omg/specs/deep-interview-*.md`): Skip analyst+architect expansion, use the pre-validated spec directly as Phase 0 output. Continue to Phase 1 (Planning).
    - **If ralplan consensus plan exists** (`.omg/plans/ralplan-*.md` or `.omg/plans/consensus-*.md` from the 3-stage pipeline): Skip BOTH Phase 0 and Phase 1 — jump directly to Phase 2 (Execution). The plan has already been Planner/Architect/Critic validated.
    - **If input is vague** (no file paths, function names, or concrete anchors): Offer redirect to `deep-interview` skill for Socratic clarification before expanding
-   - **Otherwise**: dispatch omg-executor sub-agent with planning-lane model (gemini-3.1-pro-preview) as analyst to extract requirements, then as architect to create technical specification
+   - **Otherwise**: dispatch omg-product (analyst-equivalent) with planning-lane model (gemini-3.1-pro-preview) to extract requirements, then dispatch omg-architect with planning-lane model to create the technical specification
    - Output: `.omg/autopilot/spec.md`
 
 2. **Phase 1 - Planning**: Create an implementation plan from the spec
@@ -48,7 +48,7 @@ Most non-trivial software tasks require coordinated phases: understanding requir
    - dispatch omg-architect sub-agent with planning-lane model: Validate plan (critic pass)
    - Output: `.omg/plans/autopilot-impl.md`
 
-3. **Phase 2 - Execution**: Implement the plan using Ralph + Ultrawork
+3. **Phase 2 - Execution**: Implement the plan using ultrawork-style parallel dispatch with a persistence loop equivalent to `/omg:loop`
    - dispatch omg-executor sub-agent with quick-lane model (gemini-3.1-flash-lite-preview): Simple tasks
    - dispatch omg-executor sub-agent with execution-lane model (gemini-3-flash-preview): Standard tasks
    - dispatch omg-executor sub-agent with planning-lane model (gemini-3.1-pro-preview): Complex tasks
@@ -148,7 +148,7 @@ If autopilot was cancelled or failed, use the `autopilot` skill again to resume 
 
 ## Troubleshooting
 
-**Stuck in a phase?** Check `.omg/state/taskboard.md` for blocked tasks, review `.omg/autopilot-state.json`, or cancel and resume. Before accessing the taskboard, check `.omg/state/session-lock.json` to confirm no other writer is active.
+**Stuck in a phase?** Check `.omg/state/taskboard.md` for blocked tasks, review `.omg/state/autopilot-state.json`, or cancel and resume. Before accessing the taskboard, check `.omg/state/session-lock.json` to confirm no other writer is active.
 
 **QA cycles exhausted?** The same error 3 times indicates a fundamental issue. Review the error pattern; manual intervention may be needed.
 
@@ -182,5 +182,5 @@ When autopilot detects a ralplan consensus plan (`.omg/plans/ralplan-*.md` or `.
 - Architecture-reviewed (ralplan omg-architect agent)
 - Quality-checked (ralplan critic pass)
 
-Autopilot starts directly at Phase 2 (Execution via Ralph + Ultrawork).
+Autopilot starts directly at Phase 2 (ultrawork-style parallel dispatch with a persistence loop equivalent to `/omg:loop`).
 </Advanced>

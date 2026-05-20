@@ -28,7 +28,7 @@ OmG layers four capability surfaces on top of Gemini CLI:
 | Surface | How to invoke | When to use |
 |---------|---------------|-------------|
 | **Slash commands** (`/omg:*`) | Type `/omg:<name>` in interactive mode | Operator control plane: status, mode, capabilities, ultraqa, goal, autopilot, ralph, taskboard, team-assemble, cancel, doctor |
-| **Skills** (`skills/<name>/SKILL.md`) | Skill is auto-loaded when its description matches the task. Use the Gemini CLI `activate_skill` tool to load the body. | Procedural how-tos: subagent-driven-development, ultrawork, ai-slop-cleaner, deep-interview, ccg, verify, trace, visual-verdict |
+| **Skills** (`skills/<name>/SKILL.md`) | Skill is auto-loaded by Gemini CLI when its frontmatter description matches the active task. | Procedural how-tos: subagent-driven-development, ultrawork, ai-slop-cleaner, deep-interview, ccg, verify, trace, visual-verdict |
 | **Agents** (`agents/<name>.md`) | Referenced inside skills and `/omg:team-*` commands. Map roles to lanes (omg-director / omg-planner / omg-executor / omg-reviewer / omg-verifier / omg-debugger / omg-architect / omg-product / omg-security-reviewer / omg-test-engineer / omg-researcher). | Role-driven delegation inside multi-step workflows |
 | **Hooks** (`hooks/hooks.json`) | Fire automatically on lifecycle events (SessionStart, BeforeAgent, BeforeModel, BeforeTool, AfterTool, AfterAgent). | Background routing, evidence capture, delegation enforcement |
 
@@ -81,8 +81,8 @@ When multiple skills could apply, use this order:
 3. **Verification skills last** (verification-before-completion, ultraqa, ai-slop-cleaner, trace) — prove the work
 
 Examples:
-- "Let's build X" → brainstorming first → writing-plans → subagent-driven-development
-- "Fix this bug" → systematic-debugging first → test-driven-development → verification-before-completion
+- "Let's build X" → brainstorming (from superpowers) first → writing-plans (from superpowers) → subagent-driven-development
+- "Fix this bug" → systematic-debugging (from superpowers) first → test-driven-development (from superpowers) → verification-before-completion (from superpowers)
 - "Ship a feature autonomously" → /omg:goal (orchestrates plan → prd → taskboard → exec → verify → fix)
 
 ## OmG-Specific Discipline
@@ -99,11 +99,11 @@ These rules come from the OmG core context (`context/omg-core.md`); always honor
 
 Quick reference of high-traffic OmG + superpowers skills:
 
-**Planning & alignment**: brainstorming, deep-interview, writing-plans, plan, omg-plan, prd, ralplan
-**Execution patterns**: subagent-driven-development, executing-plans, ultrawork, autopilot, dispatching-parallel-agents, team
-**Quality & verification**: test-driven-development, systematic-debugging, verification-before-completion, ultraqa, verify, ai-slop-cleaner, trace, visual-verdict
-**Knowledge & memory**: deep-dive, wiki, learner, remember, writer-memory, context-optimize
-**Specialist surfaces**: ccg (Claude+Codex+Gemini council), mcp-setup, deepinit, release, autoresearch
+**Planning & alignment**: brainstorming (from superpowers), deep-interview, writing-plans (from superpowers), plan, omg-plan, prd, ralplan
+**Execution patterns**: subagent-driven-development, executing-plans (from superpowers), ultrawork, autopilot, dispatching-parallel-agents (from superpowers), team (from superpowers)
+**Quality & verification**: test-driven-development (from superpowers), systematic-debugging (from superpowers), verification-before-completion (from superpowers), ultraqa, verify, ai-slop-cleaner, trace, visual-verdict
+**Knowledge & memory**: deep-dive, wiki, learner, remember (from superpowers), writer-memory (from superpowers), context-optimize
+**Specialist surfaces**: ccg (Claude+Codex+Gemini council), mcp-setup, deepinit, release, autoresearch, gemini-3-5-flash-tuning (see "Gemini 3.5 Flash routing" in `context/omg-core.md`)
 
 For the full list, see `skills/` directory or run `/omg:skill list`.
 

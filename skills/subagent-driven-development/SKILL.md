@@ -21,8 +21,8 @@ Pre-conditions:
 - You will stay in this Gemini CLI session (otherwise use `executing-plans`)
 
 If any pre-condition fails, fall back to:
-- `brainstorming` then `writing-plans` (no plan yet)
-- `executing-plans` (parallel session instead of same-session)
+- `brainstorming` (from superpowers) then `writing-plans` (from superpowers) (no plan yet)
+- `executing-plans` (from superpowers) (parallel session instead of same-session)
 - Manual single-pass execution (1-2 trivial tasks, no benefit from delegation)
 
 ## OmG Agent Registry → Role Mapping
@@ -31,10 +31,10 @@ Use this table when you dispatch each sub-agent. Names match `agents/<name>.md`.
 
 | Stage | OmG agent | Model tier | Prompt template |
 |-------|-----------|------------|-----------------|
-| Implementer | `omg-executor` | flash-agent (default) → pro-agent if integration-heavy | `./implementer-prompt.md` |
-| Spec-compliance reviewer | `omg-reviewer` | flash-agent | `./spec-reviewer-prompt.md` |
-| Code-quality reviewer | `omg-verifier` | pro-agent | `./code-quality-reviewer-prompt.md` |
-| Final whole-implementation reviewer | `omg-verifier` | pro-agent | `./code-quality-reviewer-prompt.md` (scope = full diff) |
+| Implementer | `omg-executor` | execution-lane (gemini-3-flash-preview) default → planning-lane (gemini-3.1-pro-preview) if integration-heavy | `./implementer-prompt.md` |
+| Spec-compliance reviewer | `omg-reviewer` | execution-lane (gemini-3-flash-preview) | `./spec-reviewer-prompt.md` |
+| Code-quality reviewer | `omg-verifier` | planning-lane (gemini-3.1-pro-preview) | `./code-quality-reviewer-prompt.md` |
+| Final whole-implementation reviewer | `omg-verifier` | planning-lane (gemini-3.1-pro-preview) | `./code-quality-reviewer-prompt.md` (scope = full diff) |
 
 Optional specialists when the task class warrants:
 - `omg-debugger` — task is "why is X broken"
@@ -57,7 +57,7 @@ Optional specialists when the task class warrants:
    g. If code-quality-reviewer ❌ → implementer fixes → re-dispatch code-quality-reviewer
    h. When code-quality-reviewer ✅ → mark task complete in .omg/state/taskboard.md
 4. After all tasks → dispatch final code-quality-reviewer for entire branch diff.
-5. Hand off via `finishing-a-development-branch` skill.
+5. Hand off via `finishing-a-development-branch` (from superpowers) skill.
 ```
 
 ## Model Selection (OmG / Gemini lane mapping)
@@ -69,7 +69,7 @@ Use the cheapest model that can plausibly succeed at each role.
 | 1-2 files, complete spec, mechanical edit | `gemini-3.1-flash-lite-preview` (quick lane) |
 | Multi-file integration, pattern matching | `gemini-3-flash-preview` (execution lane) |
 | Architecture / design / cross-system review | `gemini-3.1-pro-preview` (planning + review lane) |
-| Tool-heavy autonomous loop | flash-agent or pro-agent (custom-tools variant) |
+| Tool-heavy autonomous loop | execution-lane (gemini-3-flash-preview) or planning-lane (gemini-3.1-pro-preview) custom-tools variant |
 
 Re-dispatch with a higher tier ONLY when the implementer reports BLOCKED due to reasoning ceiling. Do not pre-pessimize.
 
@@ -126,7 +126,7 @@ Re-dispatch with a higher tier ONLY when the implementer reports BLOCKED due to 
 | Sub-agent dispatch surface | OmG agent dispatch / Gemini CLI sub-agent tool — see `agents/` registry |
 | Task ledger | `.omg/state/taskboard.md` (single-writer per project; check `.omg/state/session-lock.json` first) |
 | Acceptance evidence | `verification-before-completion` skill or `/omg:ultraqa` |
-| Hand-off | `finishing-a-development-branch` |
+| Hand-off | `finishing-a-development-branch` (from superpowers) |
 
 ## Cost / Benefit
 
