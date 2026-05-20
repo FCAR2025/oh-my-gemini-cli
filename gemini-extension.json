@@ -8,5 +8,34 @@
   "homepage": "https://github.com/FCAR2025/oh-my-gemini-cli",
   "sourceUrl": "https://github.com/FCAR2025/oh-my-gemini-cli",
   "contextFileName": "GEMINI.md",
-  "settings": []
+  "settings": [],
+  "mcpServers": {
+    "omx-state": {
+      "command": "node",
+      "args": ["/home/info/.npm-global/lib/node_modules/oh-my-codex/dist/mcp/state-server.js"]
+    },
+    "omx-memory": {
+      "command": "node",
+      "args": ["/home/info/.npm-global/lib/node_modules/oh-my-codex/dist/mcp/memory-server.js"]
+    },
+    "omx-wiki": {
+      "command": "node",
+      "args": ["/home/info/.npm-global/lib/node_modules/oh-my-codex/dist/mcp/wiki-server.js"]
+    },
+    "omx-trace": {
+      "command": "node",
+      "args": ["/home/info/.npm-global/lib/node_modules/oh-my-codex/dist/mcp/trace-server.js"]
+    },
+    "omx-code-intel": {
+      "command": "node",
+      "args": ["/home/info/.npm-global/lib/node_modules/oh-my-codex/dist/mcp/code-intel-server.js"]
+    },
+    "omc-bridge": {
+      "command": "node",
+      "args": ["/home/info/.claude/plugins/cache/omc/oh-my-claudecode/4.14.0/bridge/mcp-server.cjs"],
+      "env": {
+        "CLAUDE_PLUGIN_ROOT": "/home/info/.claude/plugins/cache/omc/oh-my-claudecode/4.14.0"
+      }
+    }
+  }
 }

@@ -31,6 +31,7 @@ OmG layers four capability surfaces on top of Gemini CLI:
 | **Skills** (`skills/<name>/SKILL.md`) | Skill is auto-loaded by Gemini CLI when its frontmatter description matches the active task. | Procedural how-tos: subagent-driven-development, ultrawork, ai-slop-cleaner, deep-interview, ccg, verify, trace, visual-verdict |
 | **Agents** (`agents/<name>.md`) | Referenced inside skills and `/omg:team-*` commands. Map roles to lanes (omg-director / omg-planner / omg-executor / omg-reviewer / omg-verifier / omg-debugger / omg-architect / omg-product / omg-security-reviewer / omg-test-engineer / omg-researcher). | Role-driven delegation inside multi-step workflows |
 | **Hooks** (`hooks/hooks.json`) | Fire automatically on lifecycle events (SessionStart, BeforeAgent, BeforeModel, BeforeTool, AfterTool, AfterAgent). | Background routing, evidence capture, delegation enforcement |
+| **MCP servers** (`gemini-extension.json -> mcpServers`) | 6 servers wired by default: `omx-state` / `omx-memory` / `omx-wiki` / `omx-trace` / `omx-code-intel` (from oh-my-codex) + `omc-bridge` (from oh-my-claudecode `t` bridge — provides full LSP across 12 backends, `python_repl`, `notepad`, `project_memory`, `wiki`, `shared_memory`, `session_search`, `ast_grep_search/replace`). | Cross-platform tool surface — same MCP tools that Claude Code + Codex use, available to Gemini CLI |
 
 ## The Rule
 
