@@ -1,5 +1,30 @@
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "name": "omg-session-start",
+            "command": "node \"${extensionPath}/hooks/scripts/hook-bootstrap.js\" \"${extensionPath}/hooks/scripts/session-start.js\"",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "BeforeAgent": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "name": "omg-keyword-detector",
+            "command": "node \"${extensionPath}/hooks/scripts/hook-bootstrap.js\" \"${extensionPath}/hooks/scripts/before-agent-keywords.js\"",
+            "timeout": 4000
+          }
+        ]
+      }
+    ],
     "BeforeModel": [
       {
         "hooks": [
@@ -8,6 +33,32 @@
             "name": "omg-model-router",
             "command": "node \"${extensionPath}/hooks/scripts/hook-bootstrap.js\" \"${extensionPath}/hooks/scripts/before-model-banner.js\"",
             "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "BeforeTool": [
+      {
+        "matcher": "run_shell_command|write_file|replace",
+        "hooks": [
+          {
+            "type": "command",
+            "name": "omg-delegation-enforcer",
+            "command": "node \"${extensionPath}/hooks/scripts/hook-bootstrap.js\" \"${extensionPath}/hooks/scripts/before-tool-enforcer.js\"",
+            "timeout": 3000
+          }
+        ]
+      }
+    ],
+    "AfterTool": [
+      {
+        "matcher": "write_file|replace|run_shell_command",
+        "hooks": [
+          {
+            "type": "command",
+            "name": "omg-evidence-capture",
+            "command": "node \"${extensionPath}/hooks/scripts/hook-bootstrap.js\" \"${extensionPath}/hooks/scripts/after-tool-evidence.js\"",
+            "timeout": 3000
           }
         ]
       }

@@ -88,6 +88,23 @@ HOME=/path/to/gemini-cli-home gemini extensions list
 
 Use `gemini extensions validate /path/to/oh-my-gemini-cli` before linking local edits.
 
+## What's New in v0.9.0-fcar.0
+
+OMC-parity upgrade: full hook surface + 16 new skills incl. `subagent-driven-development`.
+
+- **New SessionStart hook** (`hooks/scripts/session-start.js`) — fires on `startup|resume|clear` and auto-injects the new `using-omg` skill directive so every session knows how to find skills, agents, hooks, and `/omg:*` commands before the model speaks.
+- **New BeforeAgent hook** (`hooks/scripts/before-agent-keywords.js`) — parity with OMC's UserPromptSubmit keyword detector. Scans the operator prompt for OmG triggers (`autopilot`, `ralph`, `ulw`, `ccg`, `ralplan`, `deep-interview`, `tdd`, `brainstorm`, `subagent-driven-dev`, `mcp-setup`, `deepinit`, `visual-verdict`, `cancel`, etc.) and injects routing hints.
+- **New BeforeTool hook** (`hooks/scripts/before-tool-enforcer.js`) — denies fork-bombs / `mkfs` / `dd if=/dev/zero of=/dev/sd*` / `rm -rf /` and warns (without blocking) on `git push --force`, `git reset --hard`, `git clean -f`, `npm publish`, `cargo publish`, `kubectl delete`, `docker system prune`, `--no-verify`. Soft mode via `OMG_ENFORCER_SOFT=1`.
+- **New AfterTool hook** (`hooks/scripts/after-tool-evidence.js`) — appends one JSON record per `write_file` / `replace` / `run_shell_command` into `.omg/state/sessions/<session>/tool-evidence.jsonl` for post-hoc evidence review.
+- **New skill: `using-omg`** — the SessionStart directive itself. Lists the four capability surfaces (commands / skills / agents / hooks), the skill-priority order, the cancel latch, and OmG-specific discipline.
+- **New skill: `subagent-driven-development`** — ports superpowers' two-stage-review pattern to the OmG agent registry (`omg-executor` implementer → `omg-reviewer` spec compliance → `omg-verifier` code quality). Ships with `implementer-prompt.md`, `spec-reviewer-prompt.md`, and `code-quality-reviewer-prompt.md`.
+- **15 new OMC-parity skills**: `ultrawork`, `autopilot`, `autoresearch`, `ai-slop-cleaner`, `deep-interview`, `verify`, `trace`, `visual-verdict`, `ultragoal`, `deepinit`, `ccg`, `mcp-setup`, `wiki`, `learner`, `skillify`. Skill bodies adapted to Gemini-CLI tool names (`read_file`, `write_file`, `run_shell_command`, `glob`, `search_file_content`) and OmG agent registry (`omg-executor`, `omg-reviewer`, `omg-verifier`, `omg-debugger`, `omg-architect`, `omg-planner`, `omg-researcher`).
+- **Companion install**: the [superpowers](https://github.com/obra/superpowers) extension is now first-class alongside OmG. Recommended install: `gemini extensions install https://github.com/obra/superpowers` for the 14-skill core library (`brainstorming`, `test-driven-development`, `systematic-debugging`, `writing-plans`, `executing-plans`, `dispatching-parallel-agents`, `verification-before-completion`, `finishing-a-development-branch`, `requesting-code-review`, `receiving-code-review`, `using-git-worktrees`, `using-superpowers`, `subagent-driven-development`, `writing-skills`).
+- **Frontmatter**: all OMC ports converted from YAML to OMG's TOML-style frontmatter (`name = "value"` / `description = "value"`) per `scripts/check-skill-metadata.js`.
+- All three test gates (`test:version`, `test:skills`, `test:parity`) pass on the new surface.
+
+Disable any new hook via `OMG_DISABLED_HOOKS=session-start,keyword-detector,delegation-enforcer,evidence-capture` (comma list) or per-hook `OMG_SESSION_START_DISABLE=1` / `OMG_BEFORE_AGENT_DISABLE=1` / `OMG_BEFORE_TOOL_DISABLE=1` / `OMG_AFTER_TOOL_DISABLE=1`.
+
 ## What's New in v0.8.5-fcar.2
 
 - Synced with upstream `v0.8.5` Goal Mode autonomous delivery and the post-`v0.8.5` Gemini CLI `v0.42.0` compatibility refresh.

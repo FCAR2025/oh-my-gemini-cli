@@ -19,7 +19,7 @@ async function main() {
     return;
   }
 
-  const resolvedTarget = path.resolve(process.cwd(), target);
+  const resolvedTarget = process.env.OMG_EXTENSION_PATH ? path.join(process.env.OMG_EXTENSION_PATH, target.replace(process.cwd() + "/", "")) : path.resolve(process.cwd(), target);
   await import(pathToFileURL(resolvedTarget).href);
 }
 
