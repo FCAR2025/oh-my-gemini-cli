@@ -43,6 +43,7 @@ const RULES = [
   { rx: /\b(release|ship to prod|prepare release)\b/i, hint: "Trigger detected: **release**. Use `release` skill or `/omg:release` for release workflow." },
   { rx: /\b(merge|commit|push|pr|pull request)\b/i, hint: "Trigger detected: **git workflow**. Consider `finishing-a-development-branch` skill before merge/PR." },
   { rx: /\b(cancel ?omc|cancel ?omg|stop the loop)\b/i, hint: "Trigger detected: **cancel**. Use `/omg:cancel` to end active autopilot/ralph/ultrawork/team mode." },
+  { rx: /\b(web[- ]?hook|web[- ]?hooks)\b/i, hint: "Trigger detected: **webhook**. Consider `vibe-code-prod-core` (money-critical signature validation) or `/omg:ultraqa` (security review)." },
 ];
 
 function isOff(v) {
@@ -83,9 +84,16 @@ function detectHints(prompt) {
   if (typeof prompt !== "string" || !prompt.trim()) {
     return [];
   }
+  // Strip code blocks, inline code, quoted values, and markdown blockquotes to prevent false-positives when discussing trigger keywords
+  const cleanPrompt = prompt
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/`[^`]+`/g, "")
+    .replace(/["'][^"']+["']/g, "")
+    .replace(/^\s*>.*$/gm, "");
+
   const matched = [];
   for (const rule of RULES) {
-    if (rule.rx.test(prompt)) {
+    if (rule.rx.test(cleanPrompt)) {
       matched.push(rule.hint);
     }
   }
