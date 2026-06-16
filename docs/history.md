@@ -1,13 +1,48 @@
 # Changelog
 
-All notable changes to oh-my-gemini-cli are documented here.
+All notable changes to oh-my-antigravity are documented here.
+
+## v0.9.1-fcar.0 - Upstream Sync + Parity sprint (2026-06-16)
+
+### Added
+- Integrated upstream v0.9.1 (durable multi-goal workflows / ultragoal) and v0.9.0 (project rename to oh-my-antigravity).
+- Switched command namespace to `/oma:*` and shorthand to `OmA`.
+- Retained FCAR capability routing (`/oma:capabilities`) and adversarial QA loops (`/oma:ultraqa`).
+- Fully merged the OMC-parity sprint changes from `v0.9.0-fcar.0` (4 lifecycle hooks, 16 skills, TOML frontmatter).
+
+## v0.9.1 - Durable Multi-Goal Workflows (2026-05-21)
+
+### Added
+
+- Added `/oma:ultragoal` command to run durable multi-goal workflows.
+- Added `$ultragoal` skill to manage sequential goal maps with repository-native checkpoints.
+- Added state tracking files (`brief.md`, `goals.json`, `ledger.jsonl`) under `.omg/ultragoal/`.
+
+### Changed
+
+- Updated `/oma:doctor` to validate `$ultragoal` skill metadata.
+- Updated `/oma:intent` routing hints to suggest `$ultragoal`.
+- Registered `$ultragoal` in the retained skills list of core context.
+- Bumped package version to `0.9.1`.
+- Updated documentation in README, Korean README, and project home page.
+
+## v0.9.0 - Project Rename to oh-my-antigravity (2026-05-20)
+
+### Changed
+
+- Renamed the project and extension package from `oh-my-gemini-cli` to `oh-my-antigravity`.
+- Changed the public shorthand from `OmG` to `OmA`.
+- Moved the extension command namespace from `/omg:*` to `/oma:*`, including the retained planning alias to `oma-plan`.
+- Updated repository, GitHub Pages, extension gallery, installation, uninstall, badge, and Star History references across README, Korean README, localized docs, landing page, and installation guide.
+- Bumped package and extension metadata to `v0.9.0`.
+- Recorded the rename in release history.
 
 ## v0.8.5-fcar.2 - Upstream Sync + FCAR Capability/UltraQA Preservation (2026-05-15)
 
 ### Added
 
-- Adopted upstream `/omg:goal` Ralph/Codex-style autonomous delivery loop (from upstream `v0.8.5`).
-- Adopted upstream automated/manual interview routing under `/omg:interview` while keeping FCAR `/omg:capabilities` checkpoint between `intent` and `workspace` in `Default Flow (Hybrid Routing)`.
+- Adopted upstream `/oma:goal` Ralph/Codex-style autonomous delivery loop (from upstream `v0.8.5`).
+- Adopted upstream automated/manual interview routing under `/oma:interview` while keeping FCAR `/oma:capabilities` checkpoint between `intent` and `workspace` in `Default Flow (Hybrid Routing)`.
 
 ### Changed
 
@@ -20,17 +55,31 @@ All notable changes to oh-my-gemini-cli are documented here.
 
 ### Changed
 
-- Added `/omg:capabilities` to route work through Gemini-native capabilities, model choices, and runtime/proxy constraints.
-- Added `/omg:ultraqa` for adversarial verify -> diagnose -> fix loops with explicit evidence and bounded exits.
+- Added `/oma:capabilities` to route work through Gemini-native capabilities, model choices, and runtime/proxy constraints.
+- Added `/oma:ultraqa` for adversarial verify -> diagnose -> fix loops with explicit evidence and bounded exits.
 - Tightened core context around anti-slop execution, lock-aware state writes, model/tool routing, and proxy-limited Gemini API surfaces.
 - Updated doctor/model/README guidance for active-HOME extension installs, FCAR public-distribution metadata, and Gemini CLI `v0.39.0+` assumptions.
 
-## v0.8.5 - Goal Mode Autonomous Delivery (2026-05-04, upstream)
+## v0.8.6 - Blueprint Workflow (2026-05-18)
 
 ### Added
 
-- Added `/omg:goal` as a Ralph/Codex-style goal-driven autonomous delivery command.
-- Goal mode treats routine non-destructive work as approved, then runs the staged OmG delivery path through plan, PRD, taskboard, execution, verification, and fix loops.
+- Added `/oma:blueprint` as an extension-native product/UI workflow decision command.
+- Added `$blueprint` as a retained deep-work skill for target users, workflow maps, interface decisions, state coverage, content hierarchy, accessibility, responsive constraints, open questions, and verification hooks.
+- Added `.omg/state/blueprint.md` as the recommended durable artifact when users request persistence.
+
+### Changed
+
+- Updated OmA core routing so product or interface-heavy work can pass through `intent -> blueprint -> team-plan/team-prd -> taskboard -> team-exec`.
+- Bumped package and extension metadata to `v0.8.6`.
+- Updated README, Korean README, landing page, and history for the blueprint workflow.
+
+## v0.8.5 - Goal Mode Autonomous Delivery (2026-05-04)
+
+### Added
+
+- Added `/oma:goal` as a Ralph/Codex-style goal-driven autonomous delivery command.
+- Goal mode treats routine non-destructive work as approved, then runs the staged OmA delivery path through plan, PRD, taskboard, execution, verification, and fix loops.
 - Added explicit runtime-boundary guidance so blocked Gemini CLI approvals, sandbox limits, trusted-folder restrictions, shell/network policy, destructive actions, credential-sensitive actions, and production-impacting actions stop as blockers instead of being bypassed.
 
 ### Changed
@@ -42,9 +91,9 @@ All notable changes to oh-my-gemini-cli are documented here.
 
 ### Removed
 
-- Removed `omg-quota-watch-after-agent` from `hooks/hooks.json`.
-- Deleted `hooks/scripts/after-agent-usage.js` so OmG no longer emits noisy `usage=unavailable` lines.
-- Stopped documenting `.omg/state/quota-watch.json` as an active OmG state artifact.
+- Removed `oma-quota-watch-after-agent` from `hooks/hooks.json`.
+- Deleted `hooks/scripts/after-agent-usage.js` so OmA no longer emits noisy `usage=unavailable` lines.
+- Stopped documenting `.omg/state/quota-watch.json` as an active OmA state artifact.
 
 ### Changed
 
@@ -64,30 +113,35 @@ All notable changes to oh-my-gemini-cli are documented here.
 
 - Replaced the noisy `BeforeModel` model-routing banner with a silent router that updates `hookSpecificOutput.llm_request.model`.
 - Switched balanced lane routing back to explicit preview model IDs: planning/review uses `gemini-3.1-pro-preview`, execution uses `gemini-3-flash-preview`, and quick edits use `gemini-3.1-flash-lite-preview`.
-- Kept model strategy visibility in `/omg:status`, HUD previews, and `/omg:model` instead of emitting a per-request banner.
+- Kept model strategy visibility in `/oma:status`, HUD previews, and `/oma:model` instead of emitting a per-request banner.
 - Refreshed `README.md`, `docs/README_ko.md`, `docs/index.html`, package metadata, and extension metadata for `v0.8.2`.
 
 ## v0.8.1 - Model Alias Routing and Visibility (2026-04-20)
 
 ### Changed
 
-- Switched OmG model guidance from hard-pinned Gemini 3 preview model names to Gemini CLI aliases: `auto`, `pro`, `flash`, and `flash-lite`.
+- Switched OmA model guidance from hard-pinned Gemini 3 preview model names to Gemini CLI aliases: `auto`, `pro`, `flash`, and `flash-lite`.
 - Updated balanced lane guidance across command/docs surfaces to use alias-based routing (`pro` for planning/review, `flash` for execution, `flash-lite` for quick edits).
 - Added workspace `.gemini/settings.json` with `general.previewFeatures=true` so this repository defaults to preview-backed alias routing where Gemini CLI supports it.
 - Refreshed `README.md`, `docs/README_ko.md`, `docs/index.html`, and command guidance to match the current Gemini CLI model alias reference.
-- Added a `BeforeModel` visibility banner hook and made `/omg:status` HUD guidance surface model strategy and preview status more prominently.
+- Added a `BeforeModel` visibility banner hook and made `/oma:status` HUD guidance surface model strategy and preview status more prominently.
 
 ## Release Timeline
 
 | Version | Date | Theme | Outcome |
 | --- | --- | --- | --- |
-| `v0.8.5-fcar.2` | 2026-05-15 | Upstream sync + FCAR capability/UltraQA preservation | Adopted upstream `/omg:goal` autonomous delivery + automated/manual interview routing + Gemini CLI v0.42.0 compat while preserving FCAR `/omg:capabilities`, `/omg:ultraqa`, and Antigravity proxy guidance |
+| `v0.9.1-fcar.0` | 2026-06-16 | Upstream sync + Ultragoal + Parity preservation | Merged upstream `v0.9.1` (durable multi-goal workflows) and `v0.9.0` (rename to oh-my-antigravity) into FCAR fork while keeping capability routing, UltraQA, and custom diagnostics |
+| `v0.9.1` | 2026-05-21 | Durable multi-goal workflows | Added `/oma:ultragoal` and `$ultragoal` to decompose complex tasks into sequential micro-goals |
+| `v0.9.0` | 2026-05-20 | Project rename | Renamed the project and extension package to `oh-my-antigravity`, changed shorthand to `OmA`, moved commands to `/oma:*`, updated public docs and install links, and bumped metadata to `v0.9.0` |
+| `v0.9.0-fcar.0` | 2026-05-18 | OMC-parity sprint | Added 16 new skills, full hook coverage (SessionStart, BeforeAgent, BeforeTool, AfterTool), TOML skill frontmatter, and superpowers extension alignment |
+| `v0.8.6` | 2026-05-18 | Blueprint workflow | Added `/oma:blueprint` and `$blueprint` for product/UI workflow decisions, interface states, content hierarchy, accessibility, responsive constraints, and verification hooks before implementation |
+| `v0.8.5-fcar.2` | 2026-05-15 | Upstream sync + FCAR capability/UltraQA preservation | Adopted upstream `/oma:goal` autonomous delivery + automated/manual interview routing + Gemini CLI v0.42.0 compat while preserving FCAR `/oma:capabilities`, `/oma:ultraqa`, and Antigravity proxy guidance |
 | `v0.8.4-fcar.1` | 2026-04-27 | Gemini capability and UltraQA hardening | Added Gemini-native capability planning, adversarial QA loops, anti-slop core policy, and active-HOME install diagnostics |
-| `v0.8.5` | 2026-05-04 | Goal mode autonomous delivery (upstream) | Added `/omg:goal` for routine-approved plan/PRD/taskboard/exec/verify/fix loops while keeping Gemini CLI runtime approval, sandbox, and policy limits explicit |
-| `v0.8.4` | 2026-04-28 | Remove usage monitor hook (upstream) | Removed the quota-watch AfterAgent hook and script so OmG no longer prints `usage=unavailable`; usage/quota visibility now relies on Gemini CLI native `/model` or `/stats model` |
-| `v0.8.3` | 2026-04-27 | Gemini CLI late-April compatibility sync | Aligned OmG guidance with Gemini CLI v0.38-v0.40 preview changes; superseded by 2026-05-13 compatibility guidance above |
+| `v0.8.5` | 2026-05-04 | Goal mode autonomous delivery | Added `/oma:goal` for routine-approved plan/PRD/taskboard/exec/verify/fix loops while keeping Gemini CLI runtime approval, sandbox, and policy limits explicit |
+| `v0.8.4` | 2026-04-28 | Remove usage monitor hook | Removed the quota-watch AfterAgent hook and script so OmA no longer prints `usage=unavailable`; usage/quota visibility now relies on Gemini CLI native `/model` or `/stats model` |
+| `v0.8.3` | 2026-04-27 | Gemini CLI late-April compatibility sync | Superseded by the 2026-05-13 compatibility guidance above |
 | `v0.8.2` | 2026-04-22 | Quiet model routing defaults | Replaced the visible BeforeModel model banner with silent request routing so repeated model-routing lines no longer appear while lane-specific model selection remains active |
-| `v0.8.1` | 2026-04-20 | Model alias routing and visibility | Switched OmG guidance to Gemini CLI model aliases, enabled workspace preview features by default, and added a BeforeModel visibility banner plus stronger HUD model visibility |
+| `v0.8.1` | 2026-04-20 | Model alias routing and visibility | Switched OmA guidance to Gemini CLI model aliases, enabled workspace preview features by default, and added a BeforeModel visibility banner plus stronger HUD model visibility |
 | `v0.8.0` | 2026-04-16 | Shared workflow single-writer safety | Added session-lock based ownership for shared workflow and operating-profile state, routed non-owning sessions into session-local drafts, and documented the safer same-project parallel-session model |
 | `v0.7.9` | 2026-04-16 | Hook state collision hardening | Stopped quota-watch and learn-state hooks from falling back to shared `process.cwd()` state paths, added atomic state writes, and documented the safer cross-project behavior |
 | `v0.7.8` | 2026-04-16 | Interview session partitioning and docs alignment | Replaced the single shared interview state contract with session-scoped interview folders, added an active-session pointer, and aligned versioned docs plus release metadata around the new structure |
@@ -98,69 +152,69 @@ All notable changes to oh-my-gemini-cli are documented here.
 | `v0.7.3` | 2026-04-08 | Stage-gate and runtime signal hardening | Added workspace-aware usage monitor cwd hints, stop/cancel skill-state cleanup signals, and stricter staged execution readiness checks |
 | `v0.7.2` | 2026-04-07 | Workflow/runtime hygiene | Added learn-signal cooldown control, release metadata sync utility, and stronger staged-workflow diagnostics |
 | `v0.7.1` | 2026-04-06 | Deterministic taskboard and fallback routing | Added null-safe task priority defaults (`p2`), deterministic `next` ordering, and one-shot agent-unavailable fallback routing across team execution stages |
-| `v0.7.0` | 2026-04-05 | Model selection policy controls | Added `/omg:model` with `balanced|auto|custom` strategy management and persisted model-policy state for consistent lane routing |
+| `v0.7.0` | 2026-04-05 | Model selection policy controls | Added `/oma:model` with `balanced|auto|custom` strategy management and persisted model-policy state for consistent lane routing |
 | `v0.6.0` | 2026-04-03 | Gemini CLI compatibility sync | Superseded by the 2026-05-13 compatibility guidance above |
-| `v0.5.0` | 2026-04-01 | Prompt ops hardening | Applied Claude-derived delegation/edit/verification guardrails across OmG core context, team commands, and agent contracts |
+| `v0.5.0` | 2026-04-01 | Prompt ops hardening | Applied Claude-derived delegation/edit/verification guardrails across OmA core context, team commands, and agent contracts |
 | `v0.4.6` | 2026-03-31 | Deep-dive discovery skill | Added extension-native `$deep-dive` trace-to-interview skill with clarity scoring and optional interview/launch state artifacts |
 | `v0.4.5` | 2026-03-30 | Deep-interview lock nudge suppression | Learn-signal hook now suppresses automated nudges while deep-interview lock is active and resumes safely after lock release |
-| `v0.4.4` | 2026-03-26 | Learn-signal safety hardening | Added actionable-session filtering, deduped learn-signal state tracking, and safer stale-state handling for `/omg:learn` nudges |
+| `v0.4.4` | 2026-03-26 | Learn-signal safety hardening | Added actionable-session filtering, deduped learn-signal state tracking, and safer stale-state handling for `/oma:learn` nudges |
 | `v0.4.3` | 2026-03-24 | AfterAgent deduplication and retry safety | Added transcript-fingerprint state tracking so repeated usage-hook retries no longer double-print the same turn |
-| `v0.4.2` | 2026-03-21 | Skills/footer compatibility alignment | Added slash-friendly `omg-plan` skill alias; current compatibility guidance is maintained in the 2026-05-13 section above |
+| `v0.4.2` | 2026-03-21 | Skills/footer compatibility alignment | Added slash-friendly `oma-plan` skill alias; current compatibility guidance is maintained in the 2026-05-13 section above |
 | `v0.4.1` | 2026-03-20 | Usage monitor runtime knobs | Added quiet-hook output control and state-root override for safer, less noisy long sessions |
 | `v0.3.9` | 2026-03-12 | Workspace hygiene and hook symmetry | Added lane-health auditing, hook lifecycle symmetry rules, and quieter delegated handoffs for safer long sessions |
 | `v0.3.8` | 2026-03-11 | Workspace and taskboard control | Added extension-native workspace lane mapping and verifier-backed taskboard workflows for lighter long-session orchestration |
 | `v0.3.7` | 2026-03-10 | Load surface cleanup | Fixed root context wiring, removed mirrored control-plane skills, and slimmed repeated command boilerplate |
-| `v0.3.6` | 2026-03-10 | Notification routing | Added extension-native notification profiles, event routing, and safe external-delivery boundaries for long-running OmG sessions |
+| `v0.3.6` | 2026-03-10 | Notification routing | Added extension-native notification profiles, event routing, and safe external-delivery boundaries for long-running OmA sessions |
 | `v0.3.5` | 2026-03-04 | Dynamic Agent Team Assembly | Added approval-gated dynamic team composition with new director/consultant/editor roles and model-aware lane policy |
 | `v0.3.4` | 2026-02-28 | Deterministic hook orchestration | Added extension-native hook commands/skill with event-lane policy, safety validation, and dry-run testing |
 | `v0.3.3` | 2026-02-28 | Claude-style memory management | Added file-based memory index/topic split and modular rule-pack workflows |
 | `v0.3.2` | 2026-02-26 | HUD visibility controls | Added extension-native HUD profile commands/skill and status rendering policy |
 | `v0.3.1` | 2026-02-26 | Intent/loop guardrail expansion | Added intake gate, loop enforcement, deep init, and conditional rule injection workflows |
 | `v0.3.0` | 2026-02-25 | Workflow and mode expansion | Added stage pipeline commands, autonomous modes, and lifecycle controls |
-| `v0.2.0` | 2026-02-24 | Extensions-first rebuild | OmG moved to Gemini CLI's official extension primitives |
+| `v0.2.0` | 2026-02-24 | Extensions-first rebuild | OmA moved to Gemini CLI's official extension primitives |
 | `v0.1.4` | 2026-02-23 | Runtime integration hardening | MCP/server wiring and status observability improved |
 | `v0.1.3` | 2026-02-23 | Installation path stabilization | GitHub-based install flow documented as default path |
-| `v0.1.2` | 2026-02-22 | Model/branding consistency | `gemini-3.1-*` naming and OmG branding normalized |
+| `v0.1.2` | 2026-02-22 | Model/branding consistency | `gemini-3.1-*` naming and OmA branding normalized |
 | `v0.1.1` | 2026-02-22 | Dashboard redesign | Retro game-style TUI and richer telemetry presentation |
 | `v0.1.0` | 2026-02-22 | Initial release | Multi-agent orchestration foundation shipped |
 
 ## v0.8.0 - Shared Workflow Single-Writer Safety (2026-04-16)
 
-Focused on reducing same-project parallel-session drift after Gemini CLI subagent GA by formalizing one authoritative writer for shared OmG state and routing non-owning sessions into session-local drafts.
+Focused on reducing same-project parallel-session drift after Gemini CLI subagent GA by formalizing one authoritative writer for shared OmA state and routing non-owning sessions into session-local drafts.
 
 ### Changed
 
 - Added shared workflow single-writer policy:
-  - `context/omg-core.md`
+  - `context/oma-core.md`
   - shared workflow artifacts now treat `.omg/state/session-lock.json` as the authoritative writer lock
   - only the lock-owning orchestration session should mutate shared workflow artifacts
   - delegated/worker/subagent turns are explicitly read-mostly for shared workflow state
 - Hardened shared workflow state writers:
-  - `commands/omg/launch.toml`
-  - `commands/omg/team.toml`
-  - `commands/omg/team-assemble.toml`
-  - `commands/omg/taskboard.toml`
-  - `commands/omg/workspace.toml`
-  - `commands/omg/checkpoint.toml`
-  - `commands/omg/stop.toml`
-  - `commands/omg/cancel.toml`
-  - `commands/omg/loop.toml`
-  - `commands/omg/autopilot.toml`
-  - `commands/omg/team-plan.toml`
-  - `commands/omg/team-exec.toml`
-  - `commands/omg/team-verify.toml`
+  - `commands/oma/launch.toml`
+  - `commands/oma/team.toml`
+  - `commands/oma/team-assemble.toml`
+  - `commands/oma/taskboard.toml`
+  - `commands/oma/workspace.toml`
+  - `commands/oma/checkpoint.toml`
+  - `commands/oma/stop.toml`
+  - `commands/oma/cancel.toml`
+  - `commands/oma/loop.toml`
+  - `commands/oma/autopilot.toml`
+  - `commands/oma/team-plan.toml`
+  - `commands/oma/team-exec.toml`
+  - `commands/oma/team-verify.toml`
   - non-owning sessions now write session-local drafts under `.omg/state/sessions/[session-slug]/...` instead of overwriting shared workflow state
 - Extended the lock-aware persistence model to operating-profile state:
-  - `commands/omg/mode.toml`
-  - `commands/omg/hud.toml`
-  - `commands/omg/hud-on.toml`
-  - `commands/omg/hud-off.toml`
-  - `commands/omg/hud-compact.toml`
-  - `commands/omg/approval.toml`
-  - `commands/omg/reasoning.toml`
-  - `commands/omg/hooks.toml`
-  - `commands/omg/hooks-init.toml`
-  - `commands/omg/notify.toml`
+  - `commands/oma/mode.toml`
+  - `commands/oma/hud.toml`
+  - `commands/oma/hud-on.toml`
+  - `commands/oma/hud-off.toml`
+  - `commands/oma/hud-compact.toml`
+  - `commands/oma/approval.toml`
+  - `commands/oma/reasoning.toml`
+  - `commands/oma/hooks.toml`
+  - `commands/oma/hooks-init.toml`
+  - `commands/oma/notify.toml`
 - Preserved prior hook collision safeguards:
   - `hooks/scripts/after-agent-usage.js`
   - `hooks/scripts/learn.js`
@@ -175,17 +229,17 @@ Focused on reducing same-project parallel-session drift after Gemini CLI subagen
 - Refreshed Gemini CLI compatibility guidance after the official subagent launch review:
   - compatibility notes re-reviewed on 2026-04-16
   - now calls out the 2026-04-15 Google Developers Blog subagent launch explicitly
-  - explains why OmG now treats delegated/worker/subagent turns as read-mostly for shared workflow state
-  - links the compatibility review to OmG's new session-lock and session-local draft safety model
+  - explains why OmA now treats delegated/worker/subagent turns as read-mostly for shared workflow state
+  - links the compatibility review to OmA's new session-lock and session-local draft safety model
 
 ### Structural Fit Note
 
-- OmG remains extension-native.
+- OmA remains extension-native.
 - Changes are limited to prompt-policy contracts, shipped hook scripts, documentation, and release metadata.
 
 ## v0.7.9 - Hook State Collision Hardening (2026-04-16)
 
-Focused on reducing cross-project hook-state collisions during concurrent local work by requiring a reliable session `cwd` before persisting OmG hook state and by making state writes atomic.
+Focused on reducing cross-project hook-state collisions during concurrent local work by requiring a reliable session `cwd` before persisting OmA hook state and by making state writes atomic.
 
 ### Changed
 
@@ -212,7 +266,7 @@ Focused on reducing cross-project hook-state collisions during concurrent local 
 
 ### Structural Fit Note
 
-- OmG remains extension-native.
+- OmA remains extension-native.
 - Changes are limited to shipped hook scripts, documentation, and release metadata.
 
 ## v0.7.8 - Interview Session Partitioning and Docs Alignment (2026-04-16)
@@ -222,10 +276,10 @@ Focused on making requirement-discovery sessions easier to separate within the s
 ### Changed
 
 - Reworked interview state contract:
-  - `commands/omg/intent.toml`
-  - `commands/omg/interview.toml`
+  - `commands/oma/intent.toml`
+  - `commands/oma/interview.toml`
   - `agents/interview.md`
-  - `context/omg-core.md`
+  - `context/oma-core.md`
   - interview state now lives at `.omg/state/interviews/[slug]/context.json`
   - the current session is tracked via `.omg/state/interviews/active.json`
   - finalized interview PRDs now land in `.omg/state/interviews/[slug]/prd.md`
@@ -240,26 +294,26 @@ Focused on making requirement-discovery sessions easier to separate within the s
 
 ### Structural Fit Note
 
-- OmG remains extension-native.
+- OmA remains extension-native.
 - Changes are limited to command/agent contracts, workflow context, documentation, and release metadata.
 
 ## v0.7.7 - Extension-Boundary Checks and Audit-First Launch Safety (2026-04-16)
 
-Focused on low-risk improvements that fit OmG's extension-native structure: safer recovery guidance when installs or hook paths drift, and clearer preflight gating before multi-lane execution starts.
+Focused on low-risk improvements that fit OmA's extension-native structure: safer recovery guidance when installs or hook paths drift, and clearer preflight gating before multi-lane execution starts.
 
 ### Changed
 
 - Tightened extension-boundary diagnostics:
-  - `commands/omg/doctor.toml`
+  - `commands/oma/doctor.toml`
   - treats stale or mixed extension roots, copied asset drift, and manual hook/skill shadowing as first-class readiness risks
 - Hardened hook recovery guidance:
-  - `commands/omg/hooks.toml`
+  - `commands/oma/hooks.toml`
   - prefers env/runtime controls plus extension-managed recovery paths before recommending direct edits to shipped hook files
 - Promoted audit-first launch behavior:
-  - `commands/omg/launch.toml`
-  - non-trivial launches now treat `/omg:workspace audit` as the default preflight before `team-exec`
+  - `commands/oma/launch.toml`
+  - non-trivial launches now treat `/oma:workspace audit` as the default preflight before `team-exec`
 - Made workspace audit verdicts more actionable:
-  - `commands/omg/workspace.toml`
+  - `commands/oma/workspace.toml`
   - dirty, untrusted, missing-baseline, or baseline-drifted active lanes are now explicit blockers until reconciled
 - Refreshed docs and release metadata for `v0.7.7`:
   - `README.md`
@@ -271,12 +325,12 @@ Focused on low-risk improvements that fit OmG's extension-native structure: safe
 
 ### Structural Fit Note
 
-- OmG remains extension-native.
+- OmA remains extension-native.
 - Changes stay within command guidance, safety policy, and documentation; no runtime daemon, binary helper, or override-heavy setup flow was introduced.
 
 ## v0.7.6 - Hook Runtime Controls and Skill Metadata Guardrails (2026-04-15)
 
-Added environment-driven hook controls so OmG operators can reduce noise or selectively disable shipped AfterAgent hooks without editing hook files directly, and added a maintainer-facing skill metadata integrity check.
+Added environment-driven hook controls so OmA operators can reduce noise or selectively disable shipped AfterAgent hooks without editing hook files directly, and added a maintainer-facing skill metadata integrity check.
 
 ### Changed
 
@@ -289,13 +343,13 @@ Added environment-driven hook controls so OmG operators can reduce noise or sele
   - `scripts/check-skill-metadata.js`
   - `npm run test:skills`
   - validates `skills/*/SKILL.md` frontmatter, duplicate skill names, and folder/name mismatches
-- Removed agent-level model pinning so OmG agents inherit the active Gemini CLI runtime model:
+- Removed agent-level model pinning so OmA agents inherit the active Gemini CLI runtime model:
   - `agents/*.md`
   - fixes global Flash/Auto model selection being overridden by bundled agent frontmatter
 - Expanded hook-management guidance and validation:
-  - `commands/omg/hooks.toml`
-  - `commands/omg/hooks-validate.toml`
-  - `commands/omg/doctor.toml`
+  - `commands/oma/hooks.toml`
+  - `commands/oma/hooks-validate.toml`
+  - `commands/oma/doctor.toml`
 - Refreshed docs and release metadata for `v0.7.6`:
   - `README.md`
   - `docs/README_ko.md`
@@ -306,12 +360,12 @@ Added environment-driven hook controls so OmG operators can reduce noise or sele
 
 ### Structural Fit Note
 
-- OmG remains extension-native.
+- OmA remains extension-native.
 - Changes are limited to shipped hook scripts, prompt-policy guidance, and documentation.
 
 ## v0.7.5 - Hook Stability and Usage-State Hygiene (2026-04-14)
 
-Focused on hook reliability for long-running OmG sessions, especially when model usage tracking or hook registration paths become noisy.
+Focused on hook reliability for long-running OmA sessions, especially when model usage tracking or hook registration paths become noisy.
 
 ### Changed
 
@@ -319,9 +373,9 @@ Focused on hook reliability for long-running OmG sessions, especially when model
   - `hooks/scripts/after-agent-usage.js`
   - `.omg/state/quota-watch.json` can now persist session totals by model and provider in addition to the latest turn snapshot
 - Expanded hook diagnostics and validation coverage:
-  - `commands/omg/hooks.toml`
-  - `commands/omg/hooks-validate.toml`
-  - `commands/omg/doctor.toml`
+  - `commands/oma/hooks.toml`
+  - `commands/oma/hooks-validate.toml`
+  - `commands/oma/doctor.toml`
   - duplicate extension/manual hook registration risk is now called out explicitly when repeated AfterAgent output is suspected
 - Refreshed docs and release metadata for `v0.7.5`:
   - `README.md`
@@ -333,27 +387,27 @@ Focused on hook reliability for long-running OmG sessions, especially when model
 
 ### Structural Fit Note
 
-- OmG remains extension-native.
+- OmA remains extension-native.
 - Changes are limited to hook/runtime state handling, diagnostics guidance, and documentation.
 
 ## v0.7.4 - Baseline-Aware Lane Guardrails (2026-04-13)
 
-Strengthened OmG's multi-lane workflow safety by making branch/HEAD baselines explicit across workspace, taskboard, planning, and execution handoffs.
+Strengthened OmA's multi-lane workflow safety by making branch/HEAD baselines explicit across workspace, taskboard, planning, and execution handoffs.
 
 ### Changed
 
 - Added lane baseline branch/HEAD anchors to state and handoff guidance:
-  - `commands/omg/workspace.toml`
-  - `commands/omg/taskboard.toml`
-  - `commands/omg/team-plan.toml`
-  - `commands/omg/team-prd.toml`
-  - `commands/omg/team-exec.toml`
-  - `commands/omg/team.toml`
+  - `commands/oma/workspace.toml`
+  - `commands/oma/taskboard.toml`
+  - `commands/oma/team-plan.toml`
+  - `commands/oma/team-prd.toml`
+  - `commands/oma/team-exec.toml`
+  - `commands/oma/team.toml`
 - Added baseline integrity as a core execution safety rule:
-  - `context/omg-core.md`
+  - `context/oma-core.md`
 - Expanded status/doctor coverage for baseline drift:
-  - `commands/omg/status.toml`
-  - `commands/omg/doctor.toml`
+  - `commands/oma/status.toml`
+  - `commands/oma/doctor.toml`
 - Refreshed docs to explain baseline-aware lane guardrails and updated release metadata:
   - `README.md`
   - `docs/README_ko.md`
@@ -364,7 +418,7 @@ Strengthened OmG's multi-lane workflow safety by making branch/HEAD baselines ex
 
 ### Structural Fit Note
 
-- OmG remains extension-native.
+- OmA remains extension-native.
 - Changes are limited to prompt/state-policy surfaces that fit Gemini CLI extensions cleanly.
 - No daemon, binary helper, or runtime shim was introduced.
 
@@ -379,23 +433,23 @@ Focused on extension-native reliability improvements for multi-lane execution, c
   - new runtime knob: `OMG_USAGE_CWD_MODE=off|leaf|parent-leaf|full` (default `parent-leaf`)
   - usage lines now emit compact `cwd=...` context for easier lane/worktree identification in parallel sessions.
 - Stop/cancel signal persistence contract:
-  - `commands/omg/stop.toml`
-  - `commands/omg/cancel.toml`
+  - `commands/oma/stop.toml`
+  - `commands/oma/cancel.toml`
   - stop/cancel flows now explicitly persist `.omg/state/cancel-signal.json` for deterministic resume handoff.
 
 ### Changed
 
 - Stop/cancel flows now clear stale `skill-active` markers when no skill is actively running:
-  - `commands/omg/stop.toml`
-  - `commands/omg/cancel.toml`
+  - `commands/oma/stop.toml`
+  - `commands/oma/cancel.toml`
 - Staged execution now enforces prerequisite readiness before implementation:
-  - `commands/omg/team-exec.toml`
+  - `commands/oma/team-exec.toml`
   - blocks execution slices when `team-plan` task graph or `team-prd` acceptance artifacts are missing.
 - Doctor diagnostics now detect additional workflow drift:
-  - `commands/omg/doctor.toml`
+  - `commands/oma/doctor.toml`
   - checks for stale `skill-active`, stale/missing `cancel-signal`, and execution-before-readiness drift.
 - Core safety policy now codifies the same stage gate:
-  - `context/omg-core.md`
+  - `context/oma-core.md`
 - README, Korean README, and landing page refreshed for `v0.7.3`:
   - `README.md`
   - `docs/README_ko.md`
@@ -406,19 +460,19 @@ Focused on extension-native reliability improvements for multi-lane execution, c
 
 ### Structural Fit Note
 
-- OmG remains extension-native.
+- OmA remains extension-native.
 - Changes are limited to command contracts, hook runtime behavior, and documentation/state guidance without new daemons or external service dependencies.
 
 ## v0.7.2 - Workflow and Runtime Hygiene (2026-04-07)
 
-Applied extension-structure-compatible workflow/runtime hygiene improvements for OmG.
+Applied extension-structure-compatible workflow/runtime hygiene improvements for OmA.
 
 ### Added
 
 - Learn-signal cooldown control for reduced nudge noise:
   - `hooks/scripts/learn.js`
   - new config key: `prompt_cooldown_minutes` (default `45`)
-  - suppresses repeated `/omg:learn` nudges across short back-to-back sessions while preserving deep-interview lock suppression and transcript dedupe behavior.
+  - suppresses repeated `/oma:learn` nudges across short back-to-back sessions while preserving deep-interview lock suppression and transcript dedupe behavior.
 - Version sync utility for release hygiene:
   - `scripts/sync-version.js`
   - syncs `package.json` and `gemini-extension.json` version metadata from one command.
@@ -430,8 +484,8 @@ Applied extension-structure-compatible workflow/runtime hygiene improvements for
 - Version-check workflow now triggers on release script changes:
   - `.github/workflows/version-check.yml`
 - Intent/doctor guidance now emphasizes staged workflow order and drift checks:
-  - `commands/omg/intent.toml`
-  - `commands/omg/doctor.toml`
+  - `commands/oma/intent.toml`
+  - `commands/oma/doctor.toml`
 - README, Korean README, and landing page refreshed for `v0.7.2`:
   - `README.md`
   - `docs/README_ko.md`
@@ -442,35 +496,35 @@ Applied extension-structure-compatible workflow/runtime hygiene improvements for
 
 ### Structural Fit Note
 
-- OmG remains extension-native.
+- OmA remains extension-native.
 - Imported changes are limited to prompt/hook/script/documentation surfaces and do not introduce runtime daemons or external worker services.
 
 ## v0.7.1 - Deterministic Taskboard and Fallback Routing (2026-04-06)
 
-Hardened OmG's extension-native task orchestration with deterministic queueing and agent-unavailable fallback handling.
+Hardened OmA's extension-native task orchestration with deterministic queueing and agent-unavailable fallback handling.
 
 ### Added
 
 - Priority-aware taskboard policy with null-safe defaults:
-  - `commands/omg/taskboard.toml`
-  - `commands/omg/team-plan.toml`
-  - `commands/omg/team-prd.toml`
+  - `commands/oma/taskboard.toml`
+  - `commands/oma/team-plan.toml`
+  - `commands/oma/team-prd.toml`
   - Uses explicit `p0|p1|p2|p3` ordering and defaults missing priority to `p2`.
 - Agent-unavailable fallback routing contract (`agent not found` style recovery):
-  - `commands/omg/team-exec.toml`
-  - `commands/omg/team-assemble.toml`
-  - `commands/omg/team.toml`
-  - Adds one-shot fallback reroute (`omg-executor` -> `omg-quick` for low-risk slices, otherwise reroute via `omg-director`).
+  - `commands/oma/team-exec.toml`
+  - `commands/oma/team-assemble.toml`
+  - `commands/oma/team.toml`
+  - Adds one-shot fallback reroute (`oma-executor` -> `oma-quick` for low-risk slices, otherwise reroute via `oma-director`).
 
 ### Changed
 
 - Verification/fix ordering now keeps priority context explicit:
-  - `commands/omg/team-verify.toml`
-  - `commands/omg/team-fix.toml`
+  - `commands/oma/team-verify.toml`
+  - `commands/oma/team-fix.toml`
 - Runtime diagnostics now detect task-priority/fallback drift:
-  - `commands/omg/doctor.toml`
-  - `commands/omg/status.toml`
-  - `context/omg-core.md`
+  - `commands/oma/doctor.toml`
+  - `commands/oma/status.toml`
+  - `context/oma-core.md`
 - README, Korean README, and landing page refreshed for the new taskboard/fallback workflow:
   - `README.md`
   - `docs/README_ko.md`
@@ -481,7 +535,7 @@ Hardened OmG's extension-native task orchestration with deterministic queueing a
 
 ### Structural Fit Note
 
-- OmG remains extension-native; this release adds command/state-policy hardening only.
+- OmA remains extension-native; this release adds command/state-policy hardening only.
 - No runtime daemon, external worker service, or binary patch flow was introduced.
 
 ## v0.7.0 - Model Selection Policy Controls (2026-04-05)
@@ -491,8 +545,8 @@ Added an extension-native model policy control surface so operators can intentio
 ### Added
 
 - New command:
-  - `commands/omg/model.toml`
-  - Exposes `/omg:model` for `balanced|auto|custom` strategy management.
+  - `commands/oma/model.toml`
+  - Exposes `/oma:model` for `balanced|auto|custom` strategy management.
 - Model-policy state contract:
   - `.omg/state/model.json` guidance now documents persisted strategy and lane model map.
 
@@ -515,7 +569,7 @@ Added an extension-native model policy control surface so operators can intentio
 
 ### Structural Fit Note
 
-- OmG remains extension-native; this release adds command-level policy guidance and state contracts only.
+- OmA remains extension-native; this release adds command-level policy guidance and state contracts only.
 - No runtime daemon, external service dependency, or binary patch flow was introduced.
 
 ## v0.6.0 - Gemini CLI Compatibility Sync (2026-04-03)
@@ -524,18 +578,18 @@ Historical compatibility-check details for this release are superseded by the 20
 
 ## v0.5.0 - Prompt Ops Hardening (2026-04-01)
 
-Adapted operational prompt patterns from the public Claude Code system-prompt breakdown into OmG's extension-native orchestration surfaces, focusing on safer delegation, stricter evidence gates, and denial-aware recovery paths.
+Adapted operational prompt patterns from the public Claude Code system-prompt breakdown into OmA's extension-native orchestration surfaces, focusing on safer delegation, stricter evidence gates, and denial-aware recovery paths.
 
 ### Added
 
 - Critical-path vs sidecar delegation policy across team orchestration:
-  - `commands/omg/team-assemble.toml`
-  - `commands/omg/team.toml`
-  - `commands/omg/team-plan.toml`
+  - `commands/oma/team-assemble.toml`
+  - `commands/oma/team.toml`
+  - `commands/oma/team-plan.toml`
 - Explicit execution-discipline guidance in core context:
-  - `context/omg-core.md`
+  - `context/oma-core.md`
 - Stronger verification posture with `pass|fail|unknown` evidence discipline:
-  - `commands/omg/team-verify.toml`
+  - `commands/oma/team-verify.toml`
   - `agents/reviewer.md`
   - `agents/verifier.md`
 
@@ -546,10 +600,10 @@ Adapted operational prompt patterns from the public Claude Code system-prompt br
   - `agents/planner.md`
   - `agents/executor.md`
 - Hardened fix-stage and denial handling:
-  - `commands/omg/team-exec.toml`
-  - `commands/omg/team-fix.toml`
+  - `commands/oma/team-exec.toml`
+  - `commands/oma/team-fix.toml`
 - Updated retained-skill diagnostics coverage:
-  - `commands/omg/doctor.toml` now validates `plan`, `omg-plan`, `execute`, `prd`, `ralplan`, `research`, `deep-dive`, and `context-optimize`
+  - `commands/oma/doctor.toml` now validates `plan`, `oma-plan`, `execute`, `prd`, `ralplan`, `research`, `deep-dive`, and `context-optimize`
 - Updated planning/execution skills:
   - `skills/plan/SKILL.md`
   - `skills/execute/SKILL.md`
@@ -558,7 +612,7 @@ Adapted operational prompt patterns from the public Claude Code system-prompt br
 
 ### Structural Fit Note
 
-- OmG remains extension-native; no runtime daemon, external agent service, or binary patching flow was introduced.
+- OmA remains extension-native; no runtime daemon, external agent service, or binary patching flow was introduced.
 - Changes are prompt/skill/state-policy level only, aligned with Gemini CLI extension primitives.
 
 ## v0.4.6 - Deep-Dive Discovery Skill (2026-03-31)
@@ -584,12 +638,12 @@ Added an extension-native discovery stage that runs trace-first analysis and esc
 
 ### Structural Fit Note
 
-- OmG remains extension-native; no runtime daemon or background worker was introduced.
+- OmA remains extension-native; no runtime daemon or background worker was introduced.
 - The feature is implemented as prompt/skill/state-file behavior within Gemini CLI extension boundaries.
 
 ## v0.4.5 - Deep-Interview Lock Nudge Suppression (2026-03-30)
 
-Adapted OmG hook behavior for deep-interview safety: when deep-interview lock state is active, automated learn nudges are suppressed so interview flow can continue without interruptions.
+Adapted OmA hook behavior for deep-interview safety: when deep-interview lock state is active, automated learn nudges are suppressed so interview flow can continue without interruptions.
 
 ### Added
 
@@ -611,19 +665,19 @@ Adapted OmG hook behavior for deep-interview safety: when deep-interview lock st
 
 ### Structural Fit Note
 
-- OmG remains extension-native; no runtime daemon or background worker was introduced.
+- OmA remains extension-native; no runtime daemon or background worker was introduced.
 - The update is hook/state-level only, aligned to existing extension boundaries.
 
 ## v0.4.4 - Learn-Signal Safety Hardening (2026-03-26)
 
-Hardened the learn-signal hook path so `/omg:learn` nudges fire only when sessions include actionable implementation intent, while remaining retry-safe under repeated transcript snapshots.
+Hardened the learn-signal hook path so `/oma:learn` nudges fire only when sessions include actionable implementation intent, while remaining retry-safe under repeated transcript snapshots.
 
 ### Added
 
 - New learn-signal state artifact:
   - `.omg/state/learn-watch.json`
 - New learn-signal hook registration:
-  - `hooks/hooks.json` (`AfterAgent` -> `omg-learn-signal-after-agent`)
+  - `hooks/hooks.json` (`AfterAgent` -> `oma-learn-signal-after-agent`)
 
 ### Changed
 
@@ -637,7 +691,7 @@ Hardened the learn-signal hook path so `/omg:learn` nudges fire only when sessio
 
 ### Structural Fit Note
 
-- OmG remains extension-native; no runtime daemon or background worker was introduced.
+- OmA remains extension-native; no runtime daemon or background worker was introduced.
 - Safety hardening stays prompt/state-level and keeps hook operation compact for long sessions.
 
 ## v0.4.3 - AfterAgent Deduplication and Retry Safety (2026-03-24)
@@ -659,7 +713,7 @@ Hardened the built-in AfterAgent usage monitor so repeated hook retries or fallb
 
 ### Structural Fit Note
 
-- OmG remains extension-native; no runtime daemon or background worker was introduced.
+- OmA remains extension-native; no runtime daemon or background worker was introduced.
 - The change keeps hook retries idempotent without adding new runtime dependencies or delivery channels.
 
 ## v0.4.2 - Skills and Footer Compatibility Alignment (2026-03-21)
@@ -685,17 +739,17 @@ Added lightweight runtime controls to the built-in AfterAgent usage monitor so l
 
 ### Structural Fit Note
 
-- OmG remains extension-native; no new runtime daemon or background process was introduced.
+- OmA remains extension-native; no new runtime daemon or background process was introduced.
 - Changes are scoped to hook runtime behavior and documentation for safer, quieter operation in long-running sessions.
 
 ## v0.3.9 - Workspace Hygiene and Hook Symmetry (2026-03-12)
 
-Adapted OmG's extension-side orchestration to recent upstream Gemini CLI changes around dirty worktree safety, hook lifecycle consistency, and subagent policy/handoff clarity without adding runtime daemons or heavier always-on context.
+Adapted OmA's extension-side orchestration to recent upstream Gemini CLI changes around dirty worktree safety, hook lifecycle consistency, and subagent policy/handoff clarity without adding runtime daemons or heavier always-on context.
 
 ### Added
 
 - New workspace sub-action:
-  - `/omg:workspace audit`
+  - `/oma:workspace audit`
 - New workspace/taskboard state conventions:
   - lane cleanliness/trust/handoff notes inside `.omg/state/workspace.json`
   - lane-health notes inside `.omg/state/taskboard.md`
@@ -713,18 +767,18 @@ Adapted OmG's extension-side orchestration to recent upstream Gemini CLI changes
 
 ### Structural Fit Note
 
-- OmG remains extension-native: no runtime daemon, background worker, or terminal hook injector was added.
+- OmA remains extension-native: no runtime daemon, background worker, or terminal hook injector was added.
 - Changes are intentionally prompt/state-level so long sessions stay compact and performance-safe.
 
 ## v0.3.8 - Workspace and Taskboard Control (2026-03-11)
 
-Added a lightweight control layer inspired by recent worktree-aware planning and stricter completion gates in related harnesses, adapted to OmG's extension-native command/state model.
+Added a lightweight control layer inspired by recent worktree-aware planning and stricter completion gates in related harnesses, adapted to OmA's extension-native command/state model.
 
 ### Added
 
 - New workspace/taskboard commands:
-  - `/omg:workspace`
-  - `/omg:taskboard`
+  - `/oma:workspace`
+  - `/oma:taskboard`
 - New runtime-state conventions:
   - `.omg/state/workspace.json`
   - `.omg/state/taskboard.md`
@@ -740,12 +794,12 @@ Added a lightweight control layer inspired by recent worktree-aware planning and
 
 ### Structural Fit Note
 
-- OmG stays extension-native: no new runtime daemon, background worker, or git wrapper was added.
+- OmA stays extension-native: no new runtime daemon, background worker, or git wrapper was added.
 - Workspace/taskboard state is intentionally compact so long sessions can resume from a stable file anchor instead of replaying verbose chat history.
 
 ## v0.3.7 - Load Surface Cleanup (2026-03-10)
 
-Fixed the extension manifest/context chain and reduced duplicated discovery surface so OmG loads through a thinner always-on prompt.
+Fixed the extension manifest/context chain and reduced duplicated discovery surface so OmA loads through a thinner always-on prompt.
 
 ### Added
 
@@ -754,8 +808,8 @@ Fixed the extension manifest/context chain and reduced duplicated discovery surf
 
 ### Changed
 
-- `GEMINI.md` now imports `context/omg-core.md`, matching the manifest's `contextFileName`.
-- `context/omg-core.md` trimmed to stable runtime rules only.
+- `GEMINI.md` now imports `context/oma-core.md`, matching the manifest's `contextFileName`.
+- `context/oma-core.md` trimmed to stable runtime rules only.
 - Mirrored control-plane skills were removed; retained skills are now:
   - `$plan`
   - `$execute`
@@ -763,23 +817,23 @@ Fixed the extension manifest/context chain and reduced duplicated discovery surf
   - `$ralplan`
   - `$research`
   - `$context-optimize`
-- High-traffic `/omg:*` commands were shortened by removing repeated output-format boilerplate.
+- High-traffic `/oma:*` commands were shortened by removing repeated output-format boilerplate.
 - `doctor` diagnostics now validate the real context import chain and retained skill set.
 - Extension/package version bumped to `0.3.7`.
 
 ### Structural Fit Note
 
-- OmG is now explicitly slash-command-first for operational control.
+- OmA is now explicitly slash-command-first for operational control.
 - Deep-work skills remain available, but overlapping command/skill mirrors were intentionally removed to shrink startup discovery overhead.
 
 ## v0.3.6 - Notification Routing (2026-03-10)
 
-Added an extension-native notification policy layer so OmG can surface approvals, verification failures, blockers, checkpoints, and idle drift without depending on custom CLI flags.
+Added an extension-native notification policy layer so OmA can surface approvals, verification failures, blockers, checkpoints, and idle drift without depending on custom CLI flags.
 
 ### Added
 
 - New notification command and skill:
-  - `/omg:notify`
+  - `/oma:notify`
   - `$notify`
 - New runtime-state conventions:
   - `.omg/state/notify.json`
@@ -787,28 +841,28 @@ Added an extension-native notification policy layer so OmG can surface approvals
 
 ### Changed
 
-- `context/omg-core.md` updated with notification controls, persisted state conventions, and worker-session notification safety rails.
+- `context/oma-core.md` updated with notification controls, persisted state conventions, and worker-session notification safety rails.
 - README, Korean README, and landing page updated with notification profile, channel, and activation guidance.
 - Extension/package version bumped to `0.3.6`.
 
 ### Structural Fit Note
 
-- OmG notification routing remains extension-native and policy-driven.
+- OmA notification routing remains extension-native and policy-driven.
 - Actual desktop/webhook delivery is intentionally delegated to Gemini host hooks, shell adapters, or project-specific bridges.
 
 ## v0.3.5 - Dynamic Agent Team Assembly (2026-03-04)
 
-Added an approval-gated dynamic team composition layer so OmG can assemble fit-for-task rosters before stage execution.
+Added an approval-gated dynamic team composition layer so OmA can assemble fit-for-task rosters before stage execution.
 
 ### Added
 
 - New team assembly command and skill:
-  - `/omg:team-assemble`
+  - `/oma:team-assemble`
   - `$team-assemble`
 - New specialist sub-agents:
-  - `omg-director`
-  - `omg-consultant`
-  - `omg-editor`
+  - `oma-director`
+  - `oma-consultant`
+  - `oma-editor`
 - New guide:
   - `docs/guide/agent-team-assembly.md`
 - New runtime-state convention:
@@ -818,13 +872,13 @@ Added an approval-gated dynamic team composition layer so OmG can assemble fit-f
 
 - `team` orchestration now supports optional stage-0 dynamic assembly.
 - `intent` routing expanded with `team-assemble` classification path.
-- `context/omg-core.md` updated with stage-0 lifecycle and roster state conventions.
+- `context/oma-core.md` updated with stage-0 lifecycle and roster state conventions.
 - README, installation guide, and landing page expanded with team assembly flows, role taxonomy, and model-allocation policy.
 - Extension/package version bumped to `0.3.5`.
 
 ### Structural Fit Note
 
-- OmG remains extension-native: assembly is prompt/state orchestrated.
+- OmA remains extension-native: assembly is prompt/state orchestrated.
 - Team collaboration is modeled through explicit handoffs and verify/fix loops, not hidden runtime daemons.
 
 ## v0.3.4 - Deterministic Hook Orchestration (2026-02-28)
@@ -834,10 +888,10 @@ Added a hook-oriented orchestration layer inspired by additive hook-extension wo
 ### Added
 
 - New hook command group:
-  - `/omg:hooks`
-  - `/omg:hooks-init`
-  - `/omg:hooks-validate`
-  - `/omg:hooks-test`
+  - `/oma:hooks`
+  - `/oma:hooks-init`
+  - `/oma:hooks-validate`
+  - `/oma:hooks-test`
 - New hook control skill:
   - `$hooks`
 - New hook engineering guide:
@@ -850,23 +904,23 @@ Added a hook-oriented orchestration layer inspired by additive hook-extension wo
 
 ### Changed
 
-- `context/omg-core.md` updated with hook controls, hook state conventions, and worker-session side-effect safety rail.
+- `context/oma-core.md` updated with hook controls, hook state conventions, and worker-session side-effect safety rail.
 - README command/skill/docs map expanded with hook workflows.
 - Extension/package version bumped to `0.3.4`.
 
 ### Structural Fit Note
 
-- OmG hook workflows remain extension-native (prompt/state-driven), not low-level terminal/runtime hook injection.
+- OmA hook workflows remain extension-native (prompt/state-driven), not low-level terminal/runtime hook injection.
 - Deterministic lanes and validation/test commands provide predictable behavior before autonomous execution loops.
 
 ## v0.3.3 - Claude-Style Memory Management (2026-02-28)
 
-Integrated a Claude-style memory model into OmG using a compact root index, topic-split memory files, and path-aware modular rules.
+Integrated a Claude-style memory model into OmA using a compact root index, topic-split memory files, and path-aware modular rules.
 
 ### Added
 
 - New memory command and skill:
-  - `/omg:memory`
+  - `/oma:memory`
   - `$memory`
 - New memory MCP tools:
   - `memory_bootstrap`
@@ -883,7 +937,7 @@ Integrated a Claude-style memory model into OmG using a compact root index, topi
 ### Changed
 
 - `omg setup` now bootstraps project memory index/topic/rule files.
-- `context/omg-core.md` updated with memory command and runtime memory artifact conventions.
+- `context/oma-core.md` updated with memory command and runtime memory artifact conventions.
 - README and landing docs updated to expose memory workflow in command/skill/interface maps.
 
 ### Structural Fit Note
@@ -898,10 +952,10 @@ Added extension-native visual status controls inspired by statusline/HUD workflo
 ### Added
 
 - New HUD profile commands:
-  - `/omg:hud`
-  - `/omg:hud-on`
-  - `/omg:hud-compact`
-  - `/omg:hud-off`
+  - `/oma:hud`
+  - `/oma:hud-on`
+  - `/oma:hud-compact`
+  - `/oma:hud-off`
 - New HUD control skill:
   - `$hud`
 - New runtime-state artifact for HUD profile persistence:
@@ -909,8 +963,8 @@ Added extension-native visual status controls inspired by statusline/HUD workflo
 
 ### Changed
 
-- `/omg:status` now renders a HUD section with visibility policy (`normal`, `compact`, `hidden`).
-- `context/omg-core.md` updated with HUD control conventions.
+- `/oma:status` now renders a HUD section with visibility policy (`normal`, `compact`, `hidden`).
+- `context/oma-core.md` updated with HUD control conventions.
 - Local dashboard HUD now supports density toggle with `h` (`normal -> compact -> hidden`), top summary line, and `.omg/state/hud.json` sync.
 - Extension/package version bumped to `0.3.2`.
 
@@ -926,16 +980,16 @@ Added extension-native guardrail workflows inspired by cross-harness operational
 ### Added
 
 - New intake/routing command and skill:
-  - `/omg:intent`
+  - `/oma:intent`
   - `$intent`
 - New loop enforcement command and skill:
-  - `/omg:loop`
+  - `/oma:loop`
   - `$loop`
 - New deep repository bootstrap command and skill:
-  - `/omg:deep-init`
+  - `/oma:deep-init`
   - `$deep-init`
 - New conditional rule injection command and skill:
-  - `/omg:rules`
+  - `/oma:rules`
   - `$rules`
 - New runtime-state artifacts for extension-guided persistence:
   - `.omg/state/intent.md`
@@ -946,7 +1000,7 @@ Added extension-native guardrail workflows inspired by cross-harness operational
 
 ### Changed
 
-- `context/omg-core.md` updated with intent-gating, conditional-rule, deep-init, and loop-discipline conventions.
+- `context/oma-core.md` updated with intent-gating, conditional-rule, deep-init, and loop-discipline conventions.
 - README command/skill map expanded with the new guardrail workflows.
 - Extension/package version bumped to `0.3.1`.
 
@@ -977,9 +1031,9 @@ Added key orchestration capabilities inspired by production usage patterns from 
   - `checkpoint`
   - `stop`
 - New specialist agents:
-  - `omg-product`
-  - `omg-verifier`
-  - `omg-consensus`
+  - `oma-product`
+  - `oma-verifier`
+  - `oma-consensus`
 - New workflow skills:
   - `$ralplan`
   - `$prd`
@@ -999,15 +1053,15 @@ Added key orchestration capabilities inspired by production usage patterns from 
 
 ## v0.2.0 - Extensions-First Rebuild (2026-02-24)
 
-Reimplemented OmG around Gemini CLI's official Extensions model.
+Reimplemented OmA around Gemini CLI's official Extensions model.
 
 ### Added
 
 - Root extension manifest: `gemini-extension.json`
 - Extension-first package metadata and files list in `package.json`
 - Sub-agent definitions in `agents/`
-- Shared extension context in `context/omg-core.md`
-- Namespaced extension commands in `commands/omg/`
+- Shared extension context in `context/oma-core.md`
+- Namespaced extension commands in `commands/oma/`
 - Frontmatter-based skills in `skills/`
 
 ### Changed
@@ -1038,8 +1092,8 @@ Reimplemented OmG around Gemini CLI's official Extensions model.
 
 ### Changed
 
-- `omg setup` updated to register all 4 OmG MCP servers in `~/.gemini/settings.json`
-- `omg doctor` updated to validate all required OmG MCP server registrations
+- `omg setup` updated to register all 4 OmA MCP servers in `~/.gemini/settings.json`
+- `omg doctor` updated to validate all required OmA MCP server registrations
 - Prompt argument wiring adjusted for Gemini CLI compatibility (`-p` path)
 - Config loading unified via shared config module flow
 
@@ -1070,8 +1124,8 @@ Reimplemented OmG around Gemini CLI's official Extensions model.
 
 - Model references standardized to explicit Gemini preview model names used at the time (`gemini-3.1-pro-preview` and `gemini-3-flash-preview`)
 - Agent label output updated to display full model names
-- Project brand text normalized from `OMG` to `OmG`
-- Tagline changed to: `Gemini thinks. OmG orchestrates.`
+- Project brand text normalized from `OMG` to `OmA`
+- Tagline changed to: `Gemini thinks. OmA orchestrates.`
 
 ## v0.1.1 - Retro Dashboard Refresh (2026-02-22)
 
@@ -1115,8 +1169,8 @@ Current compatibility guidance is maintained in the 2026-05-13 section at the to
 | --- | --- |
 | Gemini CLI baseline | `v0.42.0+` |
 | Extension workflow | `gemini extensions install/update/list/reload ...` and `/extensions list` |
-| Command namespace | `/omg:*` |
-| Skill namespace | retained `$skills`, including `$omg-plan` for native `/plan` collision avoidance |
+| Command namespace | `/oma:*` |
+| Skill namespace | retained `$skills`, including `$oma-plan` for native `/plan` collision avoidance |
 ## Notes
 
 - Historical details before `v0.1.0` are not tracked.

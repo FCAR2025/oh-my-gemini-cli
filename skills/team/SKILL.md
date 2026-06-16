@@ -1,0 +1,42 @@
+---
+name: team
+description: Run OmG's full team lifecycle with optional dynamic team assembly and verify/fix loops.
+---
+Coordinate the request with OmG agents.
+
+Task:
+$ARGUMENTS
+
+Execution protocol (staged):
+1. If model/tool/API fit affects success, run `capabilities` first and carry its constraints into the plan.
+2. If team composition is unclear or task is non-standard, run `team-assemble` first.
+3. Read `.omg/state/session-lock.json`, then load `.omg/state/workspace.json` and `.omg/state/reasoning.json` when available.
+4. Identify the immediate blocking objective and keep it on the active critical lane.
+5. `team-plan`: Delegate decomposition to `omg-planner` and architecture checks to `omg-architect`, including lane-health and isolation risks.
+6. `team-prd`: Delegate scope lock and acceptance criteria to `omg-product`.
+7. `taskboard`: Sync compact task ledger before first implementation slice (priority-aware with null-safe default `p2`).
+8. Keep lane baseline branch/HEAD anchors explicit across plan -> prd -> exec -> verify handoffs when workspace/taskboard state can carry them.
+9. `team-exec`: Delegate implementation slices to `omg-executor` with explicit lane/subagent context and terse success reporting.
+10. `team-verify`: Delegate validation to `omg-reviewer` and `omg-verifier` (include anti-slop quality check plus lane/handoff evidence).
+11. `team-fix`: If verification fails, delegate root-cause and patches to `omg-debugger` + `omg-executor`.
+12. Repeat steps 9-11 until acceptance criteria pass, all tracked tasks are verified, or blockers are explicit.
+13. Run `ultraqa` before final claims when the task is release-critical, adversarial, proxy/runtime-sensitive, or explicitly asks for proof.
+14. If an assigned implementation/review agent is unavailable ("agent not found"), retry once using a mapped fallback lane and record the reroute reason.
+15. If permissions/tools are denied, do not retry unchanged commands; mark blocker and route to explicit approval or fallback path.
+16. Return one merged lifecycle report.
+
+State handling:
+- Only the orchestration session that owns `.omg/state/session-lock.json` may update shared workflow artifacts.
+- If another session owns the lock, do not overwrite `.omg/state/workflow.md`, `.omg/state/taskboard.md`, or `.omg/state/workspace.json`; write session-local drafts under `.omg/state/sessions/[session-slug]/` and report merge needs.
+- If filesystem tools are available and the current session owns the lock, update `.omg/state/workflow.md` with stage status and open blockers.
+- Keep `.omg/state/taskboard.md` as the compact source of truth for ready, blocked, done, and verified tasks only for the lock-owning orchestration session.
+- Keep task ordering deterministic via dependency-ready + lane-safe + priority (`p0` -> `p3`) + task-id tie-breaker.
+- Keep `.omg/state/workspace.json` as the compact source of truth for lane ownership, cleanliness, trust, and handoff readiness only for the lock-owning orchestration session.
+- Preserve lane baseline anchors in both workspace/taskboard state when known so resume and review can detect branch drift.
+- If dynamic assembly was used, also persist `.omg/state/team-assembly.md`.
+- Keep verification evidence concise (tests, checks, reasoning) and avoid repeating full success traces when nothing unusual happened.
+
+Final report format:
+- Keep it concise and operator-facing.
+- Include `Pipeline Summary`, `Team Assembly`, `Critical Path Status`, `Stage Results`, `Work Completed`, `Validation`, and `Open Items`.
+- Collapse stage details when a stage was skipped, unchanged, or ended on the normal success path; expand only blocker or early-stop branches.

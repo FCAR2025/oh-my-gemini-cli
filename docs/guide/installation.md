@@ -1,10 +1,10 @@
-# oh-my-gemini-cli Extension Installation Guide
+# oh-my-antigravity Extension Installation Guide
 
 This guide follows the official Gemini CLI Extensions workflow.
 
 ## Prerequisites
 
-1. Gemini CLI installed (recommended `v0.42.0+`; FCAR v0.8.5-fcar.2 sets the unified baseline across README, doctor, and install guide)
+1. Gemini CLI installed (recommended `v0.38.0+`)
 2. Gemini authentication completed
 3. Local clone of this repository
 
@@ -17,14 +17,14 @@ gemini --version
 Compatibility note:
 
 - If your existing scripts still use `--allowed-tools`, migrate to `--policy` profiles.
-- OmG does not require preview-channel-only manifest features to run.
-- OmG keeps `general.previewFeatures=true` for preview-backed runtime features, while balanced model routing uses explicit preview model IDs by default.
+- OmA does not require preview-channel-only manifest features to run.
+- OmA keeps `general.previewFeatures=true` for preview-backed runtime features, while balanced model routing uses explicit preview model IDs by default.
 
 ## Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/FCAR2025/oh-my-gemini-cli.git
-cd oh-my-gemini-cli
+git clone https://github.com/Joonghyun-Lee-Frieren/oh-my-antigravity.git
+cd oh-my-antigravity
 ```
 
 ## Step 2: Install as Gemini Extension
@@ -32,7 +32,7 @@ cd oh-my-gemini-cli
 Run from your terminal (non-interactive mode):
 
 ```bash
-gemini extensions install https://github.com/FCAR2025/oh-my-gemini-cli
+gemini extensions install https://github.com/Joonghyun-Lee-Frieren/oh-my-antigravity
 ```
 
 ## Step 3: Verify Extension Loaded
@@ -49,11 +49,11 @@ Or from terminal:
 gemini extensions list
 ```
 
-You should see `oh-my-gemini-cli` in the extension list.
+You should see `oh-my-antigravity` in the extension list.
 
 ## Step 3.5: Preview Features
 
-OmG defaults to explicit preview model IDs for balanced routing and keeps Gemini CLI preview features enabled for runtime features that still depend on the flag:
+OmA defaults to explicit preview model IDs for balanced routing and keeps Gemini CLI preview features enabled for runtime features that still depend on the flag:
 
 ```json
 {
@@ -70,7 +70,7 @@ Set this in `~/.gemini/settings.json` or your workspace `.gemini/settings.json`.
 Run one command and one skill:
 
 ```text
-/omg:status
+/oma:status
 ```
 
 ```text
@@ -80,20 +80,20 @@ $plan "Plan a small refactor in this repository"
 Optional hook-layer smoke test:
 
 ```text
-/omg:hooks
-/omg:hooks-validate
+/oma:hooks
+/oma:hooks-validate
 ```
 
 If agent delegation is needed:
 
 ```text
-/omg:team "Implement a small feature with planning and review"
+/oma:team "Implement a small feature with planning and review"
 ```
 
 If dynamic team composition is needed before execution:
 
 ```text
-/omg:team-assemble "Analyze competitors and draft a decision report"
+/oma:team-assemble "Analyze competitors and draft a decision report"
 ```
 
 ## Note
@@ -111,5 +111,5 @@ No extension-level setting override is required for installation.
 From terminal:
 
 ```bash
-gemini extensions uninstall oh-my-gemini-cli
+gemini extensions uninstall oh-my-antigravity
 ```

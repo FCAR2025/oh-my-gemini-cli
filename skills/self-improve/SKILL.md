@@ -1,0 +1,56 @@
+---
+name: self-improve
+description: Bounded autonomous code improvement loop with tournament selection across N variants.
+---
+Run OmG `self-improve`.
+
+Target:
+$ARGUMENTS
+
+Protocol:
+1. Lock the target. A file, function, module, or test that defines success. Reject vague targets ("make code better"); demand a specific scope and an objective function (test pass-rate, perf metric, file size, lint count, etc.).
+2. Capture the baseline: current state, current value of the objective function, and the operator's tolerance for regressions on adjacent metrics.
+3. Generate up to `N` variant proposals (default `N=3`, max 5). Each variant must:
+   - be a small, self-contained diff
+   - state which mechanism it improves (refactor, simplification, algorithm swap, test addition)
+   - include the predicted objective-function delta + the predicted regression risk
+4. Tournament:
+   - run the objective function against each variant in isolation (separate worktree or in-memory dry-run)
+   - rank by objective-function delta, breaking ties by smallest diff
+   - reject any variant that regresses an adjacent guarded metric (test failures, lint breaks, type errors)
+5. Pick the winner. If no variant strictly improves the objective, exit `unknown` and report what was tried.
+6. Apply the winner under `.omg/state/session-lock.json` discipline. Stage; do not auto-commit unless the operator explicitly requested commit-on-win.
+7. Persist the tournament under `.omg/state/self-improve/<slug>/`:
+   - `baseline.md`
+   - `variant-<n>.md` per variant
+   - `tournament.md` with rankings + winner rationale
+
+Anti-slop guards:
+- Never run more than `N` variants per cycle; cost grows linearly and the diff space stays small.
+- Never auto-merge across runs without a human-approved commit message.
+- Never count a variant as a win if it adds dependencies, lowers test coverage, or expands surface area beyond the target.
+- Stop the loop after one cycle by default; multi-cycle self-improvement requires explicit operator opt-in (`--cycles=N`).
+
+Boundaries:
+- Self-improve never edits files outside the locked target.
+- Verification must happen on every variant before tournament; do not skip with "obviously safe".
+
+Response:
+## Target
+- scope:
+- objective function:
+- baseline value:
+
+## Variants
+| # | Mechanism | Predicted Δ | Diff Size | Result | Regressions |
+| --- | --- | --- | --- | --- | --- |
+
+## Tournament Verdict
+- winner: variant-X | none (unknown)
+- rationale:
+
+## Applied Diff
+- ...
+
+## Recommended Next Command
+- ...

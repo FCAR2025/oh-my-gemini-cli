@@ -1,0 +1,79 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "name": "omg-session-start",
+            "command": "node \"/home/info/.gemini/config/plugins/oh-my-antigravity/hooks/scripts/hook-bootstrap.js\" \"/home/info/.gemini/config/plugins/oh-my-antigravity/hooks/scripts/session-start.js\"",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "BeforeAgent": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "name": "omg-keyword-detector",
+            "command": "node \"/home/info/.gemini/config/plugins/oh-my-antigravity/hooks/scripts/hook-bootstrap.js\" \"/home/info/.gemini/config/plugins/oh-my-antigravity/hooks/scripts/before-agent-keywords.js\"",
+            "timeout": 4000
+          }
+        ]
+      }
+    ],
+    "BeforeModel": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "name": "omg-model-router",
+            "command": "node \"/home/info/.gemini/config/plugins/oh-my-antigravity/hooks/scripts/hook-bootstrap.js\" \"/home/info/.gemini/config/plugins/oh-my-antigravity/hooks/scripts/before-model-banner.js\"",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "BeforeTool": [
+      {
+        "matcher": "run_shell_command|write_file|replace",
+        "hooks": [
+          {
+            "type": "command",
+            "name": "omg-delegation-enforcer",
+            "command": "node \"/home/info/.gemini/config/plugins/oh-my-antigravity/hooks/scripts/hook-bootstrap.js\" \"/home/info/.gemini/config/plugins/oh-my-antigravity/hooks/scripts/before-tool-enforcer.js\"",
+            "timeout": 3000
+          }
+        ]
+      }
+    ],
+    "AfterTool": [
+      {
+        "matcher": "write_file|replace|run_shell_command",
+        "hooks": [
+          {
+            "type": "command",
+            "name": "omg-evidence-capture",
+            "command": "node \"/home/info/.gemini/config/plugins/oh-my-antigravity/hooks/scripts/hook-bootstrap.js\" \"/home/info/.gemini/config/plugins/oh-my-antigravity/hooks/scripts/after-tool-evidence.js\"",
+            "timeout": 3000
+          }
+        ]
+      }
+    ],
+    "AfterAgent": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "name": "omg-learn-signal-after-agent",
+            "command": "node \"/home/info/.gemini/config/plugins/oh-my-antigravity/hooks/scripts/hook-bootstrap.js\" \"/home/info/.gemini/config/plugins/oh-my-antigravity/hooks/scripts/learn.js\"",
+            "timeout": 8000
+          }
+        ]
+      }
+    ]
+  }
+}
