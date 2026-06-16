@@ -1,6 +1,6 @@
 ---
-name: hud-on
-description: Quick toggle: set OmG HUD visibility profile to normal.
+name = "hud-on"
+description = "Quick toggle: set OmG HUD visibility profile to normal."
 ---
 Set OmG HUD visibility profile to `normal`.
 

@@ -1,6 +1,6 @@
 ---
-name: status
-description: Summarize repository progress with HUD-style visual status, pipeline stage, risks, and next actions.
+name = "status"
+description = "Summarize repository progress with HUD-style visual status, pipeline stage, risks, and next actions."
 ---
 Create an OmG status report for the current project with a visual HUD snapshot.
 

@@ -1,6 +1,6 @@
 ---
-name: hooks-validate
-description: Validate OmG hook trigger graph, ordering, and safety constraints.
+name = "hooks-validate"
+description = "Validate OmG hook trigger graph, ordering, and safety constraints."
 ---
 Run OmG hook validation.
 

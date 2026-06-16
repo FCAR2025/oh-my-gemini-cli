@@ -1,6 +1,6 @@
 ---
-name: team-assemble
-description: Stage 0/5: Dynamically assemble a task-fit agent team with approval gating and model-aware role assignment.
+name = "team-assemble"
+description = "Stage 0/5: Dynamically assemble a task-fit agent team with approval gating and model-aware role assignment."
 ---
 Run OmG `team-assemble`.
 

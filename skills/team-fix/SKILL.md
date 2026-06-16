@@ -1,6 +1,6 @@
 ---
-name: team-fix
-description: Stage 5/5: Fix only verified issues, then prepare the next verification pass.
+name = "team-fix"
+description = "Stage 5/5: Fix only verified issues, then prepare the next verification pass."
 ---
 Run OmG `team-fix`.
 

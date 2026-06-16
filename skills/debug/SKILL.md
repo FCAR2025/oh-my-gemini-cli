@@ -1,6 +1,6 @@
 ---
-name: debug
-description: Structured debugging lane — root-cause + minimal repro + smallest fix, never wallpaper-over.
+name = "debug"
+description = "Structured debugging lane — root-cause + minimal repro + smallest fix, never wallpaper-over."
 ---
 Run OmG `debug`.
 

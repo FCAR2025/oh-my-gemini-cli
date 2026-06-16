@@ -1,6 +1,6 @@
 ---
-name: taskboard
-description: Inspect or update a compact task board with stable task IDs, priorities, owners, and verifier-backed completion.
+name = "taskboard"
+description = "Inspect or update a compact task board with stable task IDs, priorities, owners, and verifier-backed completion."
 ---
 Run OmG `taskboard`.
 

@@ -1,6 +1,6 @@
 ---
-name: hooks-test
-description: Dry-run OmG hook pipeline against simulated event sequences and report efficiency.
+name = "hooks-test"
+description = "Dry-run OmG hook pipeline against simulated event sequences and report efficiency."
 ---
 Run OmG hook dry-run test.
 

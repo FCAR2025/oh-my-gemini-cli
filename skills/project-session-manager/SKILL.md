@@ -1,6 +1,6 @@
 ---
-name: project-session-manager
-description: Worktree-first dev environment manager for issues, PRs, and features (with optional tmux session).
+name = "project-session-manager"
+description = "Worktree-first dev environment manager for issues, PRs, and features (with optional tmux session)."
 ---
 Run OmG `project-session-manager` (also `/omg:psm`).
 

@@ -1,6 +1,6 @@
 ---
-name: team-exec
-description: Stage 3/5: Implement approved plan slices with controlled scope and validation notes.
+name = "team-exec"
+description = "Stage 3/5: Implement approved plan slices with controlled scope and validation notes."
 ---
 Run OmG `team-exec`.
 

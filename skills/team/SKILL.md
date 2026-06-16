@@ -1,6 +1,6 @@
 ---
-name: team
-description: Run OmG's full team lifecycle with optional dynamic team assembly and verify/fix loops.
+name = "team"
+description = "Run OmG's full team lifecycle with optional dynamic team assembly and verify/fix loops."
 ---
 Coordinate the request with OmG agents.
 

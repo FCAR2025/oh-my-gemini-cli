@@ -1,6 +1,6 @@
 ---
-name: rules
-description: Apply conditional OmG rule packs based on task and context triggers.
+name = "rules"
+description = "Apply conditional OmG rule packs based on task and context triggers."
 ---
 Run OmG `rules` injector.
 

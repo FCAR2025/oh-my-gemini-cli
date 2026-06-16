@@ -1,6 +1,6 @@
 ---
-name: self-improve
-description: Bounded autonomous code improvement loop with tournament selection across N variants.
+name = "self-improve"
+description = "Bounded autonomous code improvement loop with tournament selection across N variants."
 ---
 Run OmG `self-improve`.
 

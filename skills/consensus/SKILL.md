@@ -1,6 +1,6 @@
 ---
-name: consensus
-description: Generate and converge on the best option through structured multi-agent comparison.
+name = "consensus"
+description = "Generate and converge on the best option through structured multi-agent comparison."
 ---
 Run OmG `consensus` mode.
 

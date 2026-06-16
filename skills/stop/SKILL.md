@@ -1,6 +1,6 @@
 ---
-name: stop
-description: Gracefully stop active autonomous workflow and produce resume-ready handoff.
+name = "stop"
+description = "Gracefully stop active autonomous workflow and produce resume-ready handoff."
 ---
 Stop active OmG autonomous workflow.
 

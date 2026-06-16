@@ -1,6 +1,6 @@
 ---
-name: sciomg
-description: Orchestrate parallel scientist lanes for comprehensive analysis with AUTO mode default.
+name = "sciomg"
+description = "Orchestrate parallel scientist lanes for comprehensive analysis with AUTO mode default."
 ---
 Run OmG `sciomg` (parallel scientist analysis).
 

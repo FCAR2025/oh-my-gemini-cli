@@ -1,6 +1,6 @@
 ---
-name: cache
-description: Audit prompt-cache stability and recommend fixes.
+name = "cache"
+description = "Audit prompt-cache stability and recommend fixes."
 ---
 Run a cache-focused OmG audit.
 

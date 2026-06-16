@@ -1,6 +1,6 @@
 ---
-name: ultraqa
-description: Run adversarial QA cycles until evidence proves the claim, a blocker is real, or the loop exhausts.
+name = "ultraqa"
+description = "Run adversarial QA cycles until evidence proves the claim, a blocker is real, or the loop exhausts."
 ---
 Run OmG UltraQA.
 

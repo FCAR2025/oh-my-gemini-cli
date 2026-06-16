@@ -1,6 +1,6 @@
 ---
-name: launch
-description: Initialize a persistent OmG workflow lifecycle and start staged execution.
+name = "launch"
+description = "Initialize a persistent OmG workflow lifecycle and start staged execution."
 ---
 Launch OmG workflow lifecycle.
 

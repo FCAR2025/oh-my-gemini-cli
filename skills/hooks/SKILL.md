@@ -1,6 +1,6 @@
 ---
-name: hooks
-description: Inspect or configure OmG hook pipeline profiles, triggers, and safety policy.
+name = "hooks"
+description = "Inspect or configure OmG hook pipeline profiles, triggers, and safety policy."
 ---
 Run OmG hook pipeline manager.
 

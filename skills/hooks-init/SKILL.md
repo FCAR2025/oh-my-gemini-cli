@@ -1,6 +1,6 @@
 ---
-name: hooks-init
-description: Bootstrap OmG hook scaffolding and default event policy files.
+name = "hooks-init"
+description = "Bootstrap OmG hook scaffolding and default event policy files."
 ---
 Initialize OmG hooks.
 

@@ -1,6 +1,6 @@
 ---
-name: workspace
-description: Inspect or set the active workspace/worktree map for OmG execution lanes.
+name = "workspace"
+description = "Inspect or set the active workspace/worktree map for OmG execution lanes."
 ---
 Run OmG `workspace` manager.
 

@@ -609,6 +609,27 @@ async function main() {
     return;
   }
 
+  const stats = fs.statSync(transcriptPath);
+  const MAX_SIZE = 50 * 1024 * 1024; // 50MB limit to prevent V8 string allocation overflow
+  if (stats.size > MAX_SIZE) {
+    const eventKey = buildEventKey(sessionId, transcriptPath, `too-large:${stats.size}:${stats.mtimeMs}`);
+    const duplicateEvent =
+      prevState.last_session_id === sessionId && prevState.last_event_key === eventKey;
+    if (duplicateEvent) {
+      emitHookOutput("");
+      return;
+    }
+    writeState(statePath, {
+      ...prevState,
+      last_session_id: sessionId,
+      last_event_key: eventKey,
+      last_reason: "transcript-too-large",
+      updated_at: new Date().toISOString(),
+    });
+    emitHookOutput("");
+    return;
+  }
+
   const transcriptRaw = fs.readFileSync(transcriptPath, "utf8");
   const eventKey = buildEventKey(sessionId, transcriptPath, transcriptRaw);
   const duplicateEvent =

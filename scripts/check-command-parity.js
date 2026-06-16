@@ -32,7 +32,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const REPO_ROOT = join(__dirname, "..");
 const MATRIX_PATH = join(__dirname, "data", "command-parity.json");
-const COMMANDS_DIR = join(REPO_ROOT, "commands", "omg");
+const COMMANDS_DIR = join(REPO_ROOT, "commands", "oma");
 const AGENTS_DIR = join(REPO_ROOT, "agents");
 
 function loadMatrix() {

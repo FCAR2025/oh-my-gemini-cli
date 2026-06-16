@@ -1,6 +1,6 @@
 ---
-name: loop
-description: Enforce execution/verify/fix loops until acceptance criteria pass or blockers are explicit.
+name = "loop"
+description = "Enforce execution/verify/fix loops until acceptance criteria pass or blockers are explicit."
 ---
 Run OmG `loop` enforcement.
 

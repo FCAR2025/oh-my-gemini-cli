@@ -1,6 +1,6 @@
 ---
-name: cancel
-description: Alias to stop autonomous workflow safely and produce a resume-ready handoff.
+name = "cancel"
+description = "Alias to stop autonomous workflow safely and produce a resume-ready handoff."
 ---
 Run OmG cancel flow.
 

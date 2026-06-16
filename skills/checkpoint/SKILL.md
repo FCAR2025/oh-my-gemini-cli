@@ -1,6 +1,6 @@
 ---
-name: checkpoint
-description: Create a compact checkpoint snapshot for long-running OmG sessions.
+name = "checkpoint"
+description = "Create a compact checkpoint snapshot for long-running OmG sessions."
 ---
 Create an OmG checkpoint snapshot.
 

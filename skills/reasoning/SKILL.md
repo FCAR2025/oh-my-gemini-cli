@@ -1,6 +1,6 @@
 ---
-name: reasoning
-description: Inspect or set OmG reasoning effort profile (global + per-teammate overrides) for depth/cost control.
+name = "reasoning"
+description = "Inspect or set OmG reasoning effort profile (global + per-teammate overrides) for depth/cost control."
 ---
 Run OmG reasoning-effort manager.
 

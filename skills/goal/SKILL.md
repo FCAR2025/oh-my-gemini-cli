@@ -1,6 +1,6 @@
 ---
-name: goal
-description: Run a goal-driven autonomous delivery loop until acceptance passes or a blocker is explicit.
+name = "goal"
+description = "Run a goal-driven autonomous delivery loop until acceptance passes or a blocker is explicit."
 ---
 Run OmG `goal` mode.
 

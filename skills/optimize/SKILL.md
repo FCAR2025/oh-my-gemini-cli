@@ -1,6 +1,6 @@
 ---
-name: optimize
-description: Perform context and prompt-cache optimization review for the current task.
+name = "optimize"
+description = "Perform context and prompt-cache optimization review for the current task."
 ---
 Run the OmG context optimization workflow.
 

@@ -1,6 +1,6 @@
 ---
-name: notify
-description: Inspect or configure OmG notification routing for approval gates, verification outcomes, blockers, and long-running sessions.
+name = "notify"
+description = "Inspect or configure OmG notification routing for approval gates, verification outcomes, blockers, and long-running sessions."
 ---
 Run OmG notification manager.
 

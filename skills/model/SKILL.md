@@ -1,6 +1,6 @@
 ---
-name: model
-description: Inspect or set OmG model-selection strategy (balanced, auto, custom) for Gemini-native task routing.
+name = "model"
+description = "Inspect or set OmG model-selection strategy (balanced, auto, custom) for Gemini-native task routing."
 ---
 Run OmG model-strategy manager.
 

@@ -1,6 +1,6 @@
 ---
-name: ask
-description: Single-advisor invocation primitive — ask one external/peer agent and capture an artifact.
+name = "ask"
+description = "Single-advisor invocation primitive — ask one external/peer agent and capture an artifact."
 ---
 Run OmG `ask`.
 

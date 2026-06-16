@@ -1,6 +1,6 @@
 ---
-name: interview
-description: Run a Socratic Interview loop to clarify requirements, or manage interview sessions.
+name = "interview"
+description = "Run a Socratic Interview loop to clarify requirements, or manage interview sessions."
 ---
 Run OmG `interview` command.
 

@@ -1,6 +1,6 @@
 ---
-name: team-prd
-description: Stage 2/5: Lock scope with PRD-quality acceptance criteria and delivery constraints.
+name = "team-prd"
+description = "Stage 2/5: Lock scope with PRD-quality acceptance criteria and delivery constraints."
 ---
 Run OmG `team-prd`.
 

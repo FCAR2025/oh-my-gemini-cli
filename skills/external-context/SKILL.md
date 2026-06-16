@@ -1,6 +1,6 @@
 ---
-name: external-context
-description: Parallel external lookup lane — fetch authoritative docs/specs/RFCs to ground a claim or decision.
+name = "external-context"
+description = "Parallel external lookup lane — fetch authoritative docs/specs/RFCs to ground a claim or decision."
 ---
 Run OmG `external-context`.
 

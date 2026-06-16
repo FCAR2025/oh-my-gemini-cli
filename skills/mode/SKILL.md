@@ -1,6 +1,6 @@
 ---
-name: mode
-description: Inspect or set OmG operating mode/profile (balanced, speed, deep, autopilot, ralph, ultrawork).
+name = "mode"
+description = "Inspect or set OmG operating mode/profile (balanced, speed, deep, autopilot, ralph, ultrawork)."
 ---
 Run OmG mode manager.
 

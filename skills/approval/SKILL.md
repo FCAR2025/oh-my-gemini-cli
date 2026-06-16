@@ -1,6 +1,6 @@
 ---
-name: approval
-description: Inspect or set OmG approval posture (suggest, auto, full-auto) for autonomous workflow control.
+name = "approval"
+description = "Inspect or set OmG approval posture (suggest, auto, full-auto) for autonomous workflow control."
 ---
 Run OmG approval-posture manager.
 

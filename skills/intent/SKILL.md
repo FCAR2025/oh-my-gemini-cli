@@ -1,6 +1,6 @@
 ---
-name: intent
-description: Run a task intent gate to classify the request and route to the right OmG stage/command.
+name = "intent"
+description = "Run a task intent gate to classify the request and route to the right OmG stage/command."
 ---
 Run OmG `intent` gate.
 

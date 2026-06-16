@@ -1,6 +1,6 @@
 ---
-name: team-verify
-description: Stage 4/5: Verify implementation against acceptance criteria and regression risks.
+name = "team-verify"
+description = "Stage 4/5: Verify implementation against acceptance criteria and regression risks."
 ---
 Run OmG `team-verify`.
 

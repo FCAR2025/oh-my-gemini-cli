@@ -1,6 +1,6 @@
 ---
-name: capabilities
-description: Map a task to Gemini-native capabilities, model choices, and runtime/proxy constraints.
+name = "capabilities"
+description = "Map a task to Gemini-native capabilities, model choices, and runtime/proxy constraints."
 ---
 Run OmG Gemini capability planner.
 

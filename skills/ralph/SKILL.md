@@ -1,6 +1,6 @@
 ---
-name: ralph
-description: Run strict quality-gated orchestration (Ralph mode) with mandatory verification gates.
+name = "ralph"
+description = "Run strict quality-gated orchestration (Ralph mode) with mandatory verification gates."
 ---
 Run OmG `ralph` mode.
 

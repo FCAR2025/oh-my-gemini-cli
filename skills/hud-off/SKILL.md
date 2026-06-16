@@ -1,6 +1,6 @@
 ---
-name: hud-off
-description: Quick toggle: set OmG HUD visibility profile to hidden.
+name = "hud-off"
+description = "Quick toggle: set OmG HUD visibility profile to hidden."
 ---
 Set OmG HUD visibility profile to `hidden`.
 

@@ -1,6 +1,6 @@
 ---
-name: hud
-description: Inspect or switch OmG HUD visibility profile (normal, compact, hidden) for visual status rendering.
+name = "hud"
+description = "Inspect or switch OmG HUD visibility profile (normal, compact, hidden) for visual status rendering."
 ---
 Run OmG HUD profile manager.
 

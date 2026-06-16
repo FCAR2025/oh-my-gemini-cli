@@ -1,6 +1,6 @@
 ---
-name: memory
-description: Manage project memory with MEMORY.md index + modular rule packs.
+name = "memory"
+description = "Manage project memory with MEMORY.md index + modular rule packs."
 ---
 Run OmG memory management workflow.
 

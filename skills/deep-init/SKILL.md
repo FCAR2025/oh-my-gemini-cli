@@ -1,6 +1,6 @@
 ---
-name: deep-init
-description: Run deep repository initialization to create durable project-map context for long sessions.
+name = "deep-init"
+description = "Run deep repository initialization to create durable project-map context for long sessions."
 ---
 Run OmG `deep-init`.
 

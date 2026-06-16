@@ -1,6 +1,6 @@
 ---
-name: recall
-description: Recall prior decisions and evidence with state-first search and bounded history fallback.
+name = "recall"
+description = "Recall prior decisions and evidence with state-first search and bounded history fallback."
 ---
 Run an OmG recall search to recover prior decisions without replaying full chat history.
 

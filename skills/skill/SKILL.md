@@ -1,6 +1,6 @@
 ---
-name: skill
-description: Manage local OmG skills — list, add, remove, search, edit.
+name = "skill"
+description = "Manage local OmG skills — list, add, remove, search, edit."
 ---
 Run OmG `skill` manager.
 

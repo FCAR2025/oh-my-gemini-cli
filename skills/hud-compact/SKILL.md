@@ -1,6 +1,6 @@
 ---
-name: hud-compact
-description: Quick toggle: set OmG HUD visibility profile to compact.
+name = "hud-compact"
+description = "Quick toggle: set OmG HUD visibility profile to compact."
 ---
 Set OmG HUD visibility profile to `compact`.
 

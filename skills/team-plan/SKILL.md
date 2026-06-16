@@ -1,6 +1,6 @@
 ---
-name: team-plan
-description: Stage 1/5: Build a staged engineering plan with dependencies and verification checkpoints.
+name = "team-plan"
+description = "Stage 1/5: Build a staged engineering plan with dependencies and verification checkpoints."
 ---
 Run OmG `team-plan`.
 

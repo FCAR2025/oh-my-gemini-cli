@@ -1,6 +1,6 @@
 ---
-name: doctor
-description: Run OmG diagnostics for extension readiness, workflow state integrity, Gemini capability fit, and multi-agent safety.
+name = "doctor"
+description = "Run OmG diagnostics for extension readiness, workflow state integrity, Gemini capability fit, and multi-agent safety."
 ---
 Run OmG doctor diagnostics.
 

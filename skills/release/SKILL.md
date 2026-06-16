@@ -1,6 +1,6 @@
 ---
-name: release
-description: Release lifecycle assistant — analyze release rules once, cache, then guide a release with proof at each gate.
+name = "release"
+description = "Release lifecycle assistant — analyze release rules once, cache, then guide a release with proof at each gate."
 ---
 Run OmG `release`.
 

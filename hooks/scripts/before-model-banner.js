@@ -251,15 +251,18 @@ function collectText(value, parts = []) {
 }
 
 function detectLane(hookInput) {
-  const request = hookInput?.llm_request || {};
+  // Lane detection scans ONLY the operator-intent signals (the slash-command /
+  // agent invocation and explicit prompt), NOT request.systemInstruction or the
+  // full message history. The omg system prompt enumerates the lane keywords
+  // ("quick_edit", "low-risk edit", "verification", "research", ...), so scanning
+  // it made every request self-match the FIRST lane pattern (quick_edit) and
+  // silently downgrade to gemini-3.5-flash-low. Regression introduced when the
+  // hook began scanning systemInstruction. Keep this scan prompt/agent-scoped.
   const text = collectText([
     hookInput?.prompt,
     hookInput?.agent,
     hookInput?.agent_name,
     hookInput?.metadata,
-    request.messages,
-    request.systemInstruction,
-    request.system_instruction,
   ]).join("\n");
 
   for (const { lane, patterns } of LANE_PATTERNS) {

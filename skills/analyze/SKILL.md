@@ -1,6 +1,6 @@
 ---
-name: analyze
-description: Read-only code analysis lane — answer 'what does this do, where is risk, what would break' without editing.
+name = "analyze"
+description = "Read-only code analysis lane — answer 'what does this do, where is risk, what would break' without editing."
 ---
 Run OmG `analyze`.
 
