@@ -2,6 +2,20 @@
 
 All notable changes to oh-my-antigravity are documented here.
 
+## v0.9.2-fcar.0 - Orbit Router Diagnostics + Upstream Sync (2026-10-14)
+
+### Added
+
+- Integrated upstream `v0.9.2` opt-in model-router tracing with `OMG_MODEL_ROUTING_TRACE=1`.
+- Added `.omg/state/model-router-last.json` as a lightweight last-decision diagnostic artifact containing the selected lane, model, strategy, match reason, and timestamp.
+
+### Changed
+
+- Kept `BeforeModel` routing silent by default while making lane-selection troubleshooting available on demand.
+- Matched both `oma-*` and `omg-*` lane patterns in `hooks/scripts/before-model-banner.js` while preserving FCAR accessible-default models and entitlement fallbacks.
+- Updated `/oma:doctor`, `/oma:status`, `/oma:model`, and `/oma:hooks-validate` guidance to surface router trace freshness, stdout-schema safety, and missing custom lane mappings.
+- Bumped package and extension metadata to `0.9.2-fcar.0`.
+
 ## v0.9.1-fcar.0 - Upstream Sync + Parity sprint (2026-06-16)
 
 ### Added
@@ -130,8 +144,10 @@ All notable changes to oh-my-antigravity are documented here.
 
 | Version | Date | Theme | Outcome |
 | --- | --- | --- | --- |
+| `v0.9.2-fcar.0` | 2026-10-14 | Orbit router diagnostics + FCAR sync | Merged upstream `v0.9.2` router trace (`OMG_MODEL_ROUTING_TRACE=1`) while supporting both `oma-*` and `omg-*` lane patterns and FCAR entitlement fallbacks |
+| `v0.9.2` | 2026-06-23 | Orbit router diagnostics | Added opt-in last-decision model-router tracing, kept hook output quiet, and taught doctor/status/model guidance to inspect trace freshness and lane mappings |
 | `v0.9.1-fcar.0` | 2026-06-16 | Upstream sync + Ultragoal + Parity preservation | Merged upstream `v0.9.1` (durable multi-goal workflows) and `v0.9.0` (rename to oh-my-antigravity) into FCAR fork while keeping capability routing, UltraQA, and custom diagnostics |
-| `v0.9.1` | 2026-05-21 | Durable multi-goal workflows | Added `/oma:ultragoal` and `$ultragoal` to decompose complex tasks into sequential micro-goals |
+| `v0.9.1` | 2026-05-21 | Durable multi-goal workflows | Added `/oma:ultragoal`, `$ultragoal`, and repo-native checkpoint files under `.omg/ultragoal/` for sequential fail-closed goal execution |
 | `v0.9.0` | 2026-05-20 | Project rename | Renamed the project and extension package to `oh-my-antigravity`, changed shorthand to `OmA`, moved commands to `/oma:*`, updated public docs and install links, and bumped metadata to `v0.9.0` |
 | `v0.9.0-fcar.0` | 2026-05-18 | OMC-parity sprint | Added 16 new skills, full hook coverage (SessionStart, BeforeAgent, BeforeTool, AfterTool), TOML skill frontmatter, and superpowers extension alignment |
 | `v0.8.6` | 2026-05-18 | Blueprint workflow | Added `/oma:blueprint` and `$blueprint` for product/UI workflow decisions, interface states, content hierarchy, accessibility, responsive constraints, and verification hooks before implementation |

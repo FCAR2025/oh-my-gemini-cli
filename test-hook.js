@@ -5,8 +5,8 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 
-const HOOK_PATH = path.resolve("./hooks/scripts/before-model-banner.js");
-const TEMP_DIR = path.resolve("./temp-test-sandbox");
+const HOOK_PATH = path.resolve(import.meta.dirname, "./hooks/scripts/before-model-banner.js");
+const TEMP_DIR = path.resolve(import.meta.dirname, "./temp-test-sandbox");
 
 // Helper to run the hook script
 function runHook(stdin, env = {}) {
@@ -166,3 +166,33 @@ test("Task 3: Filter inaccessible models and fallback gracefully", () => {
   );
   assert.strictEqual(resFallbackObj.stdout.hookSpecificOutput?.llm_request?.model, "gemini-3-flash-agent");
 });
+
+test("Task 4: Orbit router trace (v0.9.2) writes model-router-last.json when OMG_MODEL_ROUTING_TRACE=1", () => {
+  const traceStateDir = path.join(TEMP_DIR, "trace-state");
+  fs.mkdirSync(traceStateDir, { recursive: true });
+  const traceFile = path.join(traceStateDir, "model-router-last.json");
+
+  // 1. Without OMG_MODEL_ROUTING_TRACE, trace file should not be written
+  runHook(
+    { prompt: "oma-architect design review", cwd: TEMP_DIR },
+    { OMG_STATE_ROOT: traceStateDir }
+  );
+  assert.strictEqual(fs.existsSync(traceFile), false);
+
+  // 2. With OMG_MODEL_ROUTING_TRACE=1, trace file is written with expected schema
+  const resTrace = runHook(
+    { prompt: "oma-executor implement feature", cwd: TEMP_DIR },
+    { OMG_STATE_ROOT: traceStateDir, OMG_MODEL_ROUTING_TRACE: "1" }
+  );
+  assert.strictEqual(resTrace.stdout.hookSpecificOutput?.llm_request?.model, "gemini-3-flash-agent");
+  assert.strictEqual(fs.existsSync(traceFile), true);
+
+  const traceData = JSON.parse(fs.readFileSync(traceFile, "utf8"));
+  assert.strictEqual(traceData.strategy, "balanced");
+  assert.strictEqual(traceData.lane, "execution");
+  assert.strictEqual(traceData.model, "gemini-3-flash-agent");
+  assert.strictEqual(traceData.source, "oma-model-router");
+  assert.match(traceData.reason, /^execution:/);
+  assert.ok(traceData.updated_at);
+});
+

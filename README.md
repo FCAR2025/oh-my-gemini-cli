@@ -99,6 +99,14 @@ HOME=/path/to/gemini-cli-home gemini extensions list
 
 Use `gemini extensions validate /path/to/oh-my-antigravity` before linking local edits.
 
+## What's New in v0.9.2-fcar.0
+
+- **Orbit Router Diagnostics**: The quiet `BeforeModel` router can now write an opt-in last-decision trace to `.omg/state/model-router-last.json`.
+- **Trace Without Noise**: Set `OMG_MODEL_ROUTING_TRACE=1` to capture selected lane, model, strategy, and match reason without restoring the old per-request banner.
+- **Doctor/Status Visibility**: `/oma:doctor`, `/oma:status`, `/oma:model`, and hook validation guidance now account for router trace freshness and missing custom lane mappings.
+- **Dual Prefix Lane Matching**: `hooks/scripts/before-model-banner.js` matches both `oma-*` and `omg-*` agent/command prefixes while preserving FCAR accessible-default models and entitlement fallbacks.
+- **Version Bump**: Bumped project and extension version to `v0.9.2-fcar.0`.
+
 ## What's New in v0.9.1-fcar.0
 
 - **Durable Multi-Goal Workflows (Ultragoal)**: Adds `/oma:ultragoal` and `$ultragoal` to decompose complex tasks into sequential repo-native micro-goals.
@@ -131,13 +139,6 @@ Use `gemini extensions validate /path/to/oh-my-antigravity` before linking local
 - Added `/oma:ultraqa` for adversarial verify -> diagnose -> fix loops with explicit evidence, edge-case checks, and single-writer state discipline.
 - Tightened core anti-slop rules from the OmA/OMX pattern: small reversible diffs, evidence before claims, session-lock respect, and 1000-line soft / 1500-line hard file caps.
 - Updated doctor/model guidance for Gemini CLI `v0.39.0+`, active-HOME extension installs, Gemini 3.1 model routing, and proxy-limited API surfaces.
-
-## What's New in v0.9.1
-
-- **Durable Multi-Goal Workflows (Ultragoal)**: Adds `/oma:ultragoal` and `$ultragoal` to decompose complex tasks into sequential repo-native micro-goals.
-- **Fail-Closed Checkpointing**: Keeps checkpoint state fail-closed under `.omg/ultragoal/`, blocking downstream goals until the active goal has validation evidence.
-- **Diagnostics Hardening**: Updated `/oma:doctor` to validate `$ultragoal` skill metadata.
-- **Version Bump**: Bumped project and extension version to `v0.9.1`.
 
 ## Extension Boundary and Upgrade Safety
 
@@ -279,6 +280,7 @@ OmA ships a quiet model-routing hook. The previous `AfterAgent` quota-watch usag
 - Behavior: silently maps outgoing model requests to the active OmA strategy (`balanced`, `auto`, or `custom`) without printing a model banner
 - Default balanced routing: planning/review -> `gemini-3.1-pro-preview`, execution -> `gemini-3-flash-preview`, quick edits -> `gemini-3.1-flash-lite-preview`
 - Optional disable: `OMG_DISABLED_HOOKS=model-routing` or `OMG_MODEL_ROUTING=off`
+- Optional trace: `OMG_MODEL_ROUTING_TRACE=1` writes the latest lane/model decision to `.omg/state/model-router-last.json`
 
 Usage/quota visibility:
 

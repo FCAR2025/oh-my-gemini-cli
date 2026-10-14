@@ -13,6 +13,7 @@ import os from "node:os";
 const STATE_ROOT_ENV = "OMG_STATE_ROOT";
 const DISABLED_HOOKS_ENV = "OMG_DISABLED_HOOKS";
 const MODEL_ROUTING_ENV = "OMG_MODEL_ROUTING";
+const MODEL_ROUTING_TRACE_ENV = "OMG_MODEL_ROUTING_TRACE";
 const MODEL_HOOK_KEYS = new Set([
   "model",
   "model-routing",
@@ -33,8 +34,9 @@ const DEFAULT_LANE_MODELS = {
 const LANE_PATTERNS = [
   {
     lane: "quick_edit",
+    label: "quick-edit",
     patterns: [
-      /\boma-quick\b/i,
+      /\bom[ag]-quick\b/i,
       /\bquick[_ -]?edit\b/i,
       /\bflash-lite\b/i,
       /\blow-risk (edit|change|fix)\b/i,
@@ -42,9 +44,10 @@ const LANE_PATTERNS = [
   },
   {
     lane: "execution",
+    label: "execution",
     patterns: [
-      /\boma-executor\b/i,
-      /\/oma:team-exec\b/i,
+      /\bom[ag]-executor\b/i,
+      /\/om[ag]:team-exec\b/i,
       /\$execute\b/i,
       /\bteam-exec\b/i,
       /\bstage 3\/5\b/i,
@@ -54,12 +57,13 @@ const LANE_PATTERNS = [
   },
   {
     lane: "review_verify",
+    label: "review-verify",
     patterns: [
-      /\boma-reviewer\b/i,
-      /\boma-verifier\b/i,
-      /\boma-debugger\b/i,
-      /\/oma:team-verify\b/i,
-      /\/oma:team-fix\b/i,
+      /\bom[ag]-reviewer\b/i,
+      /\bom[ag]-verifier\b/i,
+      /\bom[ag]-debugger\b/i,
+      /\/om[ag]:team-verify\b/i,
+      /\/om[ag]:team-fix\b/i,
       /\bteam-verify\b/i,
       /\bteam-fix\b/i,
       /\breview[_ -]?verify\b/i,
@@ -69,18 +73,19 @@ const LANE_PATTERNS = [
   },
   {
     lane: "planning",
+    label: "planning",
     patterns: [
-      /\boma-director\b/i,
-      /\boma-architect\b/i,
-      /\boma-planner\b/i,
-      /\boma-product\b/i,
-      /\boma-consultant\b/i,
-      /\boma-researcher\b/i,
-      /\/oma:team-plan\b/i,
-      /\/oma:team-prd\b/i,
-      /\/oma:team-assemble\b/i,
+      /\bom[ag]-director\b/i,
+      /\bom[ag]-architect\b/i,
+      /\bom[ag]-planner\b/i,
+      /\bom[ag]-product\b/i,
+      /\bom[ag]-consultant\b/i,
+      /\bom[ag]-researcher\b/i,
+      /\/om[ag]:team-plan\b/i,
+      /\/om[ag]:team-prd\b/i,
+      /\/om[ag]:team-assemble\b/i,
       /\$plan\b/i,
-      /\$oma-plan\b/i,
+      /\$om[ag]-plan\b/i,
       /\$prd\b/i,
       /\$research\b/i,
       /\bteam-plan\b/i,
@@ -119,6 +124,10 @@ function isObject(value) {
 
 function isOff(value) {
   return typeof value === "string" && ["0", "false", "no", "off"].includes(value.trim().toLowerCase());
+}
+
+function isOn(value) {
+  return typeof value === "string" && ["1", "true", "yes", "on", "trace"].includes(value.trim().toLowerCase());
 }
 
 function parseCsvEnv(value) {
@@ -265,16 +274,23 @@ function detectLane(hookInput) {
     hookInput?.metadata,
   ]).join("\n");
 
-  for (const { lane, patterns } of LANE_PATTERNS) {
-    if (patterns.some((pattern) => pattern.test(text))) {
-      return lane;
+  for (const { lane, label, patterns } of LANE_PATTERNS) {
+    const matchedPattern = patterns.find((pattern) => pattern.test(text));
+    if (matchedPattern) {
+      return {
+        lane,
+        reason: `${label}:${matchedPattern.source}`,
+      };
     }
   }
   // Default to execution lane (Flash) for unclassified requests instead of
   // planning (Pro). Cheap-default policy: never silently route an unrouted
   // request to the most expensive model. Operators who want Pro can route
-  // explicitly via /omg:model or /omg:capabilities.
-  return "execution";
+  // explicitly via /oma:model or /oma:capabilities.
+  return {
+    lane: "execution",
+    reason: "fallback:execution-default",
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -453,6 +469,23 @@ function resolveLaneModel(lane, policy, inaccessibleModels) {
   return model;
 }
 
+function writeRouterTrace(stateRoot, trace) {
+  if (!stateRoot || !isOn(process.env[MODEL_ROUTING_TRACE_ENV])) {
+    return;
+  }
+
+  try {
+    fs.mkdirSync(stateRoot, { recursive: true });
+    fs.writeFileSync(
+      path.join(stateRoot, "model-router-last.json"),
+      `${JSON.stringify(trace, null, 2)}\n`,
+      "utf8",
+    );
+  } catch {
+    // Trace writes are best-effort and must never affect model routing.
+  }
+}
+
 async function main() {
   const rawInput = await readStdinText();
   const hookInput = safeJsonParse(rawInput, {});
@@ -466,10 +499,22 @@ async function main() {
   }
 
   const cwd = resolveSessionCwd(hookInput);
+  const stateRoot = resolveStateRoot(cwd);
   const policy = readModelPolicy(cwd);
-  const lane = detectLane(hookInput);
+  const laneDecision = detectLane(hookInput);
+  const lane = laneDecision.lane;
   const inaccessibleModels = readInaccessibleModels();
   const model = resolveLaneModel(lane, policy, inaccessibleModels);
+
+  writeRouterTrace(stateRoot, {
+    updated_at: new Date().toISOString(),
+    cwd,
+    strategy: policy.strategy,
+    lane,
+    model,
+    reason: laneDecision.reason,
+    source: "oma-model-router",
+  });
 
   // Apply 3.x/2.5 schema translation when the incoming request carries a
   // generationConfig with the wrong-shape thinking config for the routed model.
