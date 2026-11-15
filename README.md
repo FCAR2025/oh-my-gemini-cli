@@ -99,6 +99,14 @@ HOME=/path/to/gemini-cli-home gemini extensions list
 
 Use `gemini extensions validate /path/to/oh-my-antigravity` before linking local edits.
 
+## What's New in v0.9.2-fcar.0
+
+- **Orbit Router Diagnostics**: The quiet `BeforeModel` router can now write an opt-in last-decision trace to `.omg/state/model-router-last.json`.
+- **Trace Without Noise**: Set `OMG_MODEL_ROUTING_TRACE=1` to capture selected lane, model, strategy, and match reason without restoring the old per-request banner.
+- **Doctor/Status Visibility**: `/oma:doctor`, `/oma:status`, `/oma:model`, and hook validation guidance now account for router trace freshness and missing custom lane mappings.
+- **Dual Prefix Lane Matching**: `hooks/scripts/before-model-banner.js` matches both `oma-*` and `omg-*` agent/command prefixes while preserving FCAR accessible-default models and entitlement fallbacks.
+- **Version Bump**: Bumped project and extension version to `v0.9.2-fcar.0`.
+
 ## What's New in v0.9.1-fcar.0
 
 - **Durable Multi-Goal Workflows (Ultragoal)**: Adds `/oma:ultragoal` and `$ultragoal` to decompose complex tasks into sequential repo-native micro-goals.
@@ -132,13 +140,6 @@ Use `gemini extensions validate /path/to/oh-my-antigravity` before linking local
 - Tightened core anti-slop rules from the OmA/OMX pattern: small reversible diffs, evidence before claims, session-lock respect, and 1000-line soft / 1500-line hard file caps.
 - Updated doctor/model guidance for Gemini CLI `v0.39.0+`, active-HOME extension installs, Gemini 3.1 model routing, and proxy-limited API surfaces.
 
-## What's New in v0.9.1
-
-- **Durable Multi-Goal Workflows (Ultragoal)**: Adds `/oma:ultragoal` and `$ultragoal` to decompose complex tasks into sequential repo-native micro-goals.
-- **Fail-Closed Checkpointing**: Keeps checkpoint state fail-closed under `.omg/ultragoal/`, blocking downstream goals until the active goal has validation evidence.
-- **Diagnostics Hardening**: Updated `/oma:doctor` to validate `$ultragoal` skill metadata.
-- **Version Bump**: Bumped project and extension version to `v0.9.1`.
-
 ## Extension Boundary and Upgrade Safety
 
 - Install and update OmA through `gemini extensions ...`; do not rely on copied command/skill folders as the primary runtime path.
@@ -167,7 +168,7 @@ Use `gemini extensions validate /path/to/oh-my-antigravity` before linking local
 | Core building blocks | `GEMINI.md`, `agents/`, `commands/`, `skills/`, `context/` |
 | Main use case | Complex implementation tasks that need plan -> execute -> review loops |
 | Control surface | Slash-command-first `/oma:*` control plane + 11 retained `$skills` (including `oma-plan` alias) + sub-agent delegation |
-| Default model strategy | Configurable via `/oma:model` (`balanced` lane split uses `gemini-3.1-pro-preview` / `gemini-3-flash-preview` / `gemini-3.1-flash-lite-preview` by default, with optional `auto` or `custom` overrides) |
+| Default model strategy | Configurable via `/oma:model` (`balanced` lane split uses `gemini-4-carbon-medium` / `gemini-4-argon-high` / `gemini-4-hydrogen-high` / `gemini-4-hydrogen-low` by default, with optional `auto` or `custom` overrides) |
 | Gemini capability planner | `/oma:capabilities` maps work to Gemini-native models, multimodal/tooling features, and proxy/runtime constraints |
 | Adversarial QA loop | `/oma:ultraqa` cycles verify -> diagnose -> fix until the claim is proven, blocked, failed, or unknown |
 
@@ -277,8 +278,9 @@ OmA ships a quiet model-routing hook. The previous `AfterAgent` quota-watch usag
 - Hook entrypoint: `hooks/hooks.json` (`BeforeModel` -> `oma-model-router`)
 - Script: `hooks/scripts/before-model-banner.js`
 - Behavior: silently maps outgoing model requests to the active OmA strategy (`balanced`, `auto`, or `custom`) without printing a model banner
-- Default balanced routing: planning/review -> `gemini-3.1-pro-preview`, execution -> `gemini-3-flash-preview`, quick edits -> `gemini-3.1-flash-lite-preview`
+- Default balanced routing: planning -> `gemini-4-carbon-medium`, execution/review -> `gemini-4-argon-high`, fast/search -> `gemini-4-hydrogen-high`, quick edits -> `gemini-4-hydrogen-low`
 - Optional disable: `OMG_DISABLED_HOOKS=model-routing` or `OMG_MODEL_ROUTING=off`
+- Optional trace: `OMG_MODEL_ROUTING_TRACE=1` writes the latest lane/model decision to `.omg/state/model-router-last.json`
 
 Usage/quota visibility:
 
@@ -399,19 +401,19 @@ Retained skills are intentionally limited to a compact set so the extension load
 
 | Agent | Primary responsibility | Preferred model profile |
 | --- | --- | --- |
-| `oma-architect` | System boundaries, interfaces, long-term maintainability | `gemini-3.1-pro-preview` |
-| `oma-planner` | Task decomposition and sequencing | `gemini-3.1-pro-preview` |
-| `oma-product` | Scope lock, non-goals, and measurable acceptance criteria | `gemini-3.1-pro-preview` |
-| `oma-executor` | Fast implementation cycles | `gemini-3-flash-preview` |
-| `oma-reviewer` | Correctness and regression risk checks | `gemini-3.1-pro-preview` |
-| `oma-verifier` | Acceptance-gate evidence and release-readiness checks | `gemini-3.1-pro-preview` |
-| `oma-debugger` | Root-cause analysis and patch strategy | `gemini-3.1-pro-preview` |
-| `oma-consensus` | Option scoring and decision convergence | `gemini-3.1-pro-preview` |
-| `oma-researcher` | External option analysis and synthesis | `gemini-3.1-pro-preview` |
-| `oma-director` | Team message routing, conflict resolution, and lifecycle orchestration | `gemini-3.1-pro-preview` |
-| `oma-consultant` | Strategic analysis criteria and recommendation framing | `gemini-3.1-pro-preview` |
-| `oma-editor` | Final deliverable structure, consistency, and audience fit | `gemini-3-flash-preview` |
-| `oma-quick` | Small, tactical fixes | `gemini-3.1-flash-lite-preview` |
+| `oma-architect` | System boundaries, interfaces, long-term maintainability | `gemini-4-carbon-high` |
+| `oma-planner` | Task decomposition and sequencing | `gemini-4-carbon-medium` |
+| `oma-product` | Scope lock, non-goals, and measurable acceptance criteria | `gemini-4-carbon-medium` |
+| `oma-executor` | Fast implementation cycles | `gemini-4-argon-high` |
+| `oma-reviewer` | Correctness and regression risk checks | `gemini-4-argon-high` |
+| `oma-verifier` | Acceptance-gate evidence and release-readiness checks | `gemini-4-argon-medium` |
+| `oma-debugger` | Root-cause analysis and patch strategy | `gemini-4-argon-high` |
+| `oma-consensus` | Option scoring and decision convergence | `gemini-4-carbon-high` |
+| `oma-researcher` | External option analysis and synthesis | `gemini-4-hydrogen-high` |
+| `oma-director` | Team message routing, conflict resolution, and lifecycle orchestration | `gemini-4-carbon-high` |
+| `oma-consultant` | Strategic analysis criteria and recommendation framing | `gemini-4-carbon-medium` |
+| `oma-editor` | Final deliverable structure, consistency, and audience fit | `gemini-4-hydrogen-medium` |
+| `oma-quick` | Small, tactical fixes | `gemini-4-hydrogen-low` |
 
 ## Context Layer Model
 

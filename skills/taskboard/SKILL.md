@@ -1,6 +1,6 @@
 ---
-name = "taskboard"
-description = "Inspect or update a compact task board with stable task IDs, priorities, owners, and verifier-backed completion."
+name: "taskboard"
+description: "Inspect or update a compact task board with stable task IDs, priorities, owners, and verifier-backed completion."
 ---
 Run OmG `taskboard`.
 
@@ -49,7 +49,7 @@ Suggested `taskboard.md` shape:
 # Taskboard
 | Task ID | Priority | Status | Owner | Dependency | Worktree | Baseline | Lane Health | Summary | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T1 | p1 | ready | omg-executor | - | root | main@abc1234 | clean | add config parser | pending verify |
+| T1 | p1 | ready | oma-executor | - | root | main@abc1234 | clean | add config parser | pending verify |
 
 Response:
 - Keep it concise and operator-facing.

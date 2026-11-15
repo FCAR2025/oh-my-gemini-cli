@@ -1,6 +1,6 @@
 ---
-name = "model"
-description = "Inspect or set OmG model-selection strategy (balanced, auto, custom) for Gemini-native task routing."
+name: "model"
+description: "Inspect or set OmG model-selection strategy (balanced, auto, custom) for Gemini 4 Carbon/Argon/Hydrogen routing."
 ---
 Run OmG model-strategy manager.
 
@@ -12,40 +12,77 @@ Protocol:
    - examples:
      - `auto`
      - `balanced`
-     - `custom planning=gemini-3.1-pro-preview execution=gemini-3-flash-preview quick=gemini-3.1-flash-lite-preview review_verify=gemini-3.1-pro-preview tools=gemini-3.1-pro-preview-custom-tools`
+     - `custom planning=gemini-4-carbon-high execution=gemini-4-argon-high fast_execution=gemini-4-hydrogen-high quick_edit=gemini-4-hydrogen-low review_verify=gemini-4-argon-high deep_fast_review=gemini-4-hydrogen-xhigh`
 2. Supported strategies:
-   - `balanced` (default): role-aware lane split (`gemini-3.1-pro-preview` for planning/review, `gemini-3-flash-preview` for execution, `gemini-3.1-flash-lite-preview` for quick low-risk edits)
-   - `auto`: defer lane model selection to Gemini runtime auto-model policy across all lanes
-   - `custom`: operator-provided lane map with concrete model names or Gemini CLI aliases
+   - `balanced` (default): Gemini 4 Carbon / Argon / Hydrogen lane split (`gemini-4-carbon-high` for architecture/critic/security, `gemini-4-carbon-medium` for planning/product/consultant/interview, `gemini-4-argon-high` for complex execution/debugging/TDD/review/dependencies, `gemini-4-argon-medium` for verification, `gemini-4-hydrogen-xhigh` for fast deep diff review and tricky single-slice TDD, `gemini-4-hydrogen-high` as the default fast lane for research and scoped execution, `gemini-4-hydrogen-medium` for editorial output, `gemini-4-hydrogen-low` for quick trivial edits)
+   - `auto`: defer lane model selection to Antigravity runtime auto-model policy across all lanes
+   - `custom`: operator-provided lane map with concrete Gemini 4 model IDs (`gemini-4-carbon-*`, `gemini-4-argon-*`, `gemini-4-hydrogen-*`)
 3. If no strategy is provided, show current policy from `.omg/state/model.json` when available.
+   - Also show `.omg/state/model-router-last.json` when it exists so operators can see the last selected lane, model, and match reason.
+   - If the operator passes `trace on`, explain that `OMG_MODEL_ROUTING_TRACE=1` enables the lightweight last-decision trace without reintroducing a per-request banner.
 4. Produce an effective lane map for:
    - planning
+   - architecture_security
    - execution
+   - fast_execution
    - quick_edit
    - review_verify
+   - deep_fast_review
+   - verification
    - tool_calling
    - multimodal_review
    - external_research
+   - editorial
 5. If filesystem tools are available, write/update `.omg/state/model.json` using session-lock discipline.
 6. Clarify boundaries:
    - this command sets OmG orchestration defaults
-   - runtime model forcing still depends on Gemini CLI runtime controls (for example `/model` or launch-time `--model` when supported)
-   - separate Gemini API surfaces (Live, Files, Batch/cache, embeddings, media generation, TTS, Veo, Imagen, Lyria) require runtime/API support beyond normal chat-completions-style proxying
+   - runtime model forcing uses `swarm` `action: "add"` (`model: "<id>"`) for parallel/model-pinned lanes or `invoke_subagent` / Antigravity runtime controls
 
 Suggested `model.json` shape:
 {
   "strategy": "balanced|auto|custom",
+  "default_fast_lane": "gemini-4-hydrogen-high",
   "lane_models": {
-    "planning": "gemini-3.1-pro-preview|auto|<custom>",
-    "execution": "gemini-3-flash-preview|auto|<custom>",
-    "quick_edit": "gemini-3.1-flash-lite-preview|auto|<custom>",
-    "review_verify": "gemini-3.1-pro-preview|auto|<custom>",
-    "tool_calling": "gemini-3.1-pro-preview-custom-tools|auto|<custom>",
-    "multimodal_review": "gemini-3.1-pro-preview|auto|<custom>",
-    "external_research": "gemini-3.1-pro-preview|auto|<custom>"
+    "architecture_security": "gemini-4-carbon-high",
+    "planning": "gemini-4-carbon-medium",
+    "execution": "gemini-4-argon-high",
+    "fast_execution": "gemini-4-hydrogen-high",
+    "quick_edit": "gemini-4-hydrogen-low",
+    "review_verify": "gemini-4-argon-high",
+    "deep_fast_review": "gemini-4-hydrogen-xhigh",
+    "verification": "gemini-4-argon-medium",
+    "tool_calling": "gemini-4-argon-high",
+    "multimodal_review": "gemini-4-carbon-high",
+    "external_research": "gemini-4-hydrogen-high",
+    "editorial": "gemini-4-hydrogen-medium"
+  },
+  "role_models": {
+    "oma-architect": "gemini-4-carbon-high",
+    "omg-critic": "gemini-4-carbon-high",
+    "omg-security-reviewer": "gemini-4-carbon-high",
+    "oma-consensus": "gemini-4-carbon-high",
+    "oma-director": "gemini-4-carbon-high",
+    "oma-planner": "gemini-4-carbon-medium",
+    "oma-product": "gemini-4-carbon-medium",
+    "oma-consultant": "gemini-4-carbon-medium",
+    "oma-interview": "gemini-4-carbon-medium",
+    "oma-executor": "gemini-4-argon-high",
+    "oma-debugger": "gemini-4-argon-high",
+    "omg-test-engineer": "gemini-4-argon-high",
+    "oma-reviewer": "gemini-4-argon-high",
+    "omg-dependency-expert": "gemini-4-argon-high",
+    "oma-verifier": "gemini-4-argon-medium",
+    "oma-researcher": "gemini-4-hydrogen-high",
+    "research": "gemini-4-hydrogen-high",
+    "oma-editor": "gemini-4-hydrogen-medium",
+    "oma-quick": "gemini-4-hydrogen-low"
   },
   "updated_at": "<ISO-8601>",
-  "source": "omg:model"
+  "source": "omg:model",
+  "diagnostics": {
+    "trace_env": "OMG_MODEL_ROUTING_TRACE=1",
+    "last_trace_file": ".omg/state/model-router-last.json"
+  }
 }
 
 Response:

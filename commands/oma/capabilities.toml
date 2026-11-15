@@ -7,11 +7,11 @@ $ARGUMENTS
 
 Protocol:
 1. Classify the task shape: coding, review, research, multimodal, data extraction, planning, interactive TUI, automation, or media/live.
-2. Recommend Gemini-native capabilities:
-   - `gemini-3.1-pro-preview` for large-context reasoning, planning, architecture, and adversarial review
-   - `gemini-3-flash-preview` for fast implementation and smoke iteration
-   - `gemini-3.1-flash-lite-preview` for cheap low-risk checks
-   - `gemini-3.5-flash` (canonical) / `gemini-3-5-flash` (hyphen alias) for 3.x reasoning on Flash class, code-execution+image, and `VALIDATED` function-call mode (cost tier `$$`, ~5x 2.5 Flash; 1M in / 64K out; thinkingLevel enum `minimal|low|medium|high` default medium; temperature floor 1.0; NO Live API). See `skills/gemini-3-5-flash-tuning/` and the "Gemini 3.5 Flash routing" section in `context/omg-core.md`.
+2. Recommend Gemini 4 and Antigravity-native capabilities:
+   - `gemini-4-carbon-high` / `gemini-4-carbon-medium` for large-context reasoning, planning, architecture, security review, and adversarial critique
+   - `gemini-4-argon-high` / `gemini-4-argon-medium` for multi-file or systems implementation, root-cause debugging, TDD, code review, dependency audits, and acceptance verification
+   - `gemini-4-hydrogen-xhigh` for fast deep diff review, tricky single-slice TDD, and rapid root-cause verification
+   - `gemini-4-hydrogen-high` (default fast lane) for search, docs lookup, and standard scoped implementation; `gemini-4-hydrogen-medium` for editorial output; `gemini-4-hydrogen-low` for quick low-risk edits. See `.gemini/rules/agent-routing.md` and `context/oma-core.md`.
    - custom-tools model variants for heavy function/tool calling when available
    - structured outputs or JSON schema for machine-readable plans and acceptance matrices
    - function calling and MCP for tool orchestration

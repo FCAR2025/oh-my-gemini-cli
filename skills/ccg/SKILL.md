@@ -1,6 +1,6 @@
 ---
-name = "ccg"
-description = "Claude-Codex-Gemini tri-model orchestration via /omg:ask, with Gemini synthesizing results from external advisors"
+name: "ccg"
+description: "Claude-Codex-Gemini tri-model orchestration via /omg:ask, with Gemini synthesizing results from external advisors"
 ---
 
 # CCG - Claude-Codex-Gemini Tri-Model Orchestration

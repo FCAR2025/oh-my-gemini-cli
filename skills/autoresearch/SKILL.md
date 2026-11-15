@@ -1,6 +1,6 @@
 ---
-name = "autoresearch"
-description = "Stateful single-mission improvement loop with strict evaluator contract, markdown decision logs, and max-runtime stop behavior"
+name: "autoresearch"
+description: "Stateful single-mission improvement loop with strict evaluator contract, markdown decision logs, and max-runtime stop behavior"
 ---
 
 <Purpose>

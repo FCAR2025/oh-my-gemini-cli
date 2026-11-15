@@ -1,6 +1,6 @@
 ---
-name = "verify"
-description = "Verify that a change really works before you claim completion"
+name: "verify"
+description: "Verify that a change really works before you claim completion"
 ---
 
 # Verify

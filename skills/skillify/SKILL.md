@@ -1,6 +1,6 @@
 ---
-name = "skillify"
-description = "Turn a repeatable workflow from the current session into a reusable OmG skill draft"
+name: "skillify"
+description: "Turn a repeatable workflow from the current session into a reusable OmG skill draft"
 ---
 
 # Skillify

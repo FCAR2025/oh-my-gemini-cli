@@ -1,6 +1,6 @@
 ---
-name = "ultrawork"
-description = "Parallel execution engine for high-throughput task completion"
+name: "ultrawork"
+description: "Parallel execution engine for high-throughput task completion"
 ---
 
 <Purpose>
@@ -17,7 +17,7 @@ Ultrawork is a parallel execution engine and execution protocol for independent 
 <Do_Not_Use_When>
 - Task requires guaranteed completion with verification -- use `ralph` instead (ralph includes ultrawork)
 - Task requires a full autonomous pipeline -- use `autopilot` instead (autopilot includes ralph which includes ultrawork)
-- There is only one sequential task with no parallelism opportunity -- delegate directly to an omg-executor agent
+- There is only one sequential task with no parallelism opportunity -- delegate directly to an oma-executor agent
 - User needs session persistence for resume -- use `ralph` which adds persistence on top of ultrawork
 </Do_Not_Use_When>
 
@@ -28,7 +28,7 @@ Sequential task execution wastes time when tasks are independent. Ultrawork enab
 <Execution_Policy>
 - Fire all independent agent calls simultaneously -- never serialize independent work
 - Always specify the model lane explicitly when dispatching
-- See OmG agent registry in `agents/` + model lanes in `context/omg-core.md` before first delegation for agent selection guidance
+- See OmG agent registry in `agents/` + model lanes in `context/oma-core.md` before first delegation for agent selection guidance
 - Use background execution for operations over ~30 seconds (installs, builds, tests)
 - Run quick commands (git status, file reads, simple checks) in the foreground
 - Resolve intent and uncertainty before implementation; explore first, ask only when still blocked
@@ -38,20 +38,20 @@ Sequential task execution wastes time when tasks are independent. Ultrawork enab
 </Execution_Policy>
 
 <Steps>
-1. **Read agent reference**: See OmG agent registry in `agents/` + model lanes in `context/omg-core.md` for lane selection
+1. **Read agent reference**: See OmG agent registry in `agents/` + model lanes in `context/oma-core.md` for lane selection
 2. **Ground intent first**: Confirm whether the request is implementation, investigation, evaluation, or research; do not code before that is clear
 3. **Gather context in parallel**:
    - use Gemini CLI search tools (`read_many_files`, `glob`, `search_file_content`) directly for quick reads/searches
-   - dispatch omg-executor sub-agents for broad context or docs lookup
+   - dispatch oma-executor sub-agents for broad context or docs lookup
 4. **Classify tasks by independence**: Identify which tasks can run in parallel vs which have dependencies
 5. **Create a task graph for non-trivial work**:
    - Parallel Execution Waves
    - Dependency Matrix
    - acceptance criteria and verification steps per task
 6. **Route to correct lanes**:
-   - Simple lookups/definitions: quick-lane (gemini-3.1-flash-lite-preview)
-   - Standard implementation: execution-lane (gemini-3-flash-preview)
-   - Complex analysis/refactoring: planning-lane (gemini-3.1-pro-preview)
+   - Simple lookups/definitions: quick-lane (gemini-4-hydrogen-low)
+   - Standard implementation: execution-lane (gemini-4-hydrogen-high)
+   - Complex analysis/refactoring: planning-lane (gemini-4-carbon-high)
 7. **Fire independent tasks simultaneously**: Launch all parallel-safe tasks at once
 8. **Run dependent tasks sequentially**: Wait for prerequisites before launching dependent work
 9. **Background long operations**: Builds, installs, and test suites run in background
@@ -63,9 +63,9 @@ Sequential task execution wastes time when tasks are independent. Ultrawork enab
 </Steps>
 
 <Tool_Usage>
-- Dispatch omg-executor sub-agent with quick-lane model (gemini-3.1-flash-lite-preview) for simple changes
-- Dispatch omg-executor sub-agent with execution-lane model (gemini-3-flash-preview) for standard work
-- Dispatch omg-executor sub-agent with planning-lane model (gemini-3.1-pro-preview) for complex work
+- Dispatch oma-executor sub-agent with quick-lane model (gemini-4-hydrogen-low) for simple changes
+- Dispatch oma-executor sub-agent with execution-lane model (gemini-4-hydrogen-high) for standard work
+- Dispatch oma-executor sub-agent with planning-lane model (gemini-4-carbon-high) for complex work
 - Use `run_shell_command` with background execution for package installs, builds, and test suites
 - Use `run_shell_command` in foreground for quick status checks; use `read_file` and `glob` for file operations
 </Tool_Usage>
@@ -74,9 +74,9 @@ Sequential task execution wastes time when tasks are independent. Ultrawork enab
 <Good>
 Three independent tasks dispatched simultaneously:
 ```
-dispatch omg-executor sub-agent with quick-lane model: "Add missing type export for Config interface"
-dispatch omg-executor sub-agent with execution-lane model: "Implement the /api/users endpoint with validation"
-dispatch omg-executor sub-agent with execution-lane model: "Add integration tests for the auth middleware"
+dispatch oma-executor sub-agent with quick-lane model: "Add missing type export for Config interface"
+dispatch oma-executor sub-agent with execution-lane model: "Implement the /api/users endpoint with validation"
+dispatch oma-executor sub-agent with execution-lane model: "Add integration tests for the auth middleware"
 ```
 Why good: Independent tasks at appropriate lanes, all dispatched at once.
 </Good>
@@ -84,8 +84,8 @@ Why good: Independent tasks at appropriate lanes, all dispatched at once.
 <Good>
 Correct use of background execution:
 ```
-dispatch omg-executor sub-agent with execution-lane model (background): "npm install && npm run build"
-dispatch omg-executor sub-agent with quick-lane model: "Update the README with new API endpoints"
+dispatch oma-executor sub-agent with execution-lane model (background): "npm install && npm run build"
+dispatch oma-executor sub-agent with quick-lane model: "Update the README with new API endpoints"
 ```
 Why good: Long build runs in background while short task runs in foreground.
 </Good>
@@ -93,9 +93,9 @@ Why good: Long build runs in background while short task runs in foreground.
 <Bad>
 Sequential execution of independent work:
 ```
-result1 = dispatch omg-executor "Add type export"  # wait...
-result2 = dispatch omg-executor "Implement endpoint"     # wait...
-result3 = dispatch omg-executor "Add tests"              # wait...
+result1 = dispatch oma-executor "Add type export"  # wait...
+result2 = dispatch oma-executor "Implement endpoint"     # wait...
+result3 = dispatch oma-executor "Add tests"              # wait...
 ```
 Why bad: These tasks are independent. Running them sequentially wastes time.
 </Bad>
@@ -103,7 +103,7 @@ Why bad: These tasks are independent. Running them sequentially wastes time.
 <Bad>
 Wrong lane selection:
 ```
-dispatch omg-executor sub-agent with planning-lane model: "Add a missing semicolon"
+dispatch oma-executor sub-agent with planning-lane model: "Add a missing semicolon"
 ```
 Why bad: planning-lane is expensive overkill for a trivial fix. Use quick-lane instead.
 </Bad>

@@ -1,7 +1,15 @@
 ---
 name: oma-verifier
 description: Use for acceptance-gate verification, test evidence checks, and release-readiness decisions.
+subagent: true
+mainAgent: false
+tools: [read_file, edit_file, write_file, run_command, manage_task, search_web]
 ---
+
+## Model & Reasoning Profile
+- **Canonical Model**: `gemini-4-argon-medium` (Gemini 4 Argon (Medium))
+- **Reasoning Effort**: `medium`
+- **Posture**: Acceptance-gate verification and evidence collection lane (`gemini-4-hydrogen-xhigh` for rapid root-cause verification).
 
 You are the verification gate owner.
 

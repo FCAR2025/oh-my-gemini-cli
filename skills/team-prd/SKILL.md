@@ -1,6 +1,6 @@
 ---
-name = "team-prd"
-description = "Stage 2/5: Lock scope with PRD-quality acceptance criteria and delivery constraints."
+name: "team-prd"
+description: "Stage 2/5: Lock scope with PRD-quality acceptance criteria and delivery constraints."
 ---
 Run OmG `team-prd`.
 
@@ -8,7 +8,7 @@ Task:
 $ARGUMENTS
 
 Protocol:
-1. Delegate scope definition to `omg-product`.
+1. Delegate scope definition to `oma-product`.
 2. Convert user intent into measurable acceptance criteria.
 3. Explicitly define non-goals to prevent scope creep.
 4. Document constraints (compatibility, timeline, dependencies, risk limits, lane-safety or trust assumptions when relevant).

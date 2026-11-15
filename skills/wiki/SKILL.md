@@ -1,6 +1,6 @@
 ---
-name = "wiki"
-description = "LLM Wiki — persistent markdown knowledge base that compounds across sessions (Karpathy model)"
+name: "wiki"
+description: "LLM Wiki — persistent markdown knowledge base that compounds across sessions (Karpathy model)"
 ---
 
 # Wiki

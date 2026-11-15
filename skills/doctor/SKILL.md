@@ -1,6 +1,6 @@
 ---
-name = "doctor"
-description = "Run OmG diagnostics for extension readiness, workflow state integrity, Gemini capability fit, and multi-agent safety."
+name: "doctor"
+description: "Run OmG diagnostics for extension readiness, workflow state integrity, Gemini capability fit, and multi-agent safety."
 ---
 Run OmG doctor diagnostics.
 
@@ -22,7 +22,7 @@ Diagnostic protocol:
 1. Detect requested scope and run matching checks.
 2. Verify extension surface integrity:
    - key directories (`agents`, `commands/omg`, `skills`, `context`)
-   - key manifest/context files (`gemini-extension.json`, `GEMINI.md`, `context/omg-core.md`)
+   - key manifest/context files (`gemini-extension.json`, `GEMINI.md`, `context/oma-core.md`)
 3. Verify command readiness for core flows (`team`, `intent`, `workspace`, `taskboard`, `loop`, `rules`, `memory`, `hooks`, `notify`, `reasoning`, `approval`, `model`, `capabilities`, `ultraqa`).
 4. Verify retained deep-work skills (`plan`, `omg-plan`, `execute`, `prd`, `ralplan`, `research`, `deep-dive`, `context-optimize`) and their metadata integrity.
 5. Check state artifacts and drift risks under `.omg/state/` when available, including lane health, trust notes, capability notes, UltraQA evidence, and hook lifecycle policy.

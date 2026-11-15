@@ -34,7 +34,7 @@ Discipline:
 
 Boundaries:
 - Sciomg is read-only analysis. Implementation belongs to a follow-up `/omg:team-exec`, `/omg:goal`, or `/omg:debug` cycle.
-- Cost-aware: each parallel lane multiplies token cost. Default to `gemini-3-flash-preview` per lane unless `architecture` or `security` lane is active, which justify Pro.
+- Cost-aware: each parallel lane multiplies token cost. Default to `gemini-4-hydrogen-high` per lane unless `architecture` or `security` lane is active, which justify Pro.
 
 Response:
 ## Sciomg Plan

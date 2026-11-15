@@ -1,15 +1,15 @@
 ---
-name = "trace"
-description = "Evidence-driven tracing lane that orchestrates competing hypotheses to explain why an observed result happened"
+name: "trace"
+description: "Evidence-driven tracing lane that orchestrates competing hypotheses to explain why an observed result happened"
 ---
 
 # Trace Skill
 
 Use this skill for ambiguous, causal, evidence-heavy questions where the goal is to explain **why** an observed result happened, not to jump directly into fixing or rewriting code.
 
-> **OmG note**: OMC has a separate `omc:tracer` agent for causal evidence tracing. OmG does not have a dedicated tracer agent — tracer responsibilities are folded into `omg-debugger`. When spawning workers for hypothesis lanes in OmG, use `omg-debugger` with explicit causal-tracing instructions rather than a generic fix-it mode.
+> **OmG note**: OMC has a separate `omc:tracer` agent for causal evidence tracing. OmG does not have a dedicated tracer agent — tracer responsibilities are folded into `oma-debugger`. When spawning workers for hypothesis lanes in OmG, use `oma-debugger` with explicit causal-tracing instructions rather than a generic fix-it mode.
 
-This is the orchestration layer on top of `omg-debugger`. The goal is to make tracing feel like a reusable OmG operating lane: restate the observation, generate competing explanations, gather evidence in parallel, rank the explanations, and propose the next probe that would collapse uncertainty fastest.
+This is the orchestration layer on top of `oma-debugger`. The goal is to make tracing feel like a reusable OmG operating lane: restate the observation, generate competing explanations, gather evidence in parallel, rank the explanations, and propose the next probe that would collapse uncertainty fastest.
 
 ## Good entry cases
 
@@ -83,7 +83,7 @@ Down-rank a hypothesis when:
 
 ## Orchestration shape
 
-Use `omg-debugger` workers (planning-lane — gemini-3.1-pro-preview) for each hypothesis lane.
+Use `oma-debugger` workers (execution-lane — gemini-4-argon-high) for each hypothesis lane.
 
 The lead should:
 
@@ -91,7 +91,7 @@ The lead should:
 2. Extract the tracing target
 3. Generate multiple deliberately different candidate hypotheses
 4. Spawn **3 debugger lanes by default** in parallel
-5. Assign one `omg-debugger` worker per lane with explicit causal-tracing instructions
+5. Assign one `oma-debugger` worker per lane with explicit causal-tracing instructions
 6. Instruct each worker to gather evidence **for** and **against** its lane
 7. Run a **rebuttal round** between the leading hypothesis and the strongest remaining alternative
 8. Detect whether the top lanes genuinely differ or actually converge on the same root cause
@@ -123,7 +123,7 @@ These lenses are not filler. Use them when they can surface a missed explanation
 
 ## Worker contract
 
-Each worker should be an `omg-debugger` lane owner operating in causal-tracing mode, not generic fix-it mode.
+Each worker should be an `oma-debugger` lane owner operating in causal-tracing mode, not generic fix-it mode.
 
 Each worker must:
 
@@ -201,7 +201,7 @@ Use an orchestration prompt along these lines:
 
 1. "Restate the observation exactly."
 2. "Generate 3 deliberately different hypotheses."
-3. "Create one omg-debugger causal-tracing lane per hypothesis in parallel."
+3. "Create one oma-debugger causal-tracing lane per hypothesis in parallel."
 4. "For each lane, gather evidence for and against, rank evidence strength, and name the critical unknown plus best discriminating probe."
 5. "Apply systems, premortem, and science lenses to the leaders if useful."
 6. "Run a rebuttal round between the top two explanations."

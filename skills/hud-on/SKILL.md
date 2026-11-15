@@ -1,6 +1,6 @@
 ---
-name = "hud-on"
-description = "Quick toggle: set OmG HUD visibility profile to normal."
+name: "hud-on"
+description: "Quick toggle: set OmG HUD visibility profile to normal."
 ---
 Set OmG HUD visibility profile to `normal`.
 
@@ -19,7 +19,7 @@ Output format:
 
 ## Preview
 ```text
-[OMG][MODEL balanced gemini-3.1-pro-preview/gemini-3-flash-preview/gemini-3.1-flash-lite-preview preview:on][MODE balanced][STAGE team-exec][TASKS 3/8][RISKS 1][NEXT /omg:team-verify]
+[OMG][MODEL balanced gemini-4-carbon-high/gemini-4-argon-high/gemini-4-hydrogen-high g4:on][MODE balanced][STAGE team-exec][TASKS 3/8][RISKS 1][NEXT /omg:team-verify]
 ```
 
 ## Next Command

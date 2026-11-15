@@ -25,9 +25,9 @@ Mode behavior:
 Suggested `mode.json` shape:
 {
   "mode": "<selected>",
-  "planning_model": "gemini-3.1-pro-preview",
-  "execution_model": "gemini-3-flash-preview",
-  "quick_edit_model": "gemini-3.1-flash-lite-preview",
+  "planning_model": "gemini-4-carbon-medium",
+  "execution_model": "gemini-4-argon-high",
+  "quick_edit_model": "gemini-4-hydrogen-low",
   "verification_strictness": "normal|high",
   "max_autonomous_cycles": 5
 }

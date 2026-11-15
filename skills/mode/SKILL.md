@@ -1,6 +1,6 @@
 ---
-name = "mode"
-description = "Inspect or set OmG operating mode/profile (balanced, speed, deep, autopilot, ralph, ultrawork)."
+name: "mode"
+description: "Inspect or set OmG operating mode/profile (balanced, speed, deep, autopilot, ralph, ultrawork)."
 ---
 Run OmG mode manager.
 
@@ -16,7 +16,7 @@ Mode behavior:
    - `autopilot`
    - `ralph`
    - `ultrawork`
-   - `goal` (single-shot autonomous delivery; FCAR pre-flights with `/omg:capabilities`)
+   - `goal` (single-shot autonomous delivery; FCAR pre-flights with `/oma:capabilities`)
    - `ultraqa` (FCAR: adversarial verify/diagnose/fix posture; max 5 cycles)
 3. Produce profile settings for planning depth, execution pace, quick-fix lane, and verification strictness.
 4. Read `.omg/state/session-lock.json` before mutating shared operating-profile state.
@@ -27,9 +27,10 @@ Mode behavior:
 Suggested `mode.json` shape:
 {
   "mode": "<selected>",
-  "planning_model": "gemini-3.1-pro-preview",
-  "execution_model": "gemini-3-flash-preview",
-  "quick_edit_model": "gemini-3.1-flash-lite-preview",
+  "planning_model": "gemini-4-carbon-medium",
+  "execution_model": "gemini-4-argon-high",
+  "fast_execution_model": "gemini-4-hydrogen-high",
+  "quick_edit_model": "gemini-4-hydrogen-low",
   "verification_strictness": "normal|high",
   "max_autonomous_cycles": 5
 }

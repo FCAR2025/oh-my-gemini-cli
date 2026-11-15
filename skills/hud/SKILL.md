@@ -1,6 +1,6 @@
 ---
-name = "hud"
-description = "Inspect or switch OmG HUD visibility profile (normal, compact, hidden) for visual status rendering."
+name: "hud"
+description: "Inspect or switch OmG HUD visibility profile (normal, compact, hidden) for visual status rendering."
 ---
 Run OmG HUD profile manager.
 
@@ -31,4 +31,4 @@ Response:
 - Keep it concise and operator-facing.
 - Include `HUD Profile`, `HUD Preview`, `Notes`, and `Next Command`.
 - `HUD Preview` should be a single sample line.
-- In the preview line, surface model strategy and preview status prominently (for example `MODEL balanced gemini-3.1-pro-preview/gemini-3-flash-preview/gemini-3.1-flash-lite-preview preview:on`).
+- In the preview line, surface model strategy and preview status prominently (for example `MODEL balanced gemini-4-carbon-high/gemini-4-argon-high/gemini-4-hydrogen-high g4:on`).

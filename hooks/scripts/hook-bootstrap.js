@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -12,6 +13,28 @@ function emitHookOutput(systemMessage = "") {
   );
 }
 
+function resolveTargetPath(target) {
+  const trimmed = target.trim();
+  const extRoot =
+    typeof process.env.OMG_EXTENSION_PATH === "string" ? process.env.OMG_EXTENSION_PATH.trim() : "";
+  if (!extRoot) {
+    return path.resolve(process.cwd(), trimmed);
+  }
+  if (!path.isAbsolute(trimmed)) {
+    return path.resolve(extRoot, trimmed);
+  }
+  const cwdWithSep = process.cwd().endsWith(path.sep) ? process.cwd() : `${process.cwd()}${path.sep}`;
+  if (trimmed.startsWith(cwdWithSep)) {
+    const relocated = path.resolve(extRoot, trimmed.slice(cwdWithSep.length));
+    try {
+      if (fs.existsSync(relocated)) {
+        return relocated;
+      }
+    } catch {}
+  }
+  return path.resolve(trimmed);
+}
+
 async function main() {
   const target = process.argv[2];
   if (typeof target !== "string" || !target.trim()) {
@@ -19,7 +42,7 @@ async function main() {
     return;
   }
 
-  const resolvedTarget = process.env.OMG_EXTENSION_PATH ? path.join(process.env.OMG_EXTENSION_PATH, target.replace(process.cwd() + "/", "")) : path.resolve(process.cwd(), target);
+  const resolvedTarget = resolveTargetPath(target);
   await import(pathToFileURL(resolvedTarget).href);
 }
 
