@@ -1,6 +1,6 @@
 ---
-name = "consensus"
-description = "Generate and converge on the best option through structured multi-agent comparison."
+name: "consensus"
+description: "Generate and converge on the best option through structured multi-agent comparison."
 ---
 Run OmG `consensus` mode.
 
@@ -8,9 +8,9 @@ Decision topic:
 $ARGUMENTS
 
 Protocol:
-1. Delegate criteria definition to `omg-consensus`.
-2. Gather architecture and delivery options from `omg-architect` and `omg-planner`.
-3. Use `omg-reviewer` to stress-test each option for risk.
+1. Delegate criteria definition to `oma-consensus`.
+2. Gather architecture and delivery options from `oma-architect` and `oma-planner`.
+3. Use `oma-reviewer` to stress-test each option for risk.
 4. Score options against criteria (delivery speed, correctness risk, maintainability, reversibility).
 5. Choose one option and provide execution handoff.
 

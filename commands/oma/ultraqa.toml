@@ -8,14 +8,14 @@ $ARGUMENTS
 Protocol:
 1. Define the exact claim under test and the smallest evidence set that can prove or falsify it.
 2. Select the verification posture:
-   - fast smoke or deterministic checks -> `gemini-3-flash-preview`
-   - adversarial review, security, architecture, or release readiness -> `gemini-3.1-pro-preview`
-   - cheap repeated checks -> `gemini-3.1-flash-lite-preview`
+   - fast smoke or deterministic checks -> `gemini-4-hydrogen-high`
+   - adversarial review, security, architecture, or release readiness -> `gemini-4-carbon-high`
+   - cheap repeated checks -> `gemini-4-hydrogen-low`
 3. If native Gemini CLI Plan Mode/read-only mode is active, perform verification and diagnosis only; do not route fixes unless the operator explicitly approves implementation.
 4. Cycle up to five times:
    - verify: run or request the smallest real check that can falsify the claim
-   - diagnose: if failed, route root cause to `omg-debugger` or `omg-reviewer`
-   - fix: route the smallest safe patch to `omg-executor`
+   - diagnose: if failed, route root cause to `oma-debugger` or `oma-reviewer`
+   - fix: route the smallest safe patch to `oma-executor`
    - re-run the failed check plus one adjacent regression check
 5. Treat missing evidence as `unknown`, not pass.
 6. Include adversarial edge cases: auth, state persistence, stale context, dirty workspace, permissions, external/runtime drift, rollback, and install-path mismatch.

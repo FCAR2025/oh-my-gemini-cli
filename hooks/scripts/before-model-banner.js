@@ -3,6 +3,7 @@
  * OmA silent BeforeModel router.
  *
  * Routes outgoing Gemini CLI model requests according to `.omg/state/model.json`
+ * (`strategy`, `default_fast_lane`, `lane_models`, and `role_models`)
  * without printing the old per-request banner.
  */
 
@@ -25,28 +26,143 @@ const MODEL_HOOK_KEYS = new Set([
 ]);
 
 const DEFAULT_LANE_MODELS = {
-  planning: "gemini-pro-agent",
-  execution: "gemini-3-flash-agent",
-  quick_edit: "gemini-3.5-flash-low",
-  review_verify: "gemini-pro-agent",
+  architecture_security: "gemini-4-carbon-high",
+  planning: "gemini-4-carbon-medium",
+  execution: "gemini-4-argon-high",
+  fast_execution: "gemini-4-hydrogen-high",
+  quick_edit: "gemini-4-hydrogen-low",
+  review_verify: "gemini-4-argon-high",
+  deep_fast_review: "gemini-4-hydrogen-xhigh",
+  verification: "gemini-4-argon-medium",
+  tool_calling: "gemini-4-argon-high",
+  multimodal_review: "gemini-4-carbon-high",
+  external_research: "gemini-4-hydrogen-high",
+  editorial: "gemini-4-hydrogen-medium",
 };
 
+const ROLE_STEM_ROUTES = Object.assign(Object.create(null), {
+  architect: { canonicalRole: "oma-architect", lane: "architecture_security" },
+  critic: { canonicalRole: "omg-critic", lane: "architecture_security" },
+  "security-reviewer": { canonicalRole: "omg-security-reviewer", lane: "architecture_security" },
+  consensus: { canonicalRole: "oma-consensus", lane: "architecture_security" },
+  director: { canonicalRole: "oma-director", lane: "architecture_security" },
+  planner: { canonicalRole: "oma-planner", lane: "planning" },
+  product: { canonicalRole: "oma-product", lane: "planning" },
+  consultant: { canonicalRole: "oma-consultant", lane: "planning" },
+  interview: { canonicalRole: "oma-interview", lane: "planning" },
+  executor: { canonicalRole: "oma-executor", lane: "execution" },
+  debugger: { canonicalRole: "oma-debugger", lane: "execution" },
+  "test-engineer": { canonicalRole: "omg-test-engineer", lane: "execution" },
+  reviewer: { canonicalRole: "oma-reviewer", lane: "review_verify" },
+  "dependency-expert": { canonicalRole: "omg-dependency-expert", lane: "execution" },
+  verifier: { canonicalRole: "oma-verifier", lane: "verification" },
+  researcher: { canonicalRole: "oma-researcher", lane: "external_research" },
+  editor: { canonicalRole: "oma-editor", lane: "editorial" },
+  quick: { canonicalRole: "oma-quick", lane: "quick_edit" },
+});
+
+const PROMPT_ROLE_TOKEN_RX = /\b(?:oma|omg)-([a-z0-9-]+)\b/gi;
+const CANONICAL_GEMINI4_RX = /^gemini-4-(?:carbon|argon|hydrogen)-(?:low|medium|high|xhigh)$/i;
+
 const LANE_PATTERNS = [
+  {
+    lane: "deep_fast_review",
+    label: "deep-fast-review",
+    patterns: [
+      /\bdeep[_ -]fast[_ -]review\b/i,
+    ],
+  },
+  {
+    lane: "multimodal_review",
+    label: "multimodal-review",
+    patterns: [
+      /\/om[ag]:visual-verdict\b/i,
+      /\$visual-verdict\b/i,
+      /\bmultimodal[_ -]review\b/i,
+      /\bvisual[_ -]verdict\b/i,
+    ],
+  },
+  {
+    lane: "architecture_security",
+    label: "architecture-security",
+    patterns: [
+      /\/om[ag]:consensus\b/i,
+      /\/om[ag]:ccg\b/i,
+      /\$consensus\b/i,
+      /\$ccg\b/i,
+      /\barchitecture[_ -]security\b/i,
+      /\bsecurity audit\b/i,
+    ],
+  },
   {
     lane: "quick_edit",
     label: "quick-edit",
     patterns: [
-      /\bom[ag]-quick\b/i,
       /\bquick[_ -]?edit\b/i,
       /\bflash-lite\b/i,
       /\blow-risk (edit|change|fix)\b/i,
     ],
   },
   {
+    lane: "editorial",
+    label: "editorial",
+    patterns: [
+      /\beditorial\b/i,
+    ],
+  },
+  {
+    lane: "verification",
+    label: "verification",
+    patterns: [
+      /\/om[ag]:verify\b/i,
+      /\/om[ag]:team-verify\b/i,
+      /\$verify\b/i,
+      /\bteam-verify\b/i,
+      /\bacceptance gate\b/i,
+      /\bverification\b/i,
+    ],
+  },
+  {
+    lane: "review_verify",
+    label: "review-verify",
+    patterns: [
+      /\/om[ag]:ultraqa\b/i,
+      /\/om[ag]:team-fix\b/i,
+      /\$ultraqa\b/i,
+      /\bteam-fix\b/i,
+      /\breview[_ -]?verify\b/i,
+    ],
+  },
+  {
+    lane: "external_research",
+    label: "external-research",
+    patterns: [
+      /\/om[ag]:research\b/i,
+      /\/om[ag]:external-context\b/i,
+      /\$research\b/i,
+      /\$external-context\b/i,
+      /\bexternal[_ -]research\b/i,
+    ],
+  },
+  {
+    lane: "fast_execution",
+    label: "fast-execution",
+    patterns: [
+      /\bfast[_ -]execution\b/i,
+    ],
+  },
+  {
+    lane: "tool_calling",
+    label: "tool-calling",
+    patterns: [
+      /\btool[_ -]calling\b/i,
+    ],
+  },
+  {
     lane: "execution",
     label: "execution",
     patterns: [
-      /\bom[ag]-executor\b/i,
+      /\/om[ag]:execute\b/i,
       /\/om[ag]:team-exec\b/i,
       /\$execute\b/i,
       /\bteam-exec\b/i,
@@ -56,43 +172,24 @@ const LANE_PATTERNS = [
     ],
   },
   {
-    lane: "review_verify",
-    label: "review-verify",
-    patterns: [
-      /\bom[ag]-reviewer\b/i,
-      /\bom[ag]-verifier\b/i,
-      /\bom[ag]-debugger\b/i,
-      /\/om[ag]:team-verify\b/i,
-      /\/om[ag]:team-fix\b/i,
-      /\bteam-verify\b/i,
-      /\bteam-fix\b/i,
-      /\breview[_ -]?verify\b/i,
-      /\bacceptance gate\b/i,
-      /\bverification\b/i,
-    ],
-  },
-  {
     lane: "planning",
     label: "planning",
     patterns: [
-      /\bom[ag]-director\b/i,
-      /\bom[ag]-architect\b/i,
-      /\bom[ag]-planner\b/i,
-      /\bom[ag]-product\b/i,
-      /\bom[ag]-consultant\b/i,
-      /\bom[ag]-researcher\b/i,
+      /\/om[ag]:(?:oma-)?plan\b/i,
+      /\/om[ag]:ralplan\b/i,
+      /\/om[ag]:prd\b/i,
+      /\/om[ag]:blueprint\b/i,
+      /\/om[ag]:(?:deep-)?interview\b/i,
       /\/om[ag]:team-plan\b/i,
       /\/om[ag]:team-prd\b/i,
       /\/om[ag]:team-assemble\b/i,
       /\$plan\b/i,
       /\$om[ag]-plan\b/i,
       /\$prd\b/i,
-      /\$research\b/i,
       /\bteam-plan\b/i,
       /\bteam-prd\b/i,
       /\bteam-assemble\b/i,
       /\bplanning\b/i,
-      /\bresearch\b/i,
       /\barchitecture\b/i,
     ],
   },
@@ -149,10 +246,10 @@ function isHookDisabled(disabledHooks, candidates) {
   return false;
 }
 
-function resolveSessionCwd(hookInput) {
+function resolveSessionCwd(envelopeCwd) {
   const rawCwd =
-    typeof hookInput?.cwd === "string" && hookInput.cwd.trim()
-      ? hookInput.cwd.trim()
+    typeof envelopeCwd === "string" && envelopeCwd.trim()
+      ? envelopeCwd.trim()
       : "";
   if (!rawCwd) {
     return null;
@@ -226,85 +323,439 @@ function normalizeStrategy(strategy) {
   return ["balanced", "auto", "custom"].includes(normalized) ? normalized : "balanced";
 }
 
+function normalizeModelMap(rawMap) {
+  const normalized = Object.create(null);
+  if (!isObject(rawMap)) {
+    return normalized;
+  }
+  for (const [key, value] of Object.entries(rawMap)) {
+    if (typeof key === "string" && typeof value === "string") {
+      const k = key.trim().toLowerCase();
+      const v = value.trim();
+      if (k && v) {
+        normalized[k] = v;
+      }
+    }
+  }
+  return normalized;
+}
+
 function readModelPolicy(cwd) {
   const stateRoot = resolveStateRoot(cwd);
   const modelState = readJsonFile(stateRoot ? path.join(stateRoot, "model.json") : "", {});
   const strategy = normalizeStrategy(modelState.strategy);
-  const stateLaneModels = isObject(modelState.lane_models) ? modelState.lane_models : {};
+  const stateLaneModels = normalizeModelMap(modelState.lane_models);
+  const roleModels = normalizeModelMap(modelState.role_models);
+  const defaultFastLane =
+    typeof modelState.default_fast_lane === "string" && modelState.default_fast_lane.trim()
+      ? modelState.default_fast_lane.trim()
+      : null;
+  const laneModels = Object.assign(Object.create(null), DEFAULT_LANE_MODELS, stateLaneModels);
   return {
     strategy,
-    laneModels: {
-      ...DEFAULT_LANE_MODELS,
-      ...stateLaneModels,
-    },
+    defaultFastLane,
+    roleModels,
+    laneModels,
   };
 }
 
-function collectText(value, parts = []) {
-  if (typeof value === "string") {
-    parts.push(value);
-    return parts;
+function resolveKnownRole(token, roleModels) {
+  if (typeof token !== "string") {
+    return null;
   }
-  if (Array.isArray(value)) {
-    for (const item of value) {
-      collectText(item, parts);
+  const lower = token.trim().toLowerCase();
+  if (!lower) {
+    return null;
+  }
+  if (lower === "research") {
+    return {
+      rawRole: lower,
+      canonicalRole: "research",
+      lane: "external_research",
+    };
+  }
+  if (lower.startsWith("oma-") || lower.startsWith("omg-")) {
+    const stem = lower.slice(4);
+    if (Object.prototype.hasOwnProperty.call(ROLE_STEM_ROUTES, stem)) {
+      const def = ROLE_STEM_ROUTES[stem];
+      return {
+        rawRole: lower,
+        canonicalRole: def.canonicalRole,
+        lane: def.lane,
+      };
     }
-    return parts;
   }
-  if (isObject(value)) {
-    for (const item of Object.values(value)) {
-      collectText(item, parts);
+  if (roleModels && Object.prototype.hasOwnProperty.call(roleModels, lower)) {
+    return {
+      rawRole: lower,
+      canonicalRole: lower,
+      lane: "execution",
+    };
+  }
+  return null;
+}
+
+const CANONICAL_IDENTITY_FIELDS = new Set([
+  "agent",
+  "agentname",
+  "agenttype",
+  "subagent",
+  "subagentname",
+  "subagenttype",
+  "typename",
+  "role",
+  "rolename",
+  "name",
+]);
+
+const CANONICAL_IDENTITY_CONTEXT_FIELDS = new Set([
+  "caller",
+  "context",
+  "agentcontext",
+  "subagentcontext",
+]);
+
+const NESTED_IDENTITY_VALUE_FIELDS = new Set([
+  "id",
+  "slug",
+  "type",
+  "value",
+]);
+
+const CANONICAL_LANE_FIELDS = new Set([
+  "lane",
+  "lanename",
+]);
+
+const FORBIDDEN_STRUCTURED_DESCENT_FIELDS = new Set([
+  "prompt",
+  "llmrequest",
+  "systeminstruction",
+]);
+
+const MAX_TRAVERSAL_NODES = 50000;
+
+function normalizeFieldKey(key) {
+  return typeof key === "string" ? key.replace(/[_-\s]/g, "").toLowerCase() : "";
+}
+
+function projectHookEnvelope(hookInput) {
+  const envelope = {
+    cwd: "",
+    incomingModel: "",
+    incomingGenerationConfig: undefined,
+    identityRoots: [],
+    laneRoots: [],
+    contextRoots: [],
+    metadataRoots: [],
+    promptRoots: [],
+  };
+  if (!isObject(hookInput)) {
+    return envelope;
+  }
+  for (const [key, val] of Object.entries(hookInput)) {
+    const norm = normalizeFieldKey(key);
+    if (norm === "cwd") {
+      if (!envelope.cwd && typeof val === "string" && val.trim()) {
+        envelope.cwd = val.trim();
+      }
+      continue;
+    }
+    if (norm === "llmrequest") {
+      if (isObject(val)) {
+        for (const [reqKey, reqVal] of Object.entries(val)) {
+          const reqNorm = normalizeFieldKey(reqKey);
+          if (reqNorm === "model" && !envelope.incomingModel && typeof reqVal === "string" && reqVal.trim()) {
+            envelope.incomingModel = reqVal.trim();
+          } else if (
+            reqNorm === "generationconfig" &&
+            envelope.incomingGenerationConfig === undefined &&
+            isObject(reqVal)
+          ) {
+            envelope.incomingGenerationConfig = reqVal;
+          }
+        }
+      }
+      continue;
+    }
+    if (norm === "systeminstruction") {
+      continue;
+    }
+    if (norm === "prompt") {
+      envelope.promptRoots.push(val);
+      continue;
+    }
+    if (norm === "metadata") {
+      envelope.metadataRoots.push(val);
+      continue;
+    }
+    if (CANONICAL_IDENTITY_FIELDS.has(norm)) {
+      envelope.identityRoots.push(val);
+    } else if (CANONICAL_LANE_FIELDS.has(norm)) {
+      envelope.laneRoots.push(val);
+    } else if (CANONICAL_IDENTITY_CONTEXT_FIELDS.has(norm)) {
+      envelope.contextRoots.push(val);
+    }
+  }
+  return envelope;
+}
+
+function collectStructuredFieldStrings(
+  roots,
+  targetFields,
+  initialMatched = false,
+  allowNestedValueFields = false,
+) {
+  const out = [];
+  const active = new WeakSet();
+  const stack = [];
+  for (let i = roots.length - 1; i >= 0; i--) {
+    stack.push({ exit: false, node: roots[i], matched: initialMatched });
+  }
+  let visited = 0;
+  while (stack.length > 0 && visited < MAX_TRAVERSAL_NODES) {
+    const frame = stack.pop();
+    if (frame.exit) {
+      active.delete(frame.node);
+      continue;
+    }
+    const { node, matched } = frame;
+    if (node === null || node === undefined) {
+      continue;
+    }
+    visited += 1;
+    if (typeof node === "string") {
+      if (matched && node.trim()) {
+        out.push(node.trim());
+      }
+      continue;
+    }
+    if (typeof node !== "object") {
+      continue;
+    }
+    if (active.has(node)) {
+      continue;
+    }
+    active.add(node);
+    stack.push({ exit: true, node, matched: false });
+
+    if (Array.isArray(node)) {
+      for (let i = node.length - 1; i >= 0; i--) {
+        stack.push({ exit: false, node: node[i], matched });
+      }
+      continue;
+    }
+
+    if (isObject(node)) {
+      const entries = Object.entries(node);
+      for (let i = entries.length - 1; i >= 0; i--) {
+        const [key, val] = entries[i];
+        const norm = normalizeFieldKey(key);
+        if (FORBIDDEN_STRUCTURED_DESCENT_FIELDS.has(norm)) {
+          continue;
+        }
+        const childMatched =
+          targetFields.has(norm) ||
+          (allowNestedValueFields && matched && NESTED_IDENTITY_VALUE_FIELDS.has(norm));
+        stack.push({ exit: false, node: val, matched: childMatched });
+      }
+    }
+  }
+  return out;
+}
+
+function extractStructuredCandidates(envelope) {
+  return [
+    ...collectStructuredFieldStrings(envelope.identityRoots, CANONICAL_IDENTITY_FIELDS, true, true),
+    ...collectStructuredFieldStrings(envelope.contextRoots, CANONICAL_IDENTITY_FIELDS, false, true),
+    ...collectStructuredFieldStrings(envelope.metadataRoots, CANONICAL_IDENTITY_FIELDS, false, true),
+  ];
+}
+
+function extractStructuredLanes(envelope) {
+  return [
+    ...collectStructuredFieldStrings(envelope.laneRoots, CANONICAL_LANE_FIELDS, true, false),
+    ...collectStructuredFieldStrings(envelope.contextRoots, CANONICAL_LANE_FIELDS, false, false),
+    ...collectStructuredFieldStrings(envelope.metadataRoots, CANONICAL_LANE_FIELDS, false, false),
+  ];
+}
+
+function resolveKnownLane(token, laneModels) {
+  if (typeof token !== "string") {
+    return null;
+  }
+  const normalized = token.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  if (!normalized) {
+    return null;
+  }
+  if (
+    (laneModels && Object.prototype.hasOwnProperty.call(laneModels, normalized)) ||
+    Object.prototype.hasOwnProperty.call(DEFAULT_LANE_MODELS, normalized)
+  ) {
+    return normalized;
+  }
+  return null;
+}
+
+function collectText(roots, skipPromptFields = false) {
+  const parts = [];
+  const active = new WeakSet();
+  const stack = [];
+  for (let i = roots.length - 1; i >= 0; i--) {
+    stack.push({ exit: false, node: roots[i] });
+  }
+  let visited = 0;
+  while (stack.length > 0 && visited < MAX_TRAVERSAL_NODES) {
+    const frame = stack.pop();
+    if (frame.exit) {
+      active.delete(frame.node);
+      continue;
+    }
+    const { node } = frame;
+    if (node === null || node === undefined) {
+      continue;
+    }
+    visited += 1;
+    if (typeof node === "string") {
+      parts.push(node);
+      continue;
+    }
+    if (typeof node !== "object") {
+      continue;
+    }
+    if (active.has(node)) {
+      continue;
+    }
+    active.add(node);
+    stack.push({ exit: true, node });
+
+    if (Array.isArray(node)) {
+      for (let i = node.length - 1; i >= 0; i--) {
+        stack.push({ exit: false, node: node[i] });
+      }
+      continue;
+    }
+
+    if (isObject(node)) {
+      const entries = Object.entries(node);
+      for (let i = entries.length - 1; i >= 0; i--) {
+        const [key, item] = entries[i];
+        if (skipPromptFields && FORBIDDEN_STRUCTURED_DESCENT_FIELDS.has(normalizeFieldKey(key))) {
+          continue;
+        }
+        stack.push({ exit: false, node: item });
+      }
     }
   }
   return parts;
 }
 
-function detectLane(hookInput) {
-  // Lane detection scans ONLY the operator-intent signals (the slash-command /
-  // agent invocation and explicit prompt), NOT request.systemInstruction or the
-  // full message history. The omg system prompt enumerates the lane keywords
-  // ("quick_edit", "low-risk edit", "verification", "research", ...), so scanning
-  // it made every request self-match the FIRST lane pattern (quick_edit) and
-  // silently downgrade to gemini-3.5-flash-low. Regression introduced when the
-  // hook began scanning systemInstruction. Keep this scan prompt/agent-scoped.
-  const text = collectText([
-    hookInput?.prompt,
-    hookInput?.agent,
-    hookInput?.agent_name,
-    hookInput?.metadata,
-  ]).join("\n");
+function matchTextRoleOrLane(text, policy, roleReasonPrefix) {
+  PROMPT_ROLE_TOKEN_RX.lastIndex = 0;
+  let match;
+  while ((match = PROMPT_ROLE_TOKEN_RX.exec(text)) !== null) {
+    const roleMatch = resolveKnownRole(match[0], policy?.roleModels);
+    if (roleMatch) {
+      return {
+        role: roleMatch.canonicalRole,
+        rawRole: roleMatch.rawRole,
+        lane: roleMatch.lane,
+        reason: `${roleReasonPrefix}:${roleMatch.canonicalRole}`,
+        isFallback: false,
+      };
+    }
+  }
 
   for (const { lane, label, patterns } of LANE_PATTERNS) {
     const matchedPattern = patterns.find((pattern) => pattern.test(text));
     if (matchedPattern) {
       return {
+        role: null,
+        rawRole: null,
         lane,
         reason: `${label}:${matchedPattern.source}`,
+        isFallback: false,
       };
     }
   }
-  // Default to execution lane (Flash) for unclassified requests instead of
-  // planning (Pro). Cheap-default policy: never silently route an unrouted
-  // request to the most expensive model. Operators who want Pro can route
-  // explicitly via /oma:model or /oma:capabilities.
+
+  return null;
+}
+
+function detectRoute(envelope, policy) {
+  // 1a. Structured caller role identity (top-level and arbitrarily nested metadata/caller) wins first.
+  for (const candidate of extractStructuredCandidates(envelope)) {
+    const directMatch = resolveKnownRole(candidate, policy?.roleModels);
+    if (directMatch) {
+      return {
+        role: directMatch.canonicalRole,
+        rawRole: directMatch.rawRole,
+        lane: directMatch.lane,
+        reason: `agent:${directMatch.canonicalRole}`,
+        isFallback: false,
+      };
+    }
+    PROMPT_ROLE_TOKEN_RX.lastIndex = 0;
+    let embedded;
+    while ((embedded = PROMPT_ROLE_TOKEN_RX.exec(candidate)) !== null) {
+      const tokenMatch = resolveKnownRole(embedded[0], policy?.roleModels);
+      if (tokenMatch) {
+        return {
+          role: tokenMatch.canonicalRole,
+          rawRole: tokenMatch.rawRole,
+          lane: tokenMatch.lane,
+          reason: `agent:${tokenMatch.canonicalRole}`,
+          isFallback: false,
+        };
+      }
+    }
+  }
+
+  // 1b. Structured caller lane identity (top-level or nested metadata) wins ahead of free-text fields.
+  for (const laneCandidate of extractStructuredLanes(envelope)) {
+    const knownLane = resolveKnownLane(laneCandidate, policy?.laneModels);
+    if (knownLane) {
+      return {
+        role: null,
+        rawRole: null,
+        lane: knownLane,
+        reason: `lane:${knownLane}`,
+        isFallback: false,
+      };
+    }
+  }
+
+  // 2. Structured metadata text is scanned strictly BEFORE free-text prompt so prompt keywords can never hijack metadata.
+  const metadataText = collectText(envelope.metadataRoots, true).join("\n");
+  if (metadataText) {
+    const metadataRoute = matchTextRoleOrLane(metadataText, policy, "metadata-role");
+    if (metadataRoute) {
+      return metadataRoute;
+    }
+  }
+
+  // 3. Operator prompt text (never systemInstruction) is scanned only when no structured or metadata route matched.
+  const promptText = collectText(envelope.promptRoots, false).join("\n");
+  if (promptText) {
+    const promptRoute = matchTextRoleOrLane(promptText, policy, "role");
+    if (promptRoute) {
+      return promptRoute;
+    }
+  }
+
+  // 4. Unclassified fallback: preserve an explicit canonical Gemini 4 pin when present, else use default_fast_lane.
   return {
-    lane: "execution",
-    reason: "fallback:execution-default",
+    role: null,
+    rawRole: null,
+    lane: "fast_execution",
+    reason: "fallback:default-fast-lane",
+    isFallback: true,
   };
 }
 
 // ---------------------------------------------------------------------------
-// Gemini 3.5 Flash awareness (launched I/O 2026 May 19).
-//
-// Schema differences vs 2.5 Flash that this hook normalizes:
-//   - 3.x uses `thinkingConfig.thinkingLevel` (enum: minimal|low|medium|high).
-//     2.5 uses `thinkingConfig.thinkingBudget` (integer). Sending the wrong
-//     field is silently ignored upstream — translate before request leaves.
-//   - 3.5 Flash docs say not to lower temperature below 1.0.
-//   - 3.5 Flash is 5x the cost of 2.5 Flash; surface a cost tier marker so
-//     the operator sees it before the spend lands on the bill.
-//   - 3.5 Flash has no Live API support — Live sessions must NOT route here
-//     (gated upstream; this hook just refuses to translate Live payloads).
+// Gemini 3.5 Flash / 2.5 legacy schema normalization (retained for backward
+// compatibility when custom/legacy models are requested).
 // ---------------------------------------------------------------------------
 const GEMINI_3X_RX = /^gemini-3(\.|-)/i;
 const GEMINI_25X_RX = /^gemini-2(\.|-)5/i;
@@ -346,19 +797,16 @@ function ensureThinkingConfig(generationConfig) {
 }
 
 function transformGenerationConfig(model, generationConfig) {
-  // Returns { generationConfig, warnings: string[] }
   const warnings = [];
   if (!isObjectLike(generationConfig)) {
     return { generationConfig, warnings };
   }
-  // Defensive copy — never mutate inputs we did not own.
   const next = { ...generationConfig };
   if (isObjectLike(next.thinkingConfig)) {
     next.thinkingConfig = { ...next.thinkingConfig };
   }
 
   if (GEMINI_3X_RX.test(model)) {
-    // 3.x branch: thinkingLevel is canonical.
     const tc = ensureThinkingConfig(next);
     if (Object.prototype.hasOwnProperty.call(tc, "thinkingBudget")) {
       const droppedBudget = tc.thinkingBudget;
@@ -371,7 +819,6 @@ function transformGenerationConfig(model, generationConfig) {
       );
     }
     if (GEMINI_35_FLASH_RX.test(model)) {
-      // 3.5 Flash docs: do not lower temperature below 1.0.
       if (typeof next.temperature === "number" && next.temperature < 1.0) {
         warnings.push(
           `Gemini 3.5 Flash detected; raising temperature ${next.temperature} -> 1.0 (docs: do not lower below 1.0).`,
@@ -382,7 +829,6 @@ function transformGenerationConfig(model, generationConfig) {
       }
     }
   } else if (GEMINI_25X_RX.test(model)) {
-    // 2.5 branch: thinkingBudget is canonical.
     const tc = next.thinkingConfig;
     if (isObjectLike(tc) && Object.prototype.hasOwnProperty.call(tc, "thinkingLevel")) {
       const level = String(tc.thinkingLevel).toLowerCase();
@@ -421,47 +867,102 @@ function buildOutput(model, options = {}) {
   };
 }
 
-const laneFallbacks = new Map();
+const routeFallbacks = new Map();
 
-function readInaccessibleModels() {
+function readInaccessibleModels(stateRoot) {
+  const out = new Set();
   const homeDir = process.env.HOME || process.env.USERPROFILE || os.homedir();
-  if (!homeDir) {
-    return new Set();
+  const candidateFiles = [];
+  if (stateRoot) {
+    candidateFiles.push(path.join(stateRoot, "inaccessible-models.json"));
   }
-  const filePath = path.join(homeDir, ".omg", "state", "inaccessible-models.json");
-  try {
-    if (fs.existsSync(filePath)) {
-      const raw = fs.readFileSync(filePath, "utf8");
-      const parsed = safeJsonParse(raw, null);
-      if (Array.isArray(parsed)) {
-        return new Set(parsed.map(m => String(m).trim().toLowerCase()));
-      } else if (parsed && typeof parsed === "object") {
-        return new Set(Object.keys(parsed).map(m => String(m).trim().toLowerCase()));
+  if (homeDir) {
+    candidateFiles.push(path.join(homeDir, ".omg", "state", "inaccessible-models.json"));
+  }
+  for (const filePath of candidateFiles) {
+    try {
+      if (fs.existsSync(filePath)) {
+        const raw = fs.readFileSync(filePath, "utf8");
+        const parsed = safeJsonParse(raw, null);
+        if (Array.isArray(parsed)) {
+          for (const item of parsed) {
+            const norm = String(item).trim().toLowerCase();
+            if (norm) out.add(norm);
+          }
+        } else if (isObject(parsed)) {
+          for (const [key, val] of Object.entries(parsed)) {
+            if (val) {
+              const norm = String(key).trim().toLowerCase();
+              if (norm) out.add(norm);
+            }
+          }
+        }
       }
-    }
-  } catch {}
-  return new Set();
+    } catch {}
+  }
+  return out;
 }
 
-function resolveLaneModel(lane, policy, inaccessibleModels) {
-  if (laneFallbacks.has(lane)) {
-    return laneFallbacks.get(lane);
+function resolveTargetModel(route, policy, inaccessibleModels, incomingModel) {
+  if (policy.strategy === "auto") {
+    return "auto";
   }
 
-  const model = policy.strategy === "auto" ? "auto" : policy.laneModels[lane] || DEFAULT_LANE_MODELS[lane];
+  const cacheKey = route.role ? `role:${route.role}` : `lane:${route.lane}`;
+  if (!route.isFallback && routeFallbacks.has(cacheKey)) {
+    const cached = routeFallbacks.get(cacheKey);
+    if (cached === "auto" || !inaccessibleModels.has(String(cached).toLowerCase())) {
+      return cached;
+    }
+  }
+
+  let model = null;
+  if (route.rawRole && Object.prototype.hasOwnProperty.call(policy.roleModels, route.rawRole)) {
+    model = policy.roleModels[route.rawRole];
+  } else if (route.role && Object.prototype.hasOwnProperty.call(policy.roleModels, route.role)) {
+    model = policy.roleModels[route.role];
+  } else if (route.isFallback) {
+    const trimmedIncoming = typeof incomingModel === "string" ? incomingModel.trim() : "";
+    if (trimmedIncoming && CANONICAL_GEMINI4_RX.test(trimmedIncoming)) {
+      model = trimmedIncoming;
+    } else {
+      model =
+        policy.defaultFastLane ||
+        policy.laneModels[route.lane] ||
+        DEFAULT_LANE_MODELS[route.lane] ||
+        DEFAULT_LANE_MODELS.execution;
+    }
+  } else {
+    model = policy.laneModels[route.lane] || DEFAULT_LANE_MODELS[route.lane] || DEFAULT_LANE_MODELS.execution;
+  }
 
   if (model && model !== "auto") {
     const lowerModel = model.toLowerCase();
     if (inaccessibleModels.has(lowerModel)) {
-      let fallback = process.env.AG_GEMINI_MODEL;
-      if (!fallback || inaccessibleModels.has(fallback.toLowerCase())) {
-        fallback = DEFAULT_LANE_MODELS.execution;
+      const fallbackCandidates = [
+        typeof process.env.AG_GEMINI_MODEL === "string" ? process.env.AG_GEMINI_MODEL.trim() : "",
+        DEFAULT_LANE_MODELS.execution,
+        policy.defaultFastLane || "",
+        policy.laneModels?.fast_execution || "",
+        DEFAULT_LANE_MODELS.fast_execution,
+        DEFAULT_LANE_MODELS.quick_edit,
+        "auto",
+      ];
+      let fallback = "auto";
+      for (const candidate of fallbackCandidates) {
+        if (!candidate) continue;
+        if (candidate === "auto" || !inaccessibleModels.has(candidate.toLowerCase())) {
+          fallback = candidate;
+          break;
+        }
       }
 
       process.stderr.write(
-        `omg-model-router: lane ${lane} model ${model} inaccessible, falling back to AG_GEMINI_MODEL or default\n`
+        `omg-model-router: lane ${route.lane} model ${model} inaccessible, falling back to AG_GEMINI_MODEL or default\n`,
       );
-      laneFallbacks.set(lane, fallback);
+      if (!route.isFallback) {
+        routeFallbacks.set(cacheKey, fallback);
+      }
       return fallback;
     }
   }
@@ -488,7 +989,8 @@ function writeRouterTrace(stateRoot, trace) {
 
 async function main() {
   const rawInput = await readStdinText();
-  const hookInput = safeJsonParse(rawInput, {});
+  const parsedInput = safeJsonParse(rawInput, {});
+  const hookInput = isObject(parsedInput) ? parsedInput : {};
   const disabledHooks = parseCsvEnv(process.env[DISABLED_HOOKS_ENV]);
   if (
     isOff(process.env[MODEL_ROUTING_ENV]) ||
@@ -498,27 +1000,27 @@ async function main() {
     return;
   }
 
-  const cwd = resolveSessionCwd(hookInput);
+  const envelope = projectHookEnvelope(hookInput);
+  const cwd = resolveSessionCwd(envelope.cwd);
   const stateRoot = resolveStateRoot(cwd);
   const policy = readModelPolicy(cwd);
-  const laneDecision = detectLane(hookInput);
-  const lane = laneDecision.lane;
-  const inaccessibleModels = readInaccessibleModels();
-  const model = resolveLaneModel(lane, policy, inaccessibleModels);
+  const route = detectRoute(envelope, policy);
+  const inaccessibleModels = readInaccessibleModels(stateRoot);
+  const incomingModel = envelope.incomingModel;
+  const model = resolveTargetModel(route, policy, inaccessibleModels, incomingModel);
 
   writeRouterTrace(stateRoot, {
     updated_at: new Date().toISOString(),
     cwd,
     strategy: policy.strategy,
-    lane,
+    role: route.role,
+    lane: route.lane,
     model,
-    reason: laneDecision.reason,
+    reason: route.reason,
     source: "oma-model-router",
   });
 
-  // Apply 3.x/2.5 schema translation when the incoming request carries a
-  // generationConfig with the wrong-shape thinking config for the routed model.
-  const incomingGenerationConfig = hookInput?.llm_request?.generationConfig;
+  const incomingGenerationConfig = envelope.incomingGenerationConfig;
   let outgoingGenerationConfig;
   const warnings = [];
   if (model && model !== "auto" && isObjectLike(incomingGenerationConfig)) {
@@ -528,9 +1030,6 @@ async function main() {
       warnings.push(...result.warnings);
     }
   } else if (model && model !== "auto" && GEMINI_35_FLASH_RX.test(model)) {
-    // No incoming generationConfig but routed model is 3.5 Flash — set the
-    // temperature floor + default thinkingLevel so the proxy gets a coherent
-    // request shape.
     outgoingGenerationConfig = {
       temperature: 1.0,
       thinkingConfig: { thinkingLevel: "medium" },

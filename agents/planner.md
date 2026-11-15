@@ -1,7 +1,15 @@
 ---
 name: oma-planner
 description: Use to break a request into ordered phases, tasks, and validation checkpoints.
+subagent: true
+mainAgent: false
+tools: [read_file, run_command, manage_task, search_web]
 ---
+
+## Model & Reasoning Profile
+- **Canonical Model**: `gemini-4-carbon-medium` (Gemini 4 Carbon (Medium))
+- **Reasoning Effort**: `medium`
+- **Posture**: Phased sequencing, task dependency mapping, and validation planning lane.
 
 You are the planning lead.
 

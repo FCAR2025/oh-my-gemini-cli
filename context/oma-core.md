@@ -5,9 +5,9 @@ OmA adds a role-driven workflow layer to Gemini CLI.
 ## Primary Interface
 
 - Use `/oma:*` commands for operational control.
-- `/oma:*` is Gemini slash-command syntax, not a shell path. Do not call
-  `run_shell_command`/Shell with `/oma:*`; emit it as the next operator command
-  or invoke it through Gemini's native slash-command surface only.
+- `/oma:*` is slash-command syntax, not a shell path. Do not call
+  `run_command`/Shell with `/oma:*`; emit it as the next operator command
+  or invoke the matching skill directly.
 - Keep always-on context thin; heavy procedure belongs in the invoked command, not here.
 - Retained skills are limited to: `$plan`, `$oma-plan`, `$execute`, `$prd`, `$ralplan`, `$research`, `$deep-dive`, `$blueprint`, `$context-optimize`, `$learn`, `$ultragoal`.
 - Use `/oma:capabilities` when a task may benefit from Gemini-specific surfaces such as large context, multimodal inputs, structured outputs, tool calling, grounding, Code Execution, Plan Mode, MCP, or extension hooks.
@@ -24,42 +24,30 @@ OmA adds a role-driven workflow layer to Gemini CLI.
 - **Loop**: Repeat `exec -> verify -> fix` until acceptance. Use `loop` for subsequent slices.
 - **Parallel Rule**: Keep immediate blockers on the active lane; delegate only independent sidecar tasks in parallel.
 
-## Gemini Capability Routing
+## Gemini 4 Capability Routing
 
-- Keep the always-on rule thin: use `/oma:capabilities` for detailed model/tool/API routing.
-- Default hints: Pro for deep reasoning/review, Flash for fast execution, Flash-Lite for cheap checks, custom-tools variants for heavy tool calling when available.
-- Use Gemini-native surfaces deliberately: multimodal inputs, structured outputs, function calling/MCP, grounding/URL context, Code Execution, Plan Mode, and extension hooks.
+- Keep the always-on rule thin: follow `.gemini/rules/agent-routing.md` and `/oma:capabilities` for detailed model/tool routing.
+- Canonical Gemini 4 lane split (`balanced` default):
+  - `gemini-4-carbon-high` (architecture, adversarial critique, security review, consensus, team director) and `gemini-4-carbon-medium` (planning, PRD, strategy, Socratic interview).
+  - `gemini-4-argon-high` (complex/multi-file implementation, debugging, TDD, severity-rated code review, dependency audits) and `gemini-4-argon-medium` (acceptance verification).
+  - `gemini-4-hydrogen-xhigh` (fast deep diff review, tricky single-slice TDD, rapid root-cause verification), `gemini-4-hydrogen-high` (default fast lane for search, docs lookup, and standard scoped implementation), `gemini-4-hydrogen-medium` (editorial/docs polish), and `gemini-4-hydrogen-low` (trivial localized edits).
+- Use Antigravity surfaces deliberately: `swarm` (`action: "add"`, `model: "<canonical-gemini-4-id>"`) for model-pinned or parallel workers, `invoke_subagent` (`TypeName`, `Role`, `Prompt`) for single-role inheritance, `run_workflow` for deterministic Python orchestration, and MCP servers for structured tool access.
 - Proxy boundary: Live, Files, Batch/cache, embeddings, media generation, TTS, Veo, Imagen, and Lyria require native/proxy support beyond ordinary chat requests.
-
-### Gemini 3.5 Flash routing
-
-Gemini 3.5 Flash launched at I/O 2026 (2026-05-19) and is materially different from 2.5 Flash; route accordingly.
-
-- Canonical slug: `gemini-3.5-flash`. Hyphen alias `gemini-3-5-flash` must also route. The `before-model-banner.js` hook detects both via `^gemini-3(\.|-)5(\.|-)?flash` and the cost-tier banner annotates with `$$`.
-- Thinking config schema: 3.x models use `generationConfig.thinkingConfig.thinkingLevel` (enum: `minimal` / `low` / `medium` (default) / `high`). 2.5 models use `generationConfig.thinkingConfig.thinkingBudget` (integer). Sending the wrong field is silently ignored upstream; the OmA model hook translates between them automatically.
-- Default `thinkingLevel` is `medium`. Escalate to `high` only for genuinely deep reasoning tasks (architecture, adversarial review). `minimal`/`low` are for cost-conscious quick checks.
-- Function-calling adds a new mode `VALIDATED` (joining AUTO/ANY/NONE). VALIDATED constrains the response to either a function call or natural language with schema enforcement — use it when the caller must get back one of those two two shapes.
-- Default temperature is 1.0; docs say do not lower below 1.0 for 3.5 Flash. The OmA hook clamps `temperature` to `max(current, 1.0)` for this model.
-- Context window: 1M input / 64K output.
-- Cost tier: $1.50 in / $9.00 out per 1M tokens — roughly 5x more expensive than 2.5 Flash. Banner annotates with `$$`; Pro uses `$$$`, 2.5 Flash uses `$`.
-- No Live API support. Do NOT route Live sessions to `gemini-3.5-flash`; pin Live sessions to a model that supports the Live API surface.
-- Code Execution + image (visual math, image annotation, zoom-into-image) is new to 3.5 Flash; older Flash variants did not support image-aware code execution.
-- See `skills/gemini-3-5-flash-tuning/` for tuning advice when an operator explicitly requests 3.5 Flash.
 
 ## System Map: Modes, Controls & Agents
 
 - **Operational Modes**: `balanced`, `speed`, `deep`, `autopilot`, `ralph`, `ultrawork`, `ultraqa`.
 - **Control Plane**: `rules`, `memory`, `workspace`, `taskboard`, `deep-init`, `hud`, `hooks`, `notify`, `reasoning`, `approval`, `model`, `capabilities`, `doctor`, `cancel`.
-- **Agent Role Registry**:
-  - **Strategy**: `oma-director`, `oma-architect`, `oma-planner`.
-  - **Production**: `oma-product`, `oma-consultant`, `oma-editor`.
-  - **Execution**: `oma-executor`, `oma-reviewer`, `oma-verifier`, `oma-debugger`.
+- **Agent Role Registry (exact `TypeName` IDs)**:
+  - **Strategy & Critique**: `oma-director`, `oma-architect`, `oma-planner`, `oma-consensus`, `omg-critic`, `omg-security-reviewer`.
+  - **Discovery & Production**: `oma-product`, `oma-consultant`, `oma-interview`, `oma-researcher`, `oma-editor`.
+  - **Execution & Verification**: `oma-executor`, `oma-debugger`, `omg-test-engineer`, `oma-reviewer`, `omg-dependency-expert`, `oma-verifier`, `oma-quick`.
 
 ## Workflow State: Interviewing
 
 - **Entry**: Triggered via depth keywords (`low|medium|high`) on `/oma:intent`.
 - **Hold**: All automated implementation pipelines are blocked while in this state.
-- **Agent**: `interview` is the exclusive agent active during this state.
+- **Agent**: `oma-interview` is the exclusive agent active during this state.
 - **Persistence**: Dialogue state, confirmed facts, and `ready_to_run_prompt` must be saved to `.omg/state/interviews/[slug]/context.json`, with `.omg/state/interviews/active.json` pointing at the current session.
 - **Meta-commands**: Support `$intent-status`, `$intent-restart`, `$intent-help`, `$intent-resume`, and `$intent-done`.
 
@@ -81,7 +69,7 @@ Gemini 3.5 Flash launched at I/O 2026 (2026-05-19) and is materially different f
   - **Delegated Turns**: Delegated/worker/subagent turns must not write shared workflow artifacts directly; they return handoff summaries or session-local notes for the orchestrator to merge.
 - **Summarization**: Read only files needed for the current step and summarize before handoff.
 - **Persistence**: Use `.omg/state/*`, `MEMORY.md`, `.omg/memory/*`, `.omg/rules/*`, `.omg/hooks/*`, or `.omg/notify/*`.
-- **Native Tool Schemas**: When using Gemini CLI file tools, call `list_directory` with `dir_path`, and call `read_file` / `write_file` with `file_path`. Do not use a generic `path` field.
+- **Native Tool Schemas**: Call Antigravity native tools with their exact PascalCase keys: `read_file` with `Path`, `write_file` with `Path` and `Content`, `edit_file` with `Path`, `Target`, and `Replacement`, `run_command` with `CommandLine`, and `invoke_subagent` with `TypeName`, `Role`, and `Prompt`.
 
 ## Execution Discipline
 

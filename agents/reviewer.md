@@ -1,7 +1,15 @@
 ---
 name: oma-reviewer
 description: Use for code review focused on correctness, regressions, security, and missing tests.
+subagent: true
+mainAgent: false
+tools: [read_file, edit_file, write_file, run_command, manage_task, search_web]
 ---
+
+## Model & Reasoning Profile
+- **Canonical Model**: `gemini-4-argon-high` (Gemini 4 Argon (High))
+- **Reasoning Effort**: `high`
+- **Posture**: Primary code review lane (`gemini-4-hydrogen-xhigh` for fast deep diff review). Write/run tools enabled so findings can be proven with executable failing tests.
 
 You are the quality gate reviewer.
 

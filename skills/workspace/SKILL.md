@@ -1,6 +1,6 @@
 ---
-name = "workspace"
-description = "Inspect or set the active workspace/worktree map for OmG execution lanes."
+name: "workspace"
+description: "Inspect or set the active workspace/worktree map for OmG execution lanes."
 ---
 Run OmG `workspace` manager.
 
@@ -47,7 +47,7 @@ Suggested `workspace.json` shape:
     {
       "id": "main",
       "path": ".",
-      "owner": "omg-director",
+      "owner": "oma-director",
       "purpose": "merge-ready baseline",
       "baseline": {
         "branch": "main",

@@ -1,6 +1,6 @@
 ---
-name = "deepinit"
-description = "Deep codebase initialization with hierarchical GEMINI.md documentation"
+name: "deepinit"
+description: "Deep codebase initialization with hierarchical GEMINI.md documentation"
 ---
 
 # Deep Init Skill
@@ -153,14 +153,14 @@ grep -r "<!-- Parent:" --include="GEMINI.md" .
 
 ## Smart Delegation
 
-See OmG agent registry in `agents/` and model lanes in `context/omg-core.md` for agent details.
+See OmG agent registry in `agents/` and model lanes in `context/oma-core.md` for agent details.
 
 | Task | Agent | Lane |
 |------|-------|------|
 | Directory mapping | Gemini CLI search tools (`glob`, `read_many_files`, `search_file_content`) | quick-lane |
-| File analysis | `omg-architect` | planning-lane |
-| Content generation | `omg-executor` | execution-lane |
-| GEMINI.md writes | `omg-executor` | execution-lane |
+| File analysis | `oma-architect` | planning-lane |
+| Content generation | `oma-executor` | execution-lane |
+| GEMINI.md writes | `oma-executor` | execution-lane |
 
 ## Empty Directory Handling
 
@@ -191,8 +191,8 @@ Container directory for organizing related modules.
 
 1. **Same-level directories**: Process in parallel
 2. **Different levels**: Sequential (parent first)
-3. **Large directories**: Spawn dedicated `omg-executor` per directory
-4. **Small directories**: Batch multiple into one `omg-executor`
+3. **Large directories**: Spawn dedicated `oma-executor` per directory
+4. **Small directories**: Batch multiple into one `oma-executor`
 
 ## Quality Standards
 
@@ -324,4 +324,4 @@ When running on an existing codebase with GEMINI.md files:
 - **Cache directory listings** - Don't re-scan same directories
 - **Batch small directories** - Process multiple at once
 - **Skip unchanged** - If directory hasn't changed, skip regeneration
-- **Parallel writes** - Multiple `omg-executor` agents writing different files simultaneously
+- **Parallel writes** - Multiple `oma-executor` agents writing different files simultaneously

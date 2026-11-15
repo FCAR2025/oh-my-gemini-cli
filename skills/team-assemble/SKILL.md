@@ -1,6 +1,6 @@
 ---
-name = "team-assemble"
-description = "Stage 0/5: Dynamically assemble a task-fit agent team with approval gating and model-aware role assignment."
+name: "team-assemble"
+description: "Stage 0/5: Dynamically assemble a task-fit agent team with approval gating and model-aware role assignment."
 ---
 Run OmG `team-assemble`.
 
@@ -15,17 +15,17 @@ Protocol:
 2. Assemble two role groups:
    - domain specialists (problem-space experts)
    - format specialists (output-quality experts)
-3. Build role lanes from OmG agents:
-   - orchestration lane: `omg-director`
-   - exploration lane: `omg-researcher` (spawn multiple lanes when breadth is high)
-   - decision lane: `omg-consultant` or `omg-architect`
-   - execution lane: `omg-executor` when implementation is required
-   - quality lane: `omg-reviewer`, `omg-verifier`, `omg-debugger`
-   - editorial lane: `omg-editor` for final packaging
-4. Assign model profiles by lane:
-   - judgment and acceptance gates -> `gemini-3.1-pro-preview`
-   - implementation-heavy execution -> `gemini-3-flash-preview`
-   - broad low-risk exploration -> `gemini-3.1-flash-lite-preview` (upgrade to `gemini-3.1-pro-preview` if depth is critical)
+3. Build role lanes from registered OmA/OmG agents (`agents/*.md`):
+   - orchestration lane: `oma-director`
+   - exploration lane: `oma-researcher` or `research` (spawn multiple lanes when breadth is high)
+   - decision/critique lane: `oma-consultant`, `oma-architect`, `oma-consensus`, `omg-critic`, or `omg-security-reviewer`
+   - execution lane: `oma-executor` when implementation is required (`omg-test-engineer` for TDD, `omg-dependency-expert` for dependencies)
+   - quality lane: `oma-reviewer`, `oma-verifier`, `oma-debugger`
+   - editorial lane: `oma-editor` for final packaging
+4. Assign Gemini 4 model profiles by lane (pin via `swarm` `action: "add"` `model`):
+   - architecture, adversarial critique, security, and orchestration -> `gemini-4-carbon-high` (`gemini-4-carbon-medium` for planning/PRD/discovery)
+   - complex implementation, debugging, TDD, review, and dependency audits -> `gemini-4-argon-high` (`gemini-4-argon-medium` for acceptance verification)
+   - fast deep review or tricky single-slice TDD -> `gemini-4-hydrogen-xhigh`; standard scoped execution and exploration -> `gemini-4-hydrogen-high`; docs -> `gemini-4-hydrogen-medium`; trivial localized edits -> `gemini-4-hydrogen-low`
 5. Assign reasoning effort per lane:
    - load `.omg/state/reasoning.json` when available
    - apply teammate overrides first, then global default
@@ -38,7 +38,7 @@ Protocol:
    - workspace/worktree lane ownership when `.omg/state/workspace.json` exists
    - lane cleanliness/trust notes when `.omg/state/workspace.json` exists
    - explicit subagent handoff schema (`owner`, `lane`, `evidence`, `termination`)
-   - agent-unavailable fallback map (for example `omg-executor` -> `omg-quick` once for low-risk slices)
+   - agent-unavailable fallback map (for example `oma-executor` -> `oma-quick` once for low-risk slices)
    - avoid duplicate unresolved delegation across lanes
    - trigger conditions for verify/fix loops
    - anti-slop quality gate before final delivery

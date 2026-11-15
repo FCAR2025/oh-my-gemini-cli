@@ -1,6 +1,6 @@
 ---
-name = "subagent-driven-development"
-description = "Use when executing an OmG implementation plan with independent tasks in the current session. Dispatches a fresh sub-agent per task with a two-stage review (spec compliance, then code quality) before marking each task complete."
+name: "subagent-driven-development"
+description: "Use when executing an OmG implementation plan with independent tasks in the current session. Dispatches a fresh sub-agent per task with a two-stage review (spec compliance, then code quality) before marking each task complete."
 ---
 
 # Subagent-Driven Development (OmG)
@@ -31,16 +31,16 @@ Use this table when you dispatch each sub-agent. Names match `agents/<name>.md`.
 
 | Stage | OmG agent | Model tier | Prompt template |
 |-------|-----------|------------|-----------------|
-| Implementer | `omg-executor` | execution-lane (gemini-3-flash-preview) default → planning-lane (gemini-3.1-pro-preview) if integration-heavy | `./implementer-prompt.md` |
-| Spec-compliance reviewer | `omg-reviewer` | execution-lane (gemini-3-flash-preview) | `./spec-reviewer-prompt.md` |
-| Code-quality reviewer | `omg-verifier` | planning-lane (gemini-3.1-pro-preview) | `./code-quality-reviewer-prompt.md` |
-| Final whole-implementation reviewer | `omg-verifier` | planning-lane (gemini-3.1-pro-preview) | `./code-quality-reviewer-prompt.md` (scope = full diff) |
+| Implementer | `oma-executor` | execution-lane (gemini-4-hydrogen-high) default → planning-lane (gemini-4-carbon-high) if integration-heavy | `./implementer-prompt.md` |
+| Spec-compliance reviewer | `oma-reviewer` | execution-lane (gemini-4-hydrogen-high) | `./spec-reviewer-prompt.md` |
+| Code-quality reviewer | `oma-verifier` | planning-lane (gemini-4-carbon-high) | `./code-quality-reviewer-prompt.md` |
+| Final whole-implementation reviewer | `oma-verifier` | planning-lane (gemini-4-carbon-high) | `./code-quality-reviewer-prompt.md` (scope = full diff) |
 
 Optional specialists when the task class warrants:
-- `omg-debugger` — task is "why is X broken"
+- `oma-debugger` — task is "why is X broken"
 - `omg-security-reviewer` — task touches auth, secrets, trust boundaries
 - `omg-test-engineer` — task is test-strategy heavy
-- `omg-architect` — task forces a design decision the plan did not pin
+- `oma-architect` — task forces a design decision the plan did not pin
 
 ## The Process
 
@@ -48,12 +48,12 @@ Optional specialists when the task class warrants:
 1. Read plan once. Extract every task with full text + scene-setting context.
 2. Persist tasks to .omg/state/taskboard.md (single-writer per project).
 3. For each task in dependency-safe order:
-   a. Dispatch implementer (omg-executor) with full task text + context + acceptance criteria
+   a. Dispatch implementer (oma-executor) with full task text + context + acceptance criteria
    b. If implementer asks questions → answer → re-dispatch
    c. Implementer reports DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED
-   d. If DONE / DONE_WITH_CONCERNS resolved → dispatch spec-reviewer (omg-reviewer)
+   d. If DONE / DONE_WITH_CONCERNS resolved → dispatch spec-reviewer (oma-reviewer)
    e. If spec-reviewer ❌ → implementer fixes → re-dispatch spec-reviewer
-   f. When spec-reviewer ✅ → dispatch code-quality-reviewer (omg-verifier)
+   f. When spec-reviewer ✅ → dispatch code-quality-reviewer (oma-verifier)
    g. If code-quality-reviewer ❌ → implementer fixes → re-dispatch code-quality-reviewer
    h. When code-quality-reviewer ✅ → mark task complete in .omg/state/taskboard.md
 4. After all tasks → dispatch final code-quality-reviewer for entire branch diff.
@@ -66,10 +66,10 @@ Use the cheapest model that can plausibly succeed at each role.
 
 | Task signal | Model |
 |-------------|-------|
-| 1-2 files, complete spec, mechanical edit | `gemini-3.1-flash-lite-preview` (quick lane) |
-| Multi-file integration, pattern matching | `gemini-3-flash-preview` (execution lane) |
-| Architecture / design / cross-system review | `gemini-3.1-pro-preview` (planning + review lane) |
-| Tool-heavy autonomous loop | execution-lane (gemini-3-flash-preview) or planning-lane (gemini-3.1-pro-preview) custom-tools variant |
+| 1-2 files, complete spec, mechanical edit | `gemini-4-hydrogen-low` (quick lane) |
+| Multi-file integration, pattern matching | `gemini-4-hydrogen-high` (execution lane) |
+| Architecture / design / cross-system review | `gemini-4-carbon-high` (planning + review lane) |
+| Tool-heavy autonomous loop | execution-lane (gemini-4-hydrogen-high) or planning-lane (gemini-4-carbon-high) custom-tools variant |
 
 Re-dispatch with a higher tier ONLY when the implementer reports BLOCKED due to reasoning ceiling. Do not pre-pessimize.
 
@@ -86,9 +86,9 @@ Re-dispatch with a higher tier ONLY when the implementer reports BLOCKED due to 
 
 ## Prompt Templates
 
-- `./implementer-prompt.md` — Dispatch the omg-executor sub-agent.
-- `./spec-reviewer-prompt.md` — Dispatch the omg-reviewer sub-agent for spec compliance.
-- `./code-quality-reviewer-prompt.md` — Dispatch the omg-verifier sub-agent for code quality.
+- `./implementer-prompt.md` — Dispatch the oma-executor sub-agent.
+- `./spec-reviewer-prompt.md` — Dispatch the oma-reviewer sub-agent for spec compliance.
+- `./code-quality-reviewer-prompt.md` — Dispatch the oma-verifier sub-agent for code quality.
 
 ## Quality Gates (do not skip)
 
@@ -135,4 +135,4 @@ Re-dispatch with a higher tier ONLY when the implementer reports BLOCKED due to 
 
 ## Reference
 
-Companion skill in the superpowers extension: `superpowers:subagent-driven-development` — same process, Claude-native agent registry. This OmG version maps to OmG's Gemini-native agents (`omg-executor` / `omg-reviewer` / `omg-verifier`) and OmG state surface (`.omg/state/taskboard.md`).
+Companion skill in the superpowers extension: `superpowers:subagent-driven-development` — same process, Claude-native agent registry. This OmG version maps to OmG's Gemini-native agents (`oma-executor` / `oma-reviewer` / `oma-verifier`) and OmG state surface (`.omg/state/taskboard.md`).

@@ -1,6 +1,6 @@
 ---
-name = "deep-interview"
-description = "Socratic deep interview with mathematical ambiguity gating before explicit execution approval"
+name: "deep-interview"
+description: "Socratic deep interview with mathematical ambiguity gating before explicit execution approval"
 ---
 
 <Purpose>
@@ -19,7 +19,7 @@ Deep Interview implements Ouroboros-inspired Socratic questioning with mathemati
 <Do_Not_Use_When>
 - User has a detailed, specific request with file paths, function names, or acceptance criteria -- execute directly
 - User wants to explore options or brainstorm -- use `omg-plan` skill instead
-- User wants a quick fix or single change -- delegate to omg-executor or ralph
+- User wants a quick fix or single change -- delegate to oma-executor or ralph
 - User says "just do it" or "skip the questions" without an explicit execution path -- respect their intent by ending interview and writing a `pending approval` spec, not by mutating files or delegating execution
 - User already has a PRD or plan file and explicitly asks to execute it -- use the requested execution skill with that plan
 </Do_Not_Use_When>
@@ -230,7 +230,7 @@ Options should include contextually relevant choices plus free-text.
 
 After receiving the user's answer, score clarity across all dimensions.
 
-**Scoring prompt** (use planning-lane model (gemini-3.1-pro-preview) at temperature 0.1 for consistency):
+**Scoring prompt** (use planning-lane model (gemini-4-carbon-medium) at temperature 0.1 for consistency):
 
 ```
 Given the following interview transcript for a {greenfield|brownfield} project, score clarity on each dimension from 0.0 to 1.0. If the initial context or transcript was summarized for prompt safety, score from that summary plus the preserved round decisions/gaps; do not re-expand raw oversized context. Honor the locked Round 0 topology: score every active component independently and never drop confirmed sibling components just because one component is already clear.
@@ -353,7 +353,7 @@ Challenge modes are used ONCE each, then return to normal Socratic questioning. 
 
 When ambiguity <= threshold (or hard cap / early exit):
 
-1. **Generate the specification** using planning-lane model (gemini-3.1-pro-preview) with the prompt-safe transcript. If the full interview transcript or initial context is too large, include the summary plus all concrete decisions, acceptance criteria, unresolved gaps, and ontology snapshots; never overflow the prompt with raw oversized context.
+1. **Generate the specification** using planning-lane model (gemini-4-carbon-medium) with the prompt-safe transcript. If the full interview transcript or initial context is too large, include the summary plus all concrete decisions, acceptance criteria, unresolved gaps, and ontology snapshots; never overflow the prompt with raw oversized context.
 2. **Write to file**: `.omg/specs/deep-interview-{slug}.md`
    - Always use this exact final spec path. Do not write temporary working files to the repo root or other ad hoc paths.
    - For ephemeral artifacts during interview rounds (for example scoring intermediate results, prompt-safe summaries, question queues, or resume metadata), use `.omg/state/`.
@@ -510,7 +510,7 @@ Skipping any stage is possible but reduces quality assurance:
 <Tool_Usage>
 - Each interview question is presented through the standard Gemini CLI prompt surface with contextual options; skills are auto-loaded by Gemini CLI when their frontmatter description matches the active task
 - Use Gemini CLI search tools (`glob`, `search_file_content`, `read_many_files`) for brownfield codebase exploration (run BEFORE asking user about codebase)
-- Use planning-lane model (gemini-3.1-pro-preview) at temperature 0.1 for ambiguity scoring -- consistency is critical
+- Use planning-lane model (gemini-4-carbon-medium) at temperature 0.1 for ambiguity scoring -- consistency is critical
 - Round 0 topology confirmation happens before ambiguity scoring; Phase 2 scoring must honor locked topology and rotate targeting across active components when more than one is present
 - Use `write_file` / `read_file` for interview state persistence under `.omg/state/`; check `.omg/state/session-lock.json` before writing
 - Use `write_file` tool to save the final spec to `.omg/specs/deep-interview-{slug}.md` exactly; use `.omg/state/` for ephemeral artifacts

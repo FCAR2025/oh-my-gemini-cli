@@ -1,7 +1,15 @@
 ---
 name: oma-consensus
 description: Use to evaluate multiple technical options and converge on one decision with explicit tradeoffs.
+subagent: true
+mainAgent: false
+tools: [read_file, run_command, manage_task, search_web]
 ---
+
+## Model & Reasoning Profile
+- **Canonical Model**: `gemini-4-carbon-high` (Gemini 4 Carbon (High))
+- **Reasoning Effort**: `high`
+- **Posture**: Multi-option technical decision convergence lane.
 
 You are the decision convergence lead.
 

@@ -1,6 +1,6 @@
 ---
-name = "using-omg"
-description = "Use when starting any conversation in Gemini CLI to establish how to find and use OmG skills, agents, hooks, and slash commands. Requires invoking relevant OmG skills before responding, even to clarifying questions."
+name: "using-omg"
+description: "Use when starting any conversation in Gemini CLI to establish how to find and use OmG skills, agents, hooks, and slash commands. Requires invoking relevant OmG skills before responding, even to clarifying questions."
 ---
 
 <SUBAGENT-STOP>
@@ -29,7 +29,7 @@ OmG layers four capability surfaces on top of Gemini CLI:
 |---------|---------------|-------------|
 | **Slash commands** (`/omg:*`) | Type `/omg:<name>` in interactive mode | Operator control plane: status, mode, capabilities, ultraqa, goal, autopilot, ralph, taskboard, team-assemble, cancel, doctor |
 | **Skills** (`skills/<name>/SKILL.md`) | Skill is auto-loaded by Gemini CLI when its frontmatter description matches the active task. | Procedural how-tos: subagent-driven-development, ultrawork, ai-slop-cleaner, deep-interview, ccg, verify, trace, visual-verdict |
-| **Agents** (`agents/<name>.md`) | Referenced inside skills and `/omg:team-*` commands. Map roles to lanes (omg-director / omg-planner / omg-executor / omg-reviewer / omg-verifier / omg-debugger / omg-architect / omg-product / omg-security-reviewer / omg-test-engineer / omg-researcher). | Role-driven delegation inside multi-step workflows |
+| **Agents** (`agents/<name>.md`) | Referenced inside skills and `/oma:team-*` commands. Map roles to registered `TypeName` lanes (`oma-director`, `oma-planner`, `oma-executor`, `oma-reviewer`, `oma-verifier`, `oma-debugger`, `oma-architect`, `oma-product`, `omg-critic`, `omg-security-reviewer`, `omg-test-engineer`, `omg-dependency-expert`, `oma-researcher`). | Role-driven delegation inside multi-step workflows |
 | **Hooks** (`hooks/hooks.json`) | Fire automatically on lifecycle events (SessionStart, BeforeAgent, BeforeModel, BeforeTool, AfterTool, AfterAgent). | Background routing, evidence capture, delegation enforcement |
 | **MCP servers** (`gemini-extension.json -> mcpServers`) | 6 servers wired by default: `omx-state` / `omx-memory` / `omx-wiki` / `omx-trace` / `omx-code-intel` (from oh-my-codex) + `omc-bridge` (from oh-my-claudecode `t` bridge — provides full LSP across 12 backends, `python_repl`, `notepad`, `project_memory`, `wiki`, `shared_memory`, `session_search`, `ast_grep_search/replace`). | Cross-platform tool surface — same MCP tools that Claude Code + Codex use, available to Gemini CLI |
 
@@ -88,7 +88,7 @@ Examples:
 
 ## OmG-Specific Discipline
 
-These rules come from the OmG core context (`context/omg-core.md`); always honor them:
+These rules come from the OmA core context (`context/oma-core.md`); always honor them:
 
 - **Single-writer state**: `.omg/state/workspace.json`, `.omg/state/taskboard.md`, `.omg/state/workflow.md`, `.omg/state/checkpoint.md`, `.omg/state/capabilities.md`, `.omg/state/ultraqa.md` are single-writer per project. Check `.omg/state/session-lock.json` before mutating.
 - **Stage gate**: `team-exec` is blocked until both `team-plan` (task graph) and `team-prd` (acceptance criteria) exist.
@@ -100,11 +100,11 @@ These rules come from the OmG core context (`context/omg-core.md`); always honor
 
 Quick reference of high-traffic OmG + superpowers skills:
 
-**Planning & alignment**: brainstorming (from superpowers), deep-interview, writing-plans (from superpowers), plan, omg-plan, prd, ralplan
+**Planning & alignment**: brainstorming (from superpowers), deep-interview, writing-plans (from superpowers), plan, oma-plan, prd, ralplan
 **Execution patterns**: subagent-driven-development, executing-plans (from superpowers), ultrawork, autopilot, dispatching-parallel-agents (from superpowers), team (from superpowers)
 **Quality & verification**: test-driven-development (from superpowers), systematic-debugging (from superpowers), verification-before-completion (from superpowers), ultraqa, verify, ai-slop-cleaner, trace, visual-verdict
 **Knowledge & memory**: deep-dive, wiki, learner, remember (from superpowers), writer-memory (from superpowers), context-optimize
-**Specialist surfaces**: ccg (Claude+Codex+Gemini council), mcp-setup, deepinit, release, autoresearch, gemini-3-5-flash-tuning (see "Gemini 3.5 Flash routing" in `context/omg-core.md`)
+**Specialist surfaces**: ccg (Claude+Codex+Gemini council), mcp-setup, deepinit, release, autoresearch, model, reasoning (see "Gemini 4 Capability Routing" in `context/oma-core.md`)
 
 For the full list, see `skills/` directory or run `/omg:skill list`.
 

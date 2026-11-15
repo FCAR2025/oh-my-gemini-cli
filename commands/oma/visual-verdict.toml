@@ -12,7 +12,7 @@ Inputs expected (parse from `$ARGUMENTS`, ask once if missing):
 - `--threshold pass|warn|fail`: minimum pass bar (default `pass`)
 
 Protocol:
-1. Capability fit: visual judgement requires multimodal Gemini. Use `gemini-3.1-pro-preview` for design/brand audits, `gemini-3-flash-preview` for fast pass/fail screens. Do not attempt visual verdict without a multimodal model.
+1. Capability fit: visual judgement requires multimodal Gemini. Use `gemini-4-carbon-high` for design/brand audits, `gemini-4-hydrogen-high` for fast pass/fail screens. Do not attempt visual verdict without a multimodal model.
 2. Load the candidate (and reference, if present) via the multimodal surface. Refuse to fabricate visual content; if loading fails, exit `blocked` with the failed path.
 3. For each criterion, produce a row with: `observation`, `expected (from reference or criterion)`, `delta`, `severity (pass | warn | fail)`, `evidence (which region of the image)`.
 4. Apply the threshold:

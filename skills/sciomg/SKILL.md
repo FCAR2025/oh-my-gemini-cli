@@ -1,6 +1,6 @@
 ---
-name = "sciomg"
-description = "Orchestrate parallel scientist lanes for comprehensive analysis with AUTO mode default."
+name: "sciomg"
+description: "Orchestrate parallel scientist lanes for comprehensive analysis with AUTO mode default."
 ---
 Run OmG `sciomg` (parallel scientist analysis).
 
@@ -36,7 +36,7 @@ Discipline:
 
 Boundaries:
 - Sciomg is read-only analysis. Implementation belongs to a follow-up `/omg:team-exec`, `/omg:goal`, or `/omg:debug` cycle.
-- Cost-aware: each parallel lane multiplies token cost. Default to `gemini-3-flash-preview` per lane unless `architecture` or `security` lane is active, which justify Pro.
+- Cost-aware: each parallel lane multiplies token cost. Default to `gemini-4-hydrogen-high` per lane unless `architecture` or `security` lane is active, which justify Pro.
 
 Response:
 ## Sciomg Plan

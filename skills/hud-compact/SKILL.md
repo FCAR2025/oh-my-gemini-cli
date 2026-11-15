@@ -1,6 +1,6 @@
 ---
-name = "hud-compact"
-description = "Quick toggle: set OmG HUD visibility profile to compact."
+name: "hud-compact"
+description: "Quick toggle: set OmG HUD visibility profile to compact."
 ---
 Set OmG HUD visibility profile to `compact`.
 
@@ -19,7 +19,7 @@ Output format:
 
 ## Preview
 ```text
-[OMG][MODEL gemini-3.1-pro-preview/gemini-3-flash-preview/gemini-3.1-flash-lite-preview preview:on][STAGE team-exec][TASKS 3/8][NEXT /omg:team-verify]
+[OMG][MODEL gemini-4-carbon-high/gemini-4-argon-high/gemini-4-hydrogen-high g4:on][STAGE team-exec][TASKS 3/8][NEXT /omg:team-verify]
 ```
 
 ## Next Command

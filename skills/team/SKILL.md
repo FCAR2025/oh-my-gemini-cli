@@ -1,6 +1,6 @@
 ---
-name = "team"
-description = "Run OmG's full team lifecycle with optional dynamic team assembly and verify/fix loops."
+name: "team"
+description: "Run OmG's full team lifecycle with optional dynamic team assembly and verify/fix loops."
 ---
 Coordinate the request with OmG agents.
 
@@ -12,13 +12,13 @@ Execution protocol (staged):
 2. If team composition is unclear or task is non-standard, run `team-assemble` first.
 3. Read `.omg/state/session-lock.json`, then load `.omg/state/workspace.json` and `.omg/state/reasoning.json` when available.
 4. Identify the immediate blocking objective and keep it on the active critical lane.
-5. `team-plan`: Delegate decomposition to `omg-planner` and architecture checks to `omg-architect`, including lane-health and isolation risks.
-6. `team-prd`: Delegate scope lock and acceptance criteria to `omg-product`.
+5. `team-plan`: Delegate decomposition to `oma-planner` and architecture checks to `oma-architect`, including lane-health and isolation risks.
+6. `team-prd`: Delegate scope lock and acceptance criteria to `oma-product`.
 7. `taskboard`: Sync compact task ledger before first implementation slice (priority-aware with null-safe default `p2`).
 8. Keep lane baseline branch/HEAD anchors explicit across plan -> prd -> exec -> verify handoffs when workspace/taskboard state can carry them.
-9. `team-exec`: Delegate implementation slices to `omg-executor` with explicit lane/subagent context and terse success reporting.
-10. `team-verify`: Delegate validation to `omg-reviewer` and `omg-verifier` (include anti-slop quality check plus lane/handoff evidence).
-11. `team-fix`: If verification fails, delegate root-cause and patches to `omg-debugger` + `omg-executor`.
+9. `team-exec`: Delegate implementation slices to `oma-executor` with explicit lane/subagent context and terse success reporting.
+10. `team-verify`: Delegate validation to `oma-reviewer` and `oma-verifier` (include anti-slop quality check plus lane/handoff evidence).
+11. `team-fix`: If verification fails, delegate root-cause and patches to `oma-debugger` + `oma-executor`.
 12. Repeat steps 9-11 until acceptance criteria pass, all tracked tasks are verified, or blockers are explicit.
 13. Run `ultraqa` before final claims when the task is release-critical, adversarial, proxy/runtime-sensitive, or explicitly asks for proof.
 14. If an assigned implementation/review agent is unavailable ("agent not found"), retry once using a mapped fallback lane and record the reroute reason.

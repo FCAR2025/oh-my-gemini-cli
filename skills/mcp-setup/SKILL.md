@@ -1,6 +1,6 @@
 ---
-name = "mcp-setup"
-description = "Configure popular MCP servers for enhanced Gemini CLI agent capabilities"
+name: "mcp-setup"
+description: "Configure popular MCP servers for enhanced Gemini CLI agent capabilities"
 ---
 
 # MCP Setup

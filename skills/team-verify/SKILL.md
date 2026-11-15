@@ -1,6 +1,6 @@
 ---
-name = "team-verify"
-description = "Stage 4/5: Verify implementation against acceptance criteria and regression risks."
+name: "team-verify"
+description: "Stage 4/5: Verify implementation against acceptance criteria and regression risks."
 ---
 Run OmG `team-verify`.
 
@@ -9,8 +9,8 @@ $ARGUMENTS
 
 Protocol:
 1. Read `.omg/state/taskboard.md` and `.omg/state/workspace.json` when available, then identify the active verification queue and lane health.
-2. Delegate review to `omg-reviewer`.
-3. Delegate acceptance-gate checks to `omg-verifier`.
+2. Delegate review to `oma-reviewer`.
+3. Delegate acceptance-gate checks to `oma-verifier`.
 4. Validate each acceptance criterion with evidence, including explicit lane/subagent context when work crossed lanes or ended early.
 5. Treat missing proof as `unknown` (not pass) and call out evidence required to close the gap.
 6. Mark tasks `verified` only when evidence is explicit, lane state is safe, and criterion coverage is complete.

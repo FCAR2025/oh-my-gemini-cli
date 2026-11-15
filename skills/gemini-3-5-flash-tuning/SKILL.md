@@ -1,6 +1,6 @@
 ---
-name = "gemini-3-5-flash-tuning"
-description = "Use when the user invokes Gemini 3.5 Flash or asks how to tune thinking/cost/function-calling/structured-output for the new Gemini 3.5 Flash model. Covers thinkingLevel vs thinkingBudget, VALIDATED function-call mode, code-execution+image, and the no-Live-API constraint."
+name: "gemini-3-5-flash-tuning"
+description: "Use when the user invokes Gemini 3.5 Flash or asks how to tune thinking/cost/function-calling/structured-output for the new Gemini 3.5 Flash model. Covers thinkingLevel vs thinkingBudget, VALIDATED function-call mode, code-execution+image, and the no-Live-API constraint."
 ---
 
 # Gemini 3.5 Flash Tuning

@@ -1,6 +1,6 @@
 ---
-name = "autopilot"
-description = "Full autonomous execution from idea to working code"
+name: "autopilot"
+description: "Full autonomous execution from idea to working code"
 ---
 
 <Purpose>
@@ -17,9 +17,9 @@ Autopilot takes a brief product idea and autonomously handles the full lifecycle
 <Do_Not_Use_When>
 - User wants to explore options or brainstorm -- use `plan` skill instead
 - User says "just explain", "draft only", or "what would you suggest" -- respond conversationally
-- User wants a single focused code change -- use `ralph` or delegate to an omg-executor agent
+- User wants a single focused code change -- use `ralph` or delegate to an oma-executor agent
 - User wants to review or critique an existing plan -- use `plan --review`
-- Task is a quick fix or small bug -- use direct omg-executor delegation
+- Task is a quick fix or small bug -- use direct oma-executor delegation
 </Do_Not_Use_When>
 
 <Why_This_Exists>
@@ -39,19 +39,19 @@ Most non-trivial software tasks require coordinated phases: understanding requir
    - **If deep-interview spec exists** (`.omg/specs/deep-interview-*.md`): Skip analyst+architect expansion, use the pre-validated spec directly as Phase 0 output. Continue to Phase 1 (Planning).
    - **If ralplan consensus plan exists** (`.omg/plans/ralplan-*.md` or `.omg/plans/consensus-*.md` from the 3-stage pipeline): Skip BOTH Phase 0 and Phase 1 — jump directly to Phase 2 (Execution). The plan has already been Planner/Architect/Critic validated.
    - **If input is vague** (no file paths, function names, or concrete anchors): Offer redirect to `deep-interview` skill for Socratic clarification before expanding
-   - **Otherwise**: dispatch omg-product (analyst-equivalent) with planning-lane model (gemini-3.1-pro-preview) to extract requirements, then dispatch omg-architect with planning-lane model to create the technical specification
+   - **Otherwise**: dispatch oma-product (analyst-equivalent) with planning-lane model (gemini-4-carbon-high) to extract requirements, then dispatch oma-architect with planning-lane model to create the technical specification
    - Output: `.omg/autopilot/spec.md`
 
 2. **Phase 1 - Planning**: Create an implementation plan from the spec
    - **If ralplan consensus plan exists**: Skip — already done in the 3-stage pipeline
-   - dispatch omg-architect sub-agent with planning-lane model: Create plan (direct mode, no interview)
-   - dispatch omg-architect sub-agent with planning-lane model: Validate plan (critic pass)
+   - dispatch oma-architect sub-agent with planning-lane model: Create plan (direct mode, no interview)
+   - dispatch oma-architect sub-agent with planning-lane model: Validate plan (critic pass)
    - Output: `.omg/plans/autopilot-impl.md`
 
 3. **Phase 2 - Execution**: Implement the plan using ultrawork-style parallel dispatch with a persistence loop equivalent to `/omg:loop`
-   - dispatch omg-executor sub-agent with quick-lane model (gemini-3.1-flash-lite-preview): Simple tasks
-   - dispatch omg-executor sub-agent with execution-lane model (gemini-3-flash-preview): Standard tasks
-   - dispatch omg-executor sub-agent with planning-lane model (gemini-3.1-pro-preview): Complex tasks
+   - dispatch oma-executor sub-agent with quick-lane model (gemini-4-hydrogen-low): Simple tasks
+   - dispatch oma-executor sub-agent with execution-lane model (gemini-4-hydrogen-high): Standard tasks
+   - dispatch oma-executor sub-agent with planning-lane model (gemini-4-carbon-high): Complex tasks
    - Run independent tasks in parallel
 
 4. **Phase 3 - QA**: Cycle until all tests pass (UltraQA mode)
@@ -60,9 +60,9 @@ Most non-trivial software tasks require coordinated phases: understanding requir
    - Stop early if the same error repeats 3 times (indicates a fundamental issue)
 
 5. **Phase 4 - Validation**: Multi-perspective review in parallel
-   - dispatch omg-architect sub-agent: Functional completeness
-   - dispatch omg-reviewer sub-agent (security pass): Vulnerability check
-   - dispatch omg-reviewer sub-agent (quality pass): Quality review
+   - dispatch oma-architect sub-agent: Functional completeness
+   - dispatch oma-reviewer sub-agent (security pass): Vulnerability check
+   - dispatch oma-reviewer sub-agent (quality pass): Quality review
    - All must approve; fix and re-validate on rejection
 
 6. **Phase 5 - Cleanup**: Delete all state files on successful completion
@@ -71,9 +71,9 @@ Most non-trivial software tasks require coordinated phases: understanding requir
 </Steps>
 
 <Tool_Usage>
-- dispatch omg-architect sub-agent for Phase 4 architecture validation
-- dispatch omg-reviewer sub-agent (security pass) for Phase 4 security review
-- dispatch omg-reviewer sub-agent (quality pass) for Phase 4 quality review
+- dispatch oma-architect sub-agent for Phase 4 architecture validation
+- dispatch oma-reviewer sub-agent (security pass) for Phase 4 security review
+- dispatch oma-reviewer sub-agent (quality pass) for Phase 4 quality review
 - Agents form their own analysis first, then dispatch cross-validation sub-agents as needed
 - Never block on external tools; proceed with available agents if delegation fails
 </Tool_Usage>
@@ -91,7 +91,7 @@ Why good: Clear product concept with a specific feature. The "build me" trigger 
 
 <Bad>
 User: "fix the bug in the login page"
-Why bad: This is a single focused fix, not a multi-phase project. Use direct omg-executor delegation or ralph instead.
+Why bad: This is a single focused fix, not a multi-phase project. Use direct oma-executor delegation or ralph instead.
 </Bad>
 
 <Bad>
@@ -179,7 +179,7 @@ deep-interview "vague idea"
 
 When autopilot detects a ralplan consensus plan (`.omg/plans/ralplan-*.md` or `.omg/plans/consensus-*.md`), it skips both Phase 0 (Expansion) and Phase 1 (Planning) because the plan has already been:
 - Requirements-validated (deep-interview ambiguity gate)
-- Architecture-reviewed (ralplan omg-architect agent)
+- Architecture-reviewed (ralplan oma-architect agent)
 - Quality-checked (ralplan critic pass)
 
 Autopilot starts directly at Phase 2 (ultrawork-style parallel dispatch with a persistence loop equivalent to `/omg:loop`).

@@ -1,6 +1,6 @@
 ---
-name = "team-exec"
-description = "Stage 3/5: Implement approved plan slices with controlled scope and validation notes."
+name: "team-exec"
+description: "Stage 3/5: Implement approved plan slices with controlled scope and validation notes."
 ---
 Run OmG `team-exec`.
 
@@ -22,11 +22,11 @@ Protocol:
    - highest priority first (`p0` -> `p1` -> `p2` -> `p3`)
    - stable task id tie-breaker
 6. Read target files before editing and preserve existing conventions.
-7. Delegate implementation to `omg-executor` with explicit lane/subagent context.
+7. Delegate implementation to `oma-executor` with explicit lane/subagent context.
    - use the current Gemini CLI subagent handoff surface as a unified invocation path; do not assume legacy wrapped subagent tools are available
 8. If the requested implementation agent is unavailable (for example "agent not found"), retry once with fallback routing:
-   - low-risk slice -> `omg-quick`
-   - architecture-sensitive or high-risk slice -> `omg-director` for reassignment before retry
+   - low-risk slice -> `oma-quick`
+   - architecture-sensitive or high-risk slice -> `oma-director` for reassignment before retry
    - never loop fallback retries
 9. Prefer editing existing files; create new files only when required by accepted scope.
 10. Keep each execution slice small and reviewable; keep the success path terse unless the slice stops early or blocks.

@@ -1,12 +1,34 @@
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const skillsRoot = path.join(__dirname, "..", "skills");
 
-function parseFrontmatter(content) {
+function parseScalarValue(rawValue) {
+  const trimmed = rawValue.trim();
+  if (!trimmed) {
+    return null;
+  }
+  if (trimmed.startsWith('"')) {
+    const dq = trimmed.match(/^"((?:\\.|[^"\\])*)"$/);
+    if (!dq) {
+      return null;
+    }
+    return dq[1].replace(/\\(["\\])/g, "$1");
+  }
+  if (trimmed.startsWith("'")) {
+    const sq = trimmed.match(/^'((?:''|[^'])*)'$/);
+    if (!sq) {
+      return null;
+    }
+    return sq[1].replace(/''/g, "'");
+  }
+  return trimmed;
+}
+
+export function parseFrontmatter(content) {
   const normalized = content.replace(/^\uFEFF/, "");
   const match = normalized.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) {
@@ -14,88 +36,101 @@ function parseFrontmatter(content) {
   }
 
   const body = match[1];
-  const result = {};
+  const result = Object.create(null);
 
   for (const rawLine of body.split(/\r?\n/)) {
     const line = rawLine.trim();
     if (!line || line.startsWith("#")) {
       continue;
     }
-    const kv = line.match(/^([A-Za-z0-9_-]+)\s*=\s*"(.*)"$/);
+    const yamlMatch = line.match(/^([A-Za-z0-9_-]+)\s*:\s*(.+)$/);
+    const tomlMatch = !yamlMatch
+      ? line.match(/^([A-Za-z0-9_-]+)\s*=\s*(".*")$/)
+      : null;
+    const kv = yamlMatch || tomlMatch;
     if (!kv) {
       return { error: `invalid frontmatter line: ${rawLine}` };
     }
-    const [, key, value] = kv;
+    const [, key, rawValue] = kv;
+    const value = parseScalarValue(rawValue);
+    if (value === null) {
+      return { error: `invalid frontmatter line: ${rawLine}` };
+    }
     if (Object.prototype.hasOwnProperty.call(result, key)) {
       return { error: `duplicate frontmatter key: ${key}` };
     }
     result[key] = value;
   }
 
-  return { data: result };
+  return { data: { ...result } };
 }
 
-const errors = [];
-const skillNames = new Map();
+export function validateAllSkills(rootDir = skillsRoot) {
+  const errors = [];
+  const skillNames = new Map();
 
-if (!fs.existsSync(skillsRoot)) {
-  console.error("skills directory is missing");
-  process.exit(1);
-}
-
-const skillDirs = fs
-  .readdirSync(skillsRoot, { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name)
-  .sort();
-
-for (const dirName of skillDirs) {
-  const skillPath = path.join(skillsRoot, dirName, "SKILL.md");
-  if (!fs.existsSync(skillPath)) {
-    errors.push(`${dirName}: missing SKILL.md`);
-    continue;
+  if (!fs.existsSync(rootDir)) {
+    return { skillCount: 0, errors: ["skills directory is missing"] };
   }
 
-  const content = fs.readFileSync(skillPath, "utf8");
-  const parsed = parseFrontmatter(content);
-  if (parsed.error) {
-    errors.push(`${dirName}: ${parsed.error}`);
-    continue;
-  }
+  const skillDirs = fs
+    .readdirSync(rootDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort();
 
-  const metadata = parsed.data;
-  const name = typeof metadata.name === "string" ? metadata.name.trim() : "";
-  const description =
-    typeof metadata.description === "string" ? metadata.description.trim() : "";
+  for (const dirName of skillDirs) {
+    const skillPath = path.join(rootDir, dirName, "SKILL.md");
+    if (!fs.existsSync(skillPath)) {
+      errors.push(`${dirName}: missing SKILL.md`);
+      continue;
+    }
 
-  if (!name) {
-    errors.push(`${dirName}: missing frontmatter key "name"`);
-  }
-  if (!description) {
-    errors.push(`${dirName}: missing frontmatter key "description"`);
-  }
-  if (name && name !== dirName) {
-    errors.push(`${dirName}: frontmatter name "${name}" must match directory name`);
-  }
+    const content = fs.readFileSync(skillPath, "utf8");
+    const parsed = parseFrontmatter(content);
+    if (parsed.error) {
+      errors.push(`${dirName}: ${parsed.error}`);
+      continue;
+    }
 
-  if (name) {
-    if (skillNames.has(name)) {
-      errors.push(
-        `${dirName}: duplicate skill name "${name}" also found in ${skillNames.get(name)}`,
-      );
-    } else {
-      skillNames.set(name, dirName);
+    const metadata = parsed.data;
+    const name = typeof metadata.name === "string" ? metadata.name.trim() : "";
+    const description =
+      typeof metadata.description === "string" ? metadata.description.trim() : "";
+
+    if (!name) {
+      errors.push(`${dirName}: missing frontmatter key "name"`);
+    }
+    if (!description) {
+      errors.push(`${dirName}: missing frontmatter key "description"`);
+    }
+    if (name && name !== dirName) {
+      errors.push(`${dirName}: frontmatter name "${name}" must match directory name`);
+    }
+
+    if (name) {
+      if (skillNames.has(name)) {
+        errors.push(
+          `${dirName}: duplicate skill name "${name}" also found in ${skillNames.get(name)}`,
+        );
+      } else {
+        skillNames.set(name, dirName);
+      }
     }
   }
+
+  return { skillCount: skillDirs.length, errors };
 }
 
-if (errors.length > 0) {
-  console.error("Skill metadata check failed:");
-  for (const error of errors) {
-    console.error(`- ${error}`);
+if (process.argv[1] && pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url) {
+  const { skillCount, errors } = validateAllSkills();
+  if (errors.length > 0) {
+    console.error("Skill metadata check failed:");
+    for (const error of errors) {
+      console.error(`- ${error}`);
+    }
+    process.exit(1);
   }
-  process.exit(1);
+  console.log(`Checked ${skillCount} skills.`);
+  console.log("All skill metadata checks passed.");
 }
-
-console.log(`Checked ${skillDirs.length} skills.`);
-console.log("All skill metadata checks passed.");

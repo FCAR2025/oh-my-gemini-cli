@@ -1,6 +1,6 @@
 ---
-name = "team-plan"
-description = "Stage 1/5: Build a staged engineering plan with dependencies and verification checkpoints."
+name: "team-plan"
+description: "Stage 1/5: Build a staged engineering plan with dependencies and verification checkpoints."
 ---
 Run OmG `team-plan`.
 
@@ -11,8 +11,8 @@ Protocol:
 1. Load `.omg/state/workspace.json` when available and respect active lane/path scope plus lane health/trust notes.
 2. Keep this stage read-only: no implementation edits in planning.
    - if native Gemini CLI Plan Mode is active and a skill/subagent activation is needed, request explicit user confirmation before activating it
-3. Delegate decomposition to `omg-planner`.
-4. Delegate architecture-sensitive risks to `omg-architect`.
+3. Delegate decomposition to `oma-planner`.
+4. Delegate architecture-sensitive risks to `oma-architect`.
 5. Build a phased task graph with stable task IDs, priorities, owners, dependencies, workspace lanes, and lane-health assumptions.
 6. For each task lane, capture the expected baseline branch or HEAD anchor when known so later execution/review can detect drift.
 7. Priority policy:

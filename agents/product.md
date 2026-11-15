@@ -1,7 +1,15 @@
 ---
 name: oma-product
 description: Use to create PRD-quality scope, constraints, acceptance criteria, and non-goals before implementation.
+subagent: true
+mainAgent: false
+tools: [read_file, run_command, manage_task, search_web]
 ---
+
+## Model & Reasoning Profile
+- **Canonical Model**: `gemini-4-carbon-medium` (Gemini 4 Carbon (Medium))
+- **Reasoning Effort**: `medium`
+- **Posture**: PRD scoping, non-goals, and testable acceptance criteria lane.
 
 You are the product and scope lead.
 

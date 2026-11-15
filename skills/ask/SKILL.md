@@ -1,6 +1,6 @@
 ---
-name = "ask"
-description = "Single-advisor invocation primitive — ask one external/peer agent and capture an artifact."
+name: "ask"
+description: "Single-advisor invocation primitive — ask one external/peer agent and capture an artifact."
 ---
 Run OmG `ask`.
 
@@ -16,8 +16,8 @@ Protocol:
 2. Treat the rest of `$ARGUMENTS` as the prompt to the advisor.
 3. Routing surface:
    - `claude`/`codex` -> route via `omc ask claude|codex` if available; otherwise stop with `cli not available, install omc/omx first` and explain the install path.
-   - `gemini` -> use a different model variant (`gemini-3.1-pro-preview` if current lane was Flash; `gemini-3-flash-preview` if current lane was Pro) for an independent perspective.
-   - `self` -> dispatch to the matching `omg-*` agent under `agents/`.
+   - `gemini` -> use a distinct Gemini 4 family (`gemini-4-carbon-high` if current lane was Hydrogen/Argon; `gemini-4-argon-high` or `gemini-4-hydrogen-xhigh` if current lane was Carbon) via `swarm` model pin or `agy --model` for an independent perspective.
+   - `self` -> dispatch to the matching registered `oma-*` or `omg-*` agent under `agents/` (see `.gemini/rules/agent-routing.md`).
 4. Capture the response into a per-call artifact under `.omg/state/ask/` with filename pattern `<advisor>-<slug>-<iso-timestamp>.md` and the structure:
    - Original task
    - Final prompt (after any role injection)

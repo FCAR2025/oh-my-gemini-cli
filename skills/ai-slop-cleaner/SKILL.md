@@ -1,6 +1,6 @@
 ---
-name = "ai-slop-cleaner"
-description = "Clean AI-generated code slop with a regression-safe, deletion-first workflow and optional reviewer-only mode"
+name: "ai-slop-cleaner"
+description: "Clean AI-generated code slop with a regression-safe, deletion-first workflow and optional reviewer-only mode"
 ---
 
 # AI Slop Cleaner
