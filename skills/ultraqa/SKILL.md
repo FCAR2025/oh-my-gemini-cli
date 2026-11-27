@@ -13,6 +13,7 @@ Protocol:
    - fast smoke or deterministic checks -> `gemini-3-flash-preview`
    - adversarial review, security, architecture, or release readiness -> `gemini-3.1-pro-preview`
    - cheap repeated checks -> `gemini-3.1-flash-lite-preview`
+   - external Codex adversarial UltraQA (when requested by operator or `--hunt money|send`) -> invoke `~/.local/bin/review-round` inheriting the live upstream Codex model from `${CODEX_HOME:-~/.codex}/config.toml` (top-level `model`, currently `gpt-6.2-astra`) rather than hardcoding a stale model ID.
 3. If native Gemini CLI Plan Mode/read-only mode is active, perform verification and diagnosis only; do not route fixes unless the operator explicitly approves implementation.
 4. Cycle up to five times:
    - verify: run or request the smallest real check that can falsify the claim
